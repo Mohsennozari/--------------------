@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>کوئیز تشخیص فسفر و آرسنیک در شیمی آلی</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card { transition: transform 0.3s, box-shadow 0.3s; }
+    .card:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); }
+    .fade-in { opacity: 0; animation: fadeIn 1s forwards; }
+    .slide-in { transform: translateX(100px); animation: slideIn 0.5s forwards; }
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes slideIn { to { transform: translateX(0); } }
+    .correct { background-color: #10B981; color: white; }
+    .incorrect { background-color: #EF4444; color: white; }
+  </style>
+</head>
+<body dir="rtl" class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center text-blue-800 mb-8">کوئیز تشخیص فسفر و آرسنیک در شیمی آلی</h1>
+
+    <!-- کوئیز -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 id="quiz-title" class="text-2xl font-semibold mb-4"></h2>
+      <div id="quiz">
+        <p id="question" class="text-lg mb-4"></p>
+        <div id="options" class="space-y-2"></div>
+        <p id="feedback" class="mt-4 text-lg"></p>
+        <div id="lesson" class="hidden fade-in mt-4 p-4 bg-gray-100 rounded-lg">
+          <h3 class="text-xl font-semibold text-gray-700 mb-2">درسنامه مرتبط</h3>
+          <p id="lesson-text" class="text-lg"></p>
+          <button id="next-button" onclick="nextQuestion()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 hidden">سوال بعدی</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- نوار پیشرفت -->
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold text-gray-700 mb-2">پیشرفت یادگیری</h2>
+      <div class="w-full bg-gray-200 rounded">
+        <div id="progress" class="bg-green-500 h-4 rounded" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- یادداشت‌برداری -->
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">یادداشت‌های شخصی</h2>
+      <textarea id="notes" class="w-full h-24 p-2 border rounded" placeholder="نکات مهم خودت رو اینجا بنویس..."></textarea>
+      <button onclick="saveNotes()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">ذخیره یادداشت</button>
+    </div>
+  </div>
+
+  <script>
+    const quizzes = [
+      // سوالات ساده (۱۰)
+      { question: 'هدف از آزمایش Lassaigne’s test چیست؟', options: ['تشخیص C و H', 'تشخیص P و As', 'اندازه‌گیری وزن مولکولی', 'تعیین نقطه ذوب'], answer: 'تشخیص P و As', lesson: 'مقدمه: آزمایش Lassaigne’s برای تشخیص عناصر خاص مثل فسفر (P) و آرسنیک (As) در ترکیبات آلی با تبدیل آنها به نمک‌های یونی استفاده می‌شود.' },
+      { question: 'چه ماده‌ای برای fusion در آزمایش تشخیص فسفر و آرسنیک استفاده می‌شود؟', options: ['کلسیم', 'سدیم فلزی', 'پتاسیم', 'منیزیم'], answer: 'سدیم فلزی', lesson: 'روش انجام: سدیم فلزی در لوله fusion ذوب می‌شود تا ترکیب آلی به نمک‌های یونی (مثل Na₃PO₄ برای P و Na₃AsO₃ برای As) تبدیل شود.' },
+      { question: 'معرف اصلی برای تشخیص فسفر چیست؟', options: ['نقره نیترات', 'آمونیوم مولیبدات', 'روی', 'اسید سولفوریک'], answer: 'آمونیوم مولیبدات', lesson: 'روش انجام (فسفر): آمونیوم مولیبدات در حضور HNO₃ و محیط قلیایی (NH₃) با PO₄³⁻ واکنش داده و رسوب زرد (NH₄)₃[PMo₁₂O₄₀] تشکیل می‌دهد.' },
+      { question: 'نتیجه مثبت آزمایش فسفر چیست؟', options: ['لکه قهوه‌ای', 'رسوب زرد', 'شعله سبز', 'گاز CO₂'], answer: 'رسوب زرد', lesson: 'تفسیر نتایج: تشکیل رسوب زرد (ammonium phosphomolybdate) نشان‌دهنده وجود فسفر در ترکیب آلی است.' },
+      { question: 'چه گازی در آزمایش Gutzeit برای آرسنیک تولید می‌شود؟', options: ['CO₂', 'H₂S', 'AsH₃', 'N₂'], answer: 'AsH₃', lesson: 'روش انجام (آرسنیک): در Gutzeit test، روی و H₂SO₄ گاز آرسین (AsH₃) تولید می‌کنند که با AgNO₃ لکه قهوه‌ای-سیاه تشکیل می‌دهد.' },
+      { question: 'کدام ماده در Sodium Fusion Extract برای فسفر تشکیل می‌شود؟', options: ['NaCl', 'Na₃PO₄', 'Na₂SO₄', 'NaCN'], answer: 'Na₃PO₄', lesson: 'روش انجام: در فرآیند fusion با سدیم، فسفر به Na₃PO₄ تبدیل می‌شود که با معرف‌های بعدی تست می‌شود.' },
+      { question: 'چرا از هود در این آزمایش استفاده می‌شود؟', options: ['افزایش دما', 'ایمنی در برابر بخارات سمی', 'خنک کردن محلول', 'افزایش حلالیت'], answer: 'ایمنی در برابر بخارات سمی', lesson: 'نکات ایمنی: هود برای جلوگیری از استنشاق بخارات سمی (مثل HNO₃ یا AsH₃) ضروری است.' },
+      { question: 'کدام وسیله برای صاف کردن SFE استفاده می‌شود؟', options: ['قیف بوخنر', 'بشر', 'پیپت', 'کاغذ تورنسل'], answer: 'قیف بوخنر', lesson: 'مواد و وسایل: قیف بوخنر و کاغذ صافی برای صاف کردن Sodium Fusion Extract استفاده می‌شود.' },
+      { question: 'لکه قهوه‌ای-سیاه در آزمایش آرسنیک نشانه چیست؟', options: ['Ag₃As', 'Ag₂S', 'NaCl', 'H₂S'], answer: 'Ag₃As', lesson: 'تفسیر نتایج: لکه قهوه‌ای-سیاه (Ag₃As) در Gutzeit test نشان‌دهنده وجود آرسنیک است.' },
+      { question: 'چرا از عینک ایمنی در آزمایش استفاده می‌کنیم؟', options: ['افزایش دقت', 'محافظت از چشم', 'جلوگیری از صدا', 'کاهش دما'], answer: 'محافظت از چشم', lesson: 'نکات ایمنی: عینک ایمنی برای محافظت از چشم در برابر پاشیدن مواد شیمیایی (مثل HNO₃) ضروری است.' },
+
+      // سوالات متوسط (۱۰)
+      { question: 'چرا ترکیب آلی در آزمایش با سدیم فلزی ذوب می‌شود؟', options: ['برای افزایش حلالیت', 'برای تبدیل به نمک‌های یونی', 'برای کاهش وزن مولکولی', 'برای تغییر رنگ'], answer: 'برای تبدیل به نمک‌های یونی', lesson: 'روش انجام: ترکیب آلی با سدیم ذوب می‌شود تا عناصر مثل P و As به نمک‌های یونی (Na₃PO₄ و Na₃AsO₃) تبدیل شوند.' },
+      { question: 'کدام اسید برای جوشاندن SFE در تست فسفر استفاده می‌شود؟', options: ['HCl', 'H₂SO₄', 'HNO₃', 'H₃PO₄'], answer: 'HNO₃', lesson: 'روش انجام (فسفر): اسید نیتریک غلیظ برای جوشاندن SFE و حذف تداخل‌ها (مثل S و N) استفاده می‌شود.' },
+      { question: 'در تست فسفر، محیط باید چه ویژگی داشته باشد؟', options: ['اسیدی', 'قلیایی', 'خنثی', 'غیرقطبی'], answer: 'قلیایی', lesson: 'روش انجام (فسفر): پس از جوشاندن با HNO₃، آمونیاک اضافه می‌شود تا محیط قلیایی (pH ۹-۱۰) شود.' },
+      { question: 'کدام ماده به عنوان احیاکننده در تست آرسنیک عمل می‌کند؟', options: ['HNO₃', 'Zn', 'AgNO₃', 'NH₃'], answer: 'Zn', lesson: 'روش انجام (آرسنیک): روی (Zn) در حضور H₂SO₄ به عنوان احیاکننده، گاز آرسین (AsH₃) تولید می‌کند.' },
+      { question: 'چرا HNO₃ در تست فسفر جوشانده می‌شود؟', options: ['برای حذف CN⁻ و S²⁻', 'برای افزایش pH', 'برای تشکیل رسوب', 'برای خنثی‌سازی'], answer: 'برای حذف CN⁻ و S²⁻', lesson: 'روش انجام: جوشاندن SFE با HNO₃ برای حذف تداخل‌های گوگرد و نیتروژن (CN⁻ و S²⁻) ضروری است.' },
+      { question: 'حساسیت تست فسفر چقدر است؟', options: ['۰.۱%', '۰.۰۱%', '۱%', '۰.۰۰۱%'], answer: '۰.۰۱%', lesson: 'تفسیر نتایج: تست فسفر با آمونیوم مولیبدات می‌تواند حدود ۰.۰۱% فسفر را تشخیص دهد.' },
+      { question: 'در Gutzeit test، کاغذ صافی با چه ماده‌ای مرطوب می‌شود؟', options: ['H₂SO₄', 'AgNO₃', 'HNO₃', 'NH₃'], answer: 'AgNO₃', lesson: 'روش انجام (آرسنیک): کاغذ صافی با نقره نیترات (AgNO₃) مرطوب می‌شود تا لکه قهوه‌ای-سیاه (Ag₃As) تشکیل شود.' },
+      { question: 'چرا آرسنیک سمی است؟', options: ['جایگزین فسفر در واکنش‌های بیوشیمیایی', 'تولید CO₂', 'افزایش pH', 'کاهش حلالیت'], answer: 'جایگزین فسفر در واکنش‌های بیوشیمیایی', lesson: 'مقدمه: آرسنیک به دلیل شباهت شیمیایی با فسفر می‌تواند در واکنش‌های بیوشیمیایی جایگزین آن شود و سمی است.' },
+      { question: 'کدام ماده در تست آرسنیک گاز تولید می‌کند؟', options: ['HNO₃', 'H₂SO₄', 'Zn', 'NH₃'], answer: 'Zn', lesson: 'روش انجام (آرسنیک): روی (Zn) در حضور H₂SO₄ گاز آرسین (AsH₃) تولید می‌کند.' },
+      { question: 'چه چیزی در تست فسفر رسوب زرد تشکیل می‌دهد؟', options: ['NaCl', '(NH₄)₃[PMo₁₂O₄₀]', 'Ag₃As', 'H₂S'], answer: '(NH₄)₃[PMo₁₂O₄₀]', lesson: 'تفسیر نتایج: رسوب زرد آمونیوم فسفومولیبدات ((NH₄)₃[PMo₁₂O₄₀]) نشان‌دهنده فسفر است.' },
+
+      // سوالات سخت (۱۰)
+      { question: 'چرا در تست آرسنیک از HgCl₂ استفاده می‌شود؟', options: ['برای حذف H₂S', 'برای تولید رسوب زرد', 'برای افزایش pH', 'برای خنثی‌سازی'], answer: 'برای حذف H₂S', lesson: 'تفسیر نتایج: HgCl₂ برای تمایز لکه آرسنیک (Ag₃As) از گوگرد (Ag₂S) استفاده می‌شود، چون لکه As ثابت می‌ماند.' },
+      { question: 'در تست فسفر، چرا محیط باید قلیایی باشد؟', options: ['برای تشکیل رسوب زرد', 'برای حذف HNO₃', 'برای افزایش دما', 'برای خنثی‌سازی اسید'], answer: 'برای تشکیل رسوب زرد', lesson: 'روش انجام (فسفر): محیط قلیایی (با NH₃) برای واکنش PO₄³⁻ با آمونیوم مولیبدات و تشکیل رسوب زرد ضروری است.' },
+      { question: 'تفاوت لکه آرسنیک و آنتیموان چیست؟', options: ['لکه As با HCl حل می‌شود', 'لکه Sb با HCl حل می‌شود', 'هر دو حل می‌شوند', 'هیچ‌کدام حل نمی‌شوند'], answer: 'لکه Sb با HCl حل می‌شود', lesson: 'تفسیر نتایج: لکه آرسنیک (Ag₃As) با HCl حل نمی‌شود، اما لکه آنتیموان (Sb) حل می‌شود.' },
+      { question: 'چرا سدیم فلزی واکنش‌پذیر است؟', options: ['به دلیل پیوند یونی', 'به دلیل واکنش با آب و اکسیژن', 'به دلیل وزن مولکولی بالا', 'به دلیل حلالیت کم'], answer: 'به دلیل واکنش با آب و اکسیژن', lesson: 'نکات ایمنی: سدیم فلزی به شدت با آب و اکسیژن واکنش می‌دهد، بنابراین باید در هود و با احتیاط استفاده شود.' },
+      { question: 'کدام واکنش شیمیایی در تست فسفر رخ می‌دهد؟', options: ['PO₄³⁻ + MoO₄²⁻ → رسوب زرد', 'AsH₃ + AgNO₃ → لکه سیاه', 'Na₃PO₄ → CO₂', 'Zn + H₂SO₄ → H₂'], answer: 'PO₄³⁻ + MoO₄²⁻ → رسوب زرد', lesson: 'روش انجام (فسفر): PO₄³⁻ با ۱۲MoO₄²⁻ و NH₄⁺ واکنش داده و رسوب زرد (NH₄)₃[PMo₁₂O₄₀] تشکیل می‌دهد.' },
+      { question: 'چرا لوله fusion پس از حرارت در آب سرد قرار می‌گیرد؟', options: ['برای افزایش دما', 'برای استخراج نمک‌های یونی', 'برای کاهش pH', 'برای خنثی‌سازی'], answer: 'برای استخراج نمک‌های یونی', lesson: 'روش انجام: لوله داغ در آب سرد شکسته می‌شود تا نمک‌های یونی (مثل Na₃PO₄) استخراج شوند.' },
+      { question: 'حساسیت تست آرسنیک چقدر است؟', options: ['۰.۵%', '۰.۰۵%', '۱%', '۰.۰۰۵%'], answer: '۰.۰۵%', lesson: 'تفسیر نتایج: تست Gutzeit می‌تواند حدود ۰.۰۵% آرسنیک را تشخیص دهد.' },
+      { question: 'چرا از شن برای خاموش کردن آتش سدیم استفاده می‌شود؟', options: ['چون سدیم با آب واکنش می‌دهد', 'چون ارزان است', 'چون دما را افزایش می‌دهد', 'چون حلالیت را کم می‌کند'], answer: 'چون سدیم با آب واکنش می‌دهد', lesson: 'نکات ایمنی: سدیم با آب واکنش انفجاری دارد، بنابراین آتش آن با شن خاموش می‌شود.' },
+      { question: 'کدام گاز در تست آرسنیک با AgNO₃ واکنش می‌دهد؟', options: ['H₂S', 'AsH₃', 'CO₂', 'N₂'], answer: 'AsH₃', lesson: 'روش انجام (آرسنیک): گاز آرسین (AsH₃) با AgNO₃ واکنش داده و لکه قهوه‌ای-سیاه (Ag₃As) تشکیل می‌دهد.' },
+      { question: 'چرا باید SFE را با HNO₃ جوشاند؟', options: ['برای حذف تداخل S و N', 'برای افزایش دما', 'برای تشکیل گاز', 'برای کاهش pH'], answer: 'برای حذف تداخل S و N', lesson: 'روش انجام: جوشاندن SFE با HNO₃ برای حذف تداخل‌های گوگرد (S²⁻) و نیتروژن (CN⁻) ضروری است.' },
+
+      // سوالات خیلی سخت (۱۰)
+      { question: 'چرا فسفر در ترکیبات آلی مثل فسفولیپیدها مهم است؟', options: ['به دلیل نقش در DNA و ATP', 'به دلیل تولید گاز', 'به دلیل حلالیت بالا', 'به دلیل پیوند یونی'], answer: 'به دلیل نقش در DNA و ATP', lesson: 'مقدمه: فسفر در ساختار مولکول‌های زیستی مثل DNA، ATP و فسفولیپیدها نقش کلیدی دارد.' },
+      { question: 'چرا آرسنیک می‌تواند جایگزین فسفر در واکنش‌های بیوشیمیایی شود؟', options: ['شباهت شیمیایی با فسفر', 'وزن مولکولی یکسان', 'پیوند یونی مشابه', 'حلالیت بالا'], answer: 'شباهت شیمیایی با فسفر', lesson: 'مقدمه: آرسنیک به دلیل شباهت شیمیایی با فسفر می‌تواند در واکنش‌های بیوشیمیایی جایگزین آن شود.' },
+      { question: 'واکنش شیمیایی اصلی در تست Gutzeit چیست؟', options: ['PO₄³⁻ + MoO₄²⁻ → رسوب زرد', 'AsH₃ + AgNO₃ → Ag₃As', 'Na₃PO₄ → CO₂', 'Zn + HNO₃ → H₂'], answer: 'AsH₃ + AgNO₃ → Ag₃As', lesson: 'روش انجام (آرسنیک): گاز آرسین (AsH₃) با نقره نیترات واکنش داده و لکه قهوه‌ای-سیاه (Ag₃As) تشکیل می‌دهد.' },
+      { question: 'چرا رسوب زرد در تست فسفر ممکن است خطا داشته باشد؟', options: ['به دلیل مولیبدات اضافی', 'به دلیل دمای پایین', 'به دلیل حلالیت کم', 'به دلیل H₂S'], answer: 'به دلیل مولیبدات اضافی', lesson: 'نکات ایمنی: رسوب زرد ممکن است به دلیل مولیبدات اضافی باشد؛ حجم معرف باید کنترل شود.' },
+      { question: 'چگونه می‌توان تداخل H₂S را در تست آرسنیک حذف کرد؟', options: ['با اضافه کردن HCl', 'با اضافه کردن HgCl₂', 'با افزایش دما', 'با کاهش pH'], answer: 'با اضافه کردن HgCl₂', lesson: 'تفسیر نتایج: HgCl₂ برای تمایز لکه آرسنیک از گوگرد (H₂S که لکه زرد Ag₂S می‌دهد) استفاده می‌شود.' },
+      { question: 'چرا در تست فسفر از آمونیاک استفاده می‌شود؟', options: ['برای کاهش pH', 'برای قلیایی کردن محیط', 'برای تولید گاز', 'برای خنثی‌سازی HNO₃'], answer: 'برای قلیایی کردن محیط', lesson: 'روش انجام (فسفر): آمونیاک برای قلیایی کردن محیط (pH ۹-۱۰) و تشکیل رسوب زرد ضروری است.' },
+      { question: 'اگر نتیجه تست فسفر منفی باشد، چه معنایی دارد؟', options: ['ترکیب فاقد فسفر است', 'ترکیب معدنی است', 'SFE خراب است', 'HNO₃ کافی نیست'], answer: 'ترکیب فاقد فسفر است', lesson: 'تفسیر نتایج: نتیجه منفی نشان‌دهنده عدم وجود فسفر یا غلظت بسیار پایین آن است.' },
+      { question: 'چرا در تست آرسنیک از H₂SO₄ رقیق استفاده می‌شود؟', options: ['برای تولید AsH₃', 'برای افزایش pH', 'برای خنثی‌سازی', 'برای تشکیل رسوب'], answer: 'برای تولید AsH₃', lesson: 'روش انجام (آرسنیک): H₂SO₄ رقیق با Zn برای تولید گاز آرسین (AsH₃) استفاده می‌شود.' },
+      { question: 'کدام روش برای تأیید دقیق‌تر فسفر مناسب است؟', options: ['طیف‌سنجی AAS', 'آزمایش سوختن', 'آزمایش حلالیت', 'آزمایش pH'], answer: 'طیف‌سنجی AAS', lesson: 'تفسیر نتایج: برای دقت بالاتر، از طیف‌سنجی (مثل AAS یا ICP) برای تأیید فسفر استفاده می‌شود.' },
+      { question: 'چرا نباید از آب برای خاموش کردن سدیم استفاده کرد؟', options: ['چون واکنش انفجاری رخ می‌دهد', 'چون دما را کاهش می‌دهد', 'چون حلالیت را افزایش می‌دهد', 'چون pH را تغییر می‌دهد'], answer: 'چون واکنش انفجاری رخ می‌دهد', lesson: 'نکات ایمنی: سدیم با آب واکنش انفجاری دارد، بنابراین از شن برای خاموش کردن استفاده می‌شود.' }
+    ];
+
+    let currentQuestionIndex = 0;
+
+    function loadQuestion() {
+      const quizTitle = document.getElementById('quiz-title');
+      const questionDiv = document.getElementById('question');
+      const optionsDiv = document.getElementById('options');
+      const feedbackDiv = document.getElementById('feedback');
+      const lessonDiv = document.getElementById('lesson');
+      const lessonText = document.getElementById('lesson-text');
+      const nextButton = document.getElementById('next-button');
+
+      if (currentQuestionIndex < quizzes.length) {
+        const q = quizzes[currentQuestionIndex];
+        quizTitle.innerText = `سوال ${currentQuestionIndex + 1} (${currentQuestionIndex < 10 ? 'ساده' : currentQuestionIndex < 20 ? 'متوسط' : currentQuestionIndex < 30 ? 'سخت' : 'خیلی سخت'})`;
+        questionDiv.innerText = q.question;
+        optionsDiv.innerHTML = '';
+        q.options.forEach(option => {
+          const button = document.createElement('button');
+          button.innerText = option;
+          button.className = 'bg-gray-200 px-4 py-2 rounded mr-2 hover:bg-gray-300 w-full text-right';
+          button.onclick = () => checkAnswer(option, q.answer, q.lesson);
+          optionsDiv.appendChild(button);
+        });
+        feedbackDiv.innerText = '';
+        lessonDiv.classList.add('hidden');
+        nextButton.classList.add('hidden');
+      } else {
+        document.getElementById('quiz').innerHTML = `<p class="text-lg">کوئیز تمام شد!</p>`;
+      }
+      updateProgress();
+    }
+
+    function checkAnswer(userAnswer, correctAnswer, lesson) {
+      const feedbackDiv = document.getElementById('feedback');
+      const options = document.querySelectorAll('#options button');
+      const lessonDiv = document.getElementById('lesson');
+      const lessonText = document.getElementById('lesson-text');
+      const nextButton = document.getElementById('next-button');
+
+      options.forEach(btn => {
+        btn.disabled = true;
+        if (btn.innerText === correctAnswer) {
+          btn.classList.add('correct');
+        } else if (btn.innerText === userAnswer && userAnswer !== correctAnswer) {
+          btn.classList.add('incorrect');
+        }
+      });
+
+      if (userAnswer === correctAnswer) {
+        feedbackDiv.innerText = 'درست!';
+        feedbackDiv.className = 'text-green-600 mt-4 text-lg';
+      } else {
+        feedbackDiv.innerText = `غلط، جواب درست: ${correctAnswer}`;
+        feedbackDiv.className = 'text-red-600 mt-4 text-lg';
+      }
+
+      lessonText.innerText = lesson;
+      lessonDiv.classList.remove('hidden');
+      lessonDiv.classList.add('fade-in');
+      nextButton.classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      loadQuestion();
+    }
+
+    function updateProgress() {
+      const progressPercent = (currentQuestionIndex / quizzes.length) * 100;
+      document.getElementById('progress').style.width = `${progressPercent}%`;
+    }
+
+    function saveNotes() {
+      const notes = document.getElementById('notes').value;
+      localStorage.setItem('userNotes', notes);
+      alert('یادداشت ذخیره شد!');
+    }
+
+    window.onload = () => {
+      document.getElementById('notes').value = localStorage.getItem('userNotes') || '';
+      loadQuestion();
+      if (!localStorage.getItem('lastVisit')) {
+        localStorage.setItem('lastVisit', new Date());
+      } else {
+        const lastVisit = new Date(localStorage.getItem('lastVisit'));
+        const now = new Date();
+        if ((now - lastVisit) / (1000 * 60 * 60) > 24) {
+          alert('وقت مرور دوباره است!');
+          localStorage.setItem('lastVisit', now);
+        }
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>آزمون برداشت و انبارداری محصولات زراعی</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/canvas-confetti@1.6.0/dist/confetti.browser.js"></script>
+  <style>
+    .fireworks {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .progress-bar {
+      height: 10px;
+      background-color: #e5e7eb;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background-color: #3b82f6;
+      transition: width 0.3s ease-in-out;
+    }
+    .timer-bar {
+      height: 8px;
+      background-color: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .timer-fill {
+      height: 100%;
+      background-color: #ef4444;
+      transition: width 0.08s linear;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4 font-sans">
+  <div class="container mx-auto max-w-2xl">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">آزمون: برداشت و انبارداری محصولات زراعی</h1>
+    <div class="progress-bar mb-4">
+      <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+    </div>
+    <div class="timer-bar mb-4">
+      <div id="timer-fill" class="timer-fill" style="width: 100%"></div>
+    </div>
+    <div id="quiz-container" class="bg-white p-6 rounded-lg shadow-lg"></div>
+    <div id="result" class="mt-4 text-center text-lg font-semibold"></div>
+    <canvas id="fireworks" class="fireworks"></canvas>
+  </div>
+
+  <script>
+    const questions = [
+      { id: 1, question: "رطوبت مناسب دانه غلات هنگام برداشت چند درصد است؟", type: "multiple", options: ["الف) 10–12%", "ب) 14–16%", "ج) 18–20%", "د) 22–24%"], answer: "ب) 14–16%" },
+      { id: 2, question: "در مرحله رسیدگی فیزیولوژیک غلات، رطوبت دانه حدود چند درصد است؟", type: "multiple", options: ["الف) 10%", "ب) 14%", "ج) 20%", "د) 25%"], answer: "ب) 14%" },
+      { id: 3, question: "دوره رشد چغندرقند معمولاً چند روز است؟", type: "multiple", options: ["الف) 100", "ب) 150", "ج) 180", "د) 200"], answer: "ج) 180" },
+      { id: 4, question: "رطوبت مطلوب برای نگهداری بلندمدت گندم چند درصد است؟", type: "multiple", options: ["الف) 10%", "ب) 13%", "ج) 16%", "د) 20%"], answer: "ب) 13%" },
+      { id: 5, question: "رطوبت مناسب انبارداری برای برنج چند درصد است؟", type: "multiple", options: ["الف) 12%", "ب) 14%", "ج) 16%", "د) 18%"], answer: "ب) 14%" },
+      { id: 6, question: "رطوبت مناسب برای نگهداری لوبیا چند درصد است؟", type: "multiple", options: ["الف) 10%", "ب) 12%", "ج) 14%", "د) 16%"], answer: "ج) 14%" },
+      { id: 7, question: "در کاهش رطوبت دانه از مرحله خمیری سفت به رسیدگی مطلوب، رطوبت تا چه درصدی کاهش می‌یابد؟", type: "multiple", options: ["الف) 10%", "ب) 14%", "ج) 18%", "د) 22%"], answer: "ب) 14%" },
+      { id: 8, question: "دمای ایده‌آل برای نگهداری بلندمدت غلات چند درجه سانتی‌گراد است؟", type: "multiple", options: ["الف) 10", "ب) 15", "ج) 20", "د) 25"], answer: "ب) 15" },
+      { id: 9, question: "حداقل درصد غلاف‌های رسیده برای برداشت حبوبات چند درصد است؟", type: "multiple", options: ["الف) 50%", "ب) 60%", "ج) 75%", "د) 90%"], answer: "ج) 75%" },
+      { id: 10, question: "رطوبت بوته و بالل ذرت سیلویی هنگام برداشت معمولاً چند درصد است؟", type: "multiple", options: ["الف) 50–55%", "ب) 60–65%", "ج) 70–75%", "د) 80–85%"], answer: "ج) 70–75%" },
+      { id: 11, question: "برداشت محصول باید فقط در مرحله بیشینه رشد اقتصادی آن انجام شود.", type: "multiple", options: ["الف) صحیح", "ب) غلط"], answer: "ب) غلط" },
+      { id: 12, question: "رسیدگی تجاری همیشه بعد از رسیدگی فیزیولوژیک اتفاق می‌افتد.", type: "multiple", options: ["الف) صحیح", "ب) غلط"], answer: "ب) غلط" },
+      { id: 13, question: "برداشت غلات دانه‌ریز با داس فقط در مزارع کوچک انجام می‌شود.", type: "multiple", options: ["الف) صحیح", "ب) غلط"], answer: "الف) صحیح" },
+      { id: 14, question: "کمباین‌های کششی توسط تراکتور به حرکت درمی‌آیند و دارای موتور کمکی مستقل نیستند.", type: "multiple", options: ["الف) صحیح", "ب) غلط"], answer: "الف) صحیح" },
+      { id: 15, question: "قطع آبیاری محصول می‌تواند باعث یکنواختی در رسیدگی حبوبات شود.", type: "multiple", options: ["الف) صحیح", "ب) غلط"], answer: "الف) صحیح" },
+      { id: 16, question: "برداشت زودهنگام چغندرقند می‌تواند باعث کاهش عملکرد ریشه و عیار قند شود.", type: "multiple", options: ["الف) صحیح", "ب) غلط"], answer: "الف) صحیح" },
+      { id: 17, question: "در انبارداری، رطوبت بالا به تنهایی مشکلی برای محصول ایجاد نمی‌کند.", type: "multiple", options: ["الف) صحیح", "ب) غلط"], answer: "ب) غلط" },
+      { id: 18, question: "پوشش کف انبار باید از نفوذ رطوبت جلوگیری کند.", type: "multiple", options: ["الف) صحیح", "ب) غلط"], answer: "الف) صحیح" },
+      { id: 19, question: "آفات و میکروارگانیسم‌ها در محیط‌های با اکسیژن کم فعالیت دارند.", type: "multiple", options: ["الف) صحیح", "ب) غلط"], answer: "ب) غلط" },
+      { id: 20, question: "بسته‌بندی علوفه یکی از مراحل مهم در برداشت و انبارداری آن است.", type: "multiple", options: ["الف) صحیح", "ب) غلط"], answer: "الف) صحیح" },
+      { id: 21, question: "برداشت محصول چه زمانی انجام می‌شود؟", type: "multiple", options: ["الف) بعد از کاشت و داشت", "ب) قبل از کاشت", "ج) در زمان جوانه‌زنی", "د) هنگام رسیدگی کامل"], answer: "الف) بعد از کاشت و داشت" },
+      { id: 22, question: "محصولاتی که مصرف قسمت‌های زیرزمینی دارند، کدامند؟", type: "multiple", options: ["الف) سیب‌زمینی و چغندرقند", "ب) گندم و جو", "ج) هندوانه و خربزه", "د) زعفران و گل‌ها"], answer: "الف) سیب‌زمینی و چغندرقند" },
+      { id: 23, question: "رسیدگی فیزیولوژیک چیست؟", type: "multiple", options: ["الف) رشد افزایش ماده خشک قسمت اقتصادی متوقف می‌شود", "ب) زمان برداشت محصول خام", "ج) مرحله گل‌دهی", "د) برداشت محصول قبل از رسیدگی تجاری"], answer: "الف) رشد افزایش ماده خشک قسمت اقتصادی متوقف می‌شود" },
+      { id: 24, question: "برداشت مکانیزه غلات کدام وسیله را به کار می‌برد؟", type: "multiple", options: ["الف) کمباین", "ب) داس", "ج) بیل", "د) خرمن‌کوب"], answer: "الف) کمباین" },
+      { id: 25, question: "پایین‌ترین رطوبت مجاز محصول غلات برای ذخیره‌سازی بلندمدت چیست؟", type: "multiple", options: ["الف) 9%", "ب) 13%", "ج) 20%", "د) 25%"], answer: "ب) 13%" },
+      { id: 26, question: "کدام محصول هنگام رسیدگی تجاری زودتر از رسیدگی فیزیولوژیک برداشت می‌شود؟", type: "multiple", options: ["الف) لوبیاسبز", "ب) گندم", "ج) جو", "د) چغندرقند"], answer: "الف) لوبیاسبز" },
+      { id: 27, question: "دستگاهی که در برداشت سیب‌زمینی به کار می‌رود، چیست؟", type: "multiple", options: ["الف) بیل عریض با زنجیر نقاله", "ب) کمباین غلات", "ج) دروگر موتوری", "د) خرمن‌کوب"], answer: "الف) بیل عریض با زنجیر نقاله" },
+      { id: 28, question: "نقش علف‌کش‌هایی مانند پاراکوات در برداشت حبوبات چیست؟", type: "multiple", options: ["الف) تسریع رسیدگی یکنواخت", "ب) افزایش رشد", "ج) جلوگیری از ریزش دانه", "د) تغذیه گیاهان"], answer: "الف) تسریع رسیدگی یکنواخت" },
+      { id: 29, question: "مهم‌ترین عوامل مؤثر بر فساد محصول در انبار چیست؟", type: "multiple", options: ["الف) دما، رطوبت و اکسیژن", "ب) نور، خاک و کود", "ج) دمای خاک، آب و اکسیژن", "د) رطوبت خاک، نور و دما"], answer: "الف) دما، رطوبت و اکسیژن" },
+      { id: 30, question: "کدام یک از موارد زیر جزء عملیات‌های کمباین برداشت غلات نیست؟", type: "multiple", options: ["الف) برش محصول", "ب) کوبیدن و جداسازی دانه", "ج) بذرپاشی", "د) تمیزکردن دانه"], answer: "ج) بذرپاشی" },
+      { id: 31, question: "اصطلاح «رسیدگی تجاری» به چه معناست؟", type: "multiple", options: ["الف) زمان برداشت محصول با بیشترین ارزش اقتصادی", "ب) مرحله توقف رشد گیاه", "ج) خوردن محصول توسط حیوانات", "د) مرحله تشکیل بذر"], answer: "الف) زمان برداشت محصول با بیشترین ارزش اقتصادی" },
+      { id: 32, question: "برداشت با «دروگرهای تراکتوری» به چه صورت انجام می‌شود؟", type: "multiple", options: ["الف) برش با نیروی تراکتور و حمل توسط آن", "ب) برداشت دستی", "ج) خشکانیدن محصول روی زمین", "د) بسته‌بندی محصول"], answer: "الف) برش با نیروی تراکتور و حمل توسط آن" },
+      { id: 33, question: "هدف از انبار کردن محصولات زراعی چیست؟", type: "multiple", options: ["الف) عرضه محصول در تمامی طول سال", "ب) افزایش رطوبت محصول", "ج) کاهش ارزش اقتصادی", "د) کاشت محصول"], answer: "الف) عرضه محصول در تمامی طول سال" },
+      { id: 34, question: "کدام مورد از روش‌های برداشت چغندرقند است؟", type: "multiple", options: ["الف) سنتی، نیمه مکانیزه، مکانیزه", "ب) فقط سنتی", "ج) فقط مکانیزه", "د) برداشت دستی اختصاصی"], answer: "الف) سنتی، نیمه مکانیزه، مکانیزه" },
+      { id: 35, question: "در کدام محصول رطوبت حین برداشت باید حدود 70–75 درصد باشد؟", type: "multiple", options: ["الف) ذرت سیلویی", "ب) گندم دانه‌ریز", "ج) چغندرقند", "د) یونجه"], answer: "الف) ذرت سیلویی" },
+      { id: 36, question: "دستگاه «ردیف‌کن» در عملیات برداشت علوفه چه کاری انجام می‌دهد؟", type: "multiple", options: ["الف) جمع‌آوری و ردیف کردن علوفه برای بسته‌بندی", "ب) برش علوفه", "ج) خرد کردن محصول برای سیلو", "د) کود دادن"], answer: "الف) جمع‌آوری و ردیف کردن علوفه برای بسته‌بندی" },
+      { id: 37, question: "محصولی که شاخص برداشت اقتصادی آن یک باشد، مربوط به کدام دسته است؟", type: "multiple", options: ["الف) گیاهان علوفه‌ای", "ب) دانه‌ریزها", "ج) میوه‌ها", "د) ساقه‌ای‌ها"], answer: "الف) گیاهان علوفه‌ای" },
+      { id: 38, question: "چرا در برداشت ماشینی باید محصول به مقاومت در برابر ریزش دانه توجه ویژه شود؟", type: "multiple", options: ["الف) جلوگیری از کاهش عملکرد و ضایعات", "ب) آسان‌تر شدن برداشت دستی", "ج) کاهش کیفیت دانه", "د) برای افزایش رشد گیاه"], answer: "الف) جلوگیری از کاهش عملکرد و ضایعات" },
+      { id: 39, question: "یکی از علائم رسیدگی فیزیولوژیکی در گندم چیست؟", type: "multiple", options: ["الف) تشکیل لایه سیاهرنگ در شکاف دانه", "ب) خرد شدن ساقه‌ها", "ج) رشد برگ‌های جدید", "د) افزایش سبزینگی"], answer: "الف) تشکیل لایه سیاهرنگ در شکاف دانه" },
+      { id: 40, question: "در انبارداری برای کاهش فعالیت میکروارگانیسم‌ها چه کاری انجام می‌شود؟", type: "multiple", options: ["الف) کاهش اکسیژن محیط", "ب) افزایش دما", "ج) فراهم کردن رطوبت بالا", "د) افزودن کود"], answer: "الف) کاهش اکسیژن محیط" }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timer;
+    const quizContainer = document.getElementById('quiz-container');
+    const resultContainer = document.getElementById('result');
+    const progressFill = document.getElementById('progress-fill');
+    const timerFill = document.getElementById('timer-fill');
+
+    function displayQuestion() {
+      const question = questions[currentQuestionIndex];
+      quizContainer.innerHTML = `
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">سوال ${question.id}: ${question.question}</h2>
+        <div class="space-y-2">
+          ${question.options.map((option, index) => `
+            <label class="flex items-center">
+              <input type="radio" name="answer" value="${option}" class="mr-2">
+              <span>${option}</span>
+            </label>
+          `).join('')}
+        </div>
+      `;
+      updateProgress();
+      startTimer();
+      bindEvents(question);
+    }
+
+    function bindEvents(question) {
+      const radios = document.querySelectorAll('input[name="answer"]');
+      radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          checkAnswer(question, radio.value);
+        });
+      });
+    }
+
+    function checkAnswer(question, userAnswer) {
+      clearInterval(timer);
+      const isCorrect = userAnswer === question.answer;
+      if (isCorrect) {
+        score++;
+        launchFireworks();
+        resultContainer.innerHTML = `<span class="text-green-600">پاسخ صحیح! امتیاز: ${score}</span>`;
+      } else {
+        resultContainer.innerHTML = `<span class="text-red-600">پاسخ اشتباه! پاسخ صحیح: ${question.answer}</span>`;
+      }
+      setTimeout(nextQuestion, 2000);
+    }
+
+    function startTimer() {
+      let timeLeft = 8;
+      timerFill.style.width = '100%';
+      timer = setInterval(() => {
+        timeLeft -= 0.08;
+        timerFill.style.width = `${(timeLeft / 8) * 100}%`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          resultContainer.innerHTML = `<span class="text-red-600">زمان تمام شد! پاسخ صحیح: ${questions[currentQuestionIndex].answer}</span>`;
+          setTimeout(nextQuestion, 2000);
+        }
+      }, 80);
+    }
+
+    function updateProgress() {
+      const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+      progressFill.style.width = `${progress}%`;
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      resultContainer.innerHTML = '';
+      if (currentQuestionIndex < questions.length) {
+        displayQuestion();
+      } else {
+        quizContainer.innerHTML = `<h2 class="text-2xl font-bold text-center">آزمون به پایان رسید!</h2><p class="text-center mt-4">امتیاز شما: ${score} از ${questions.length}</p>`;
+        progressFill.style.width = '100%';
+      }
+    }
+
+    function launchFireworks() {
+      const duration = 3 * 1000; // 3 seconds
+      const end = Date.now() + duration;
+
+      const fireworksInterval = setInterval(() => {
+        if (Date.now() > end) {
+          return clearInterval(fireworksInterval);
+        }
+
+        // Fireworks from all four sides
+        confetti({
+          particleCount: 50,
+          spread: 90,
+          origin: { x: 0, y: 0.5 }, // Left
+          angle: 0
+        });
+        confetti({
+          particleCount: 50,
+          spread: 90,
+          origin: { x: 1, y: 0.5 }, // Right
+          angle: 180
+        });
+        confetti({
+          particleCount: 50,
+          spread: 90,
+          origin: { x: 0.5, y: 0 }, // Top
+          angle: 90
+        });
+        confetti({
+          particleCount: 50,
+          spread: 90,
+          origin: { x: 0.5, y: 1 }, // Bottom
+          angle: 270
+        });
+      }, 250);
+    }
+
+    // Start the quiz
+    displayQuestion();
+  </script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمون تستی عناصر غذایی - ۴۰ سوال</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FFC107', // زرد
+                        secondary: '#2196F3', // آبی
+                        accent: '#FF5722', // نارنجی
+                        highlight: '#4CAF50', // سبز
+                        bg: '#212121', // تیره
+                    },
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #212121 0%, #424242 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        .question-card {
+            perspective: 1000px;
+            transition: transform 0.3s ease;
+        }
+        .question-card:hover {
+            transform: scale(1.05) rotateY(5deg);
+        }
+        .option {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .option:hover {
+            transform: translateX(10px);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+        .feedback {
+            display: none;
+            margin-top: 5px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .correct { background-color: #4CAF50; color: white; }
+        .incorrect { background-color: #F44336; color: white; }
+        .reflection {
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
+            z-index: -1;
+            filter: blur(5px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+    </style>
+</head>
+<body class="text-white font-sans">
+    <nav class="bg-primary p-4 fixed w-full top-0 shadow-lg z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">آزمون تستی عناصر غذایی</h1>
+            <button id="theme-toggle" class="bg-secondary text-white px-2 py-1 rounded">تم روشن/تاریک</button>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6 mt-20">
+        <div id="progress-bar" class="w-full h-2 bg-gray-700 rounded mb-4">
+            <div class="h-full bg-highlight transition-all duration-300" style="width: 0%;"></div>
+        </div>
+        <div id="quiz-container" class="space-y-6"></div>
+        <p id="quiz-score" class="mt-4"></p>
+    </main>
+
+    <script>
+        const questions = [
+            // بخش ۱: مقدمه و عناصر ضروری
+            { q: "تعداد عناصر غذایی ضروری گیاهان چند است؟", options: ["15", "17", "20", "12"], ans: 1 },
+            { q: "سه عنصر اصلی جذب‌شده از هوا و آب کدامند؟", options: ["N, P, K", "C, H, O", "Fe, Zn, Cu", "Ca, Mg, S"], ans: 1 },
+            { q: "معیار اصلی ضروری بودن یک عنصر چیست؟", options: ["تکمیل چرخه زندگی", "افزایش رشد", "تغییر pH", "افزایش گلدهی"], ans: 0 },
+
+            // بخش ۲: نقش، کمبود و بیش‌بود (نمونه برای N, P, K)
+            { q: "نقش اصلی نیتروژن در گیاه چیست؟", options: ["تشکیل کلروفیل", "ساخت دیواره سلولی", "تثبیت CO2", "فعال‌سازی آنزیم"], ans: 0 },
+            { q: "علامت کمبود نیتروژن چیست؟", options: ["زردی برگ‌های مسن", "ارغوانی برگ‌ها", "سوختگی حاشیه", "کوتولگی"], ans: 0 },
+            { q: "بیش‌بود نیتروژن چه تأثیری دارد؟", options: ["رشد بیش‌ازحد", "کاهش رشد", "افزایش مقاومت", "زردی برگ‌ها"], ans: 0 },
+            { q: "نقش فسفر در گیاه چیست؟", options: ["تشکیل ATP", "سنتز کلروفیل", "تعدیل هورمون", "انتقال الکترون"], ans: 0 },
+            { q: "علامت کمبود فسفر چیست؟", options: ["ارغوانی برگ‌ها", "زردی برگ‌های جوان", "بافت‌مردگی", "کوتولگی"], ans: 0 },
+            { q: "بیش‌بود فسفر چه مشکلی ایجاد می‌کند؟", options: ["کمبود Fe و Zn", "افزایش رشد", "کاهش pH", "افزایش مقاومت"], ans: 0 },
+            { q: "نقش پتاسیم در گیاه چیست؟", options: ["تنظیم روزنه‌ها", "سنتز پروتئین", "تشکیل دیواره", "انتقال انرژی"], ans: 0 },
+            { q: "علامت کمبود پتاسیم چیست؟", options: ["سوختگی حاشیه برگ‌ها", "زردی بین‌رگبرگی", "نکروزه جوانه", "کوتولگی"], ans: 0 },
+            { q: "بیش‌بود پتاسیم چه تأثیری دارد؟", options: ["کمبود Ca و Mg", "افزایش رشد", "کاهش آفات", "بهبود کیفیت"], ans: 0 },
+
+            // بخش ۳: چرخه تولید و مصرف
+            { q: "عناصر غذایی با برداشت محصول چگونه خارج می‌شوند؟", options: ["از خاک", "از هوا", "از آب", "از نور"], ans: 0 },
+            { q: "چرخه عناصر غذایی توسط چه چیزی بسته می‌شود؟", options: ["بازگشت مواد زاید", "افزایش کود", "کاهش آبیاری", "تغییر pH"], ans: 0 },
+            { q: "عناصر از چه منابعی به خاک بازمی‌گردند؟", options: ["گیاهان و میکروب‌ها", "فقط هوا", "فقط آب", "فقط کود"], ans: 0 },
+
+            // بخش ۴: دامنه تأمین
+            { q: "دامنه کمبود شدید چه ویژگی‌ای دارد؟", options: ["علامت ظاهری و رشد ضعیف", "رشد بیشینه", "سمیت خفیف", "بهبود کیفیت"], ans: 0 },
+            { q: "دامنه بهینه چه چیزی را به حداکثر می‌رساند؟", options: ["رشد و عملکرد", "سمیت", "کمبود", "لوکس"], ans: 0 },
+            { q: "سمیت شدید چه تأثیری دارد؟", options: ["کاهش شدید عملکرد", "افزایش رشد", "بهبود خاک", "کاهش آفات"], ans: 0 },
+
+            // بخش ۵: منابع کودها
+            { q: "کود دامی پوسیده چند تن در هکتار توصیه می‌شود؟", options: ["10-50", "50-100", "100-150", "5-10"], ans: 0 },
+            { q: "کود سبز معادل چند تن کود دامی است؟", options: ["10-20", "20-30", "5-10", "30-40"], ans: 0 },
+            { q: "کودهای زیستی چه نقشی دارند؟", options: ["تثبیت نیتروژن", "افزایش شوری", "کاهش pH", "افزایش آفات"], ans: 0 },
+            { q: "کودهای کامل شامل چه عناصری هستند؟", options: ["NPK", "N و P", "K و Ca", "Fe و Zn"], ans: 0 },
+
+            // بخش ۶: کاربرد کودها
+            { q: "زمان مصرف پایه کود چه زمانی است؟", options: ["قبل یا همزمان با کاشت", "پس از برداشت", "در زمستان", "در پاییز"], ans: 0 },
+            { q: "روش تزریقی کود چه زمانی مناسب است؟", options: ["10-15 روز قبل کاشت", "همزمان با کاشت", "پس از برداشت", "در تابستان"], ans: 0 },
+            { q: "فاصله نواری کود از بذر چند سانتی‌متر است؟", options: ["5-7", "2-5", "10-15", "7-10"], ans: 0 },
+            { q: "کودآبیاری در چه سیستم‌هایی انجام می‌شود؟", options: ["بارانی و قطره‌ای", "نواری و کناری", "تزریقی و پراکندن", "محلول‌پاشی"], ans: 0 },
+
+            // ادامه سوالات برای تکمیل ۴۰ سوال
+            { q: "علامت کمبود کلسیم چیست؟", options: ["بافت‌مردگی برگ‌های جوان", "زردی برگ‌های مسن", "ارغوانی برگ‌ها", "سوختگی حاشیه"], ans: 0 },
+            { q: "نقش منیزیم در گیاه چیست؟", options: ["مرکزی کلروفیل", "تشکیل ATP", "تعدیل هورمون", "انتقال الکترون"], ans: 0 },
+            { q: "بیش‌بود گوگرد چه مشکلی ایجاد می‌کند؟", options: ["کاهش جذب NO3-", "افزایش رشد", "کاهش pH", "افزایش مقاومت"], ans: 0 },
+            { q: "علامت کمبود آهن چیست؟", options: ["زردی بین‌رگبرگی جوان", "سوختگی حاشیه", "نکروزه جوانه", "کوتولگی"], ans: 0 },
+            { q: "نقش روی در گیاه چیست؟", options: ["سنتز سیتوکروم", "تشکیل دیواره", "تثبیت CO2", "فعال‌سازی آنزیم"], ans: 0 },
+            { q: "بیش‌بود مس چه تأثیری دارد؟", options: ["زردی و بافت‌مردگی", "افزایش رشد", "کاهش آفات", "بهبود کیفیت"], ans: 0 },
+            { q: "علامت کمبود منگنز چیست؟", options: ["زردی با نکروزه", "ارغوانی برگ‌ها", "سوختگی حاشیه", "کوتولگی"], ans: 0 },
+            { q: "نقش بر در گیاه چیست؟", options: ["طویل شدن سلول", "تشکیل کلروفیل", "تعدیل هورمون", "انتقال انرژی"], ans: 0 },
+            { q: "بیش‌بود مولیبدن چه مشکلی ایجاد می‌کند؟", options: ["ریزش برگ‌ها", "افزایش رشد", "کاهش pH", "افزایش مقاومت"], ans: 0 },
+            { q: "محلول‌پاشی برای چه عناصری مناسب است؟", options: ["عناصر کم‌مصرف", "عناصر پرمصرف", "نیتروژن", "فسفر"], ans: 0 },
+            { q: "دامنه لوکس چه ویژگی‌ای دارد؟", options: ["بیش‌ازحد بدون اثر منفی", "کمبود شدید", "سمیت خفیف", "بهینه"], ans: 0 },
+            { q: "کودهای ساده چه ویژگی‌ای دارند؟", options: ["حاوی یک عنصر", "حاوی چند عنصر", "فقط NPK", "فقط میکرو"], ans: 0 },
+            { q: "روش پراکندن کود نیاز به چه دارد؟", options: ["آبیاری پس از پخش", "تزریق", "محلول‌پاشی", "کودآبیاری"], ans: 0 },
+            { q: "علامت کمبود روی چیست؟", options: ["سفید شدن بین‌رگبرگی", "زردی برگ‌های مسن", "ارغوانی برگ‌ها", "سوختگی حاشیه"], ans: 0 },
+            { q: "نقش مس در گیاه چیست؟", options: ["اکسیداسیون", "تشکیل ATP", "تعدیل هورمون", "انتقال الکترون"], ans: 0 },
+            { q: "بیش‌بود آهن چه تأثیری دارد؟", options: ["کوتولگی و بافت‌مردگی", "افزایش رشد", "کاهش آفات", "بهبود کیفیت"], ans: 0 }
+        ];
+
+        // Theme Toggle
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+        });
+        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+
+        // Render Quiz
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+            questions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card bg-white/10 p-4 rounded-lg shadow-lg relative overflow-hidden fade-in';
+                card.innerHTML = `
+                    <h3 class="text-lg font-bold mb-2">${index + 1}. ${q.q}</h3>
+                    ${q.options.map((opt, i) => `
+                        <label class="block option bg-${['primary', 'secondary', 'accent', 'highlight'][i % 4]}/20 p-2 mb-2 rounded-lg cursor-pointer relative">
+                            <input type="radio" name="q${index}" value="${i}" class="mr-2" onchange="checkAnswer(${index}, ${i}, ${q.ans})"> ${opt}
+                            <span id="feedback-q${index}-o${i}" class="feedback"></span>
+                        </label>
+                    `).join('')}
+                    <div class="reflection"></div>
+                `;
+                container.appendChild(card);
+            });
+            updateProgress();
+        }
+
+        // Check Answer with Immediate Feedback
+        function checkAnswer(questionIndex, selectedIndex, correctIndex) {
+            const feedback = document.getElementById(`feedback-q${questionIndex}-o${selectedIndex}`);
+            if (selectedIndex === correctIndex) {
+                feedback.textContent = "درست!";
+                feedback.className = "feedback correct";
+            } else {
+                feedback.textContent = "نادرست!";
+                feedback.className = "feedback incorrect";
+            }
+            feedback.style.display = "block";
+        }
+
+        // Progress Bar
+        function updateProgress() {
+            const progress = document.querySelector('#progress-bar div');
+            progress.style.width = `${(document.querySelectorAll('.question-card').length / questions.length) * 100}%`;
+        }
+
+        // Initial Render
+        renderQuiz();
+    </script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>آزمون خاک‌شناسی</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <style>
+    body{font-family:'Vazir',sans-serif;direction:rtl;background:linear-gradient(to bottom right,#e0f2fe,#d1fae5)}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff');font-weight:normal}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Bold.woff') format('woff');font-weight:bold}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Light.woff') format('woff');font-weight:300}
+    .btn{transition:all 0.3s ease}.btn:hover{transform:scale(1.05);filter:brightness(1.1)}
+    .modal{transition:all 0.4s ease}.modal-hidden{opacity:0;transform:scale(0.9)}.modal-visible{opacity:1;transform:scale(1)}
+    .progress-bar{transition:width 0.6s ease-in-out}
+    .question-card{animation:slideIn 0.5s ease-in}
+    @keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <div id="root" class="container mx-auto p-6 min-h-screen flex items-center justify-center"></div>
+  <script type="text/babel">
+    const questions=[
+      {id:1,text:"کدام یک از عوامل زیر جزء عوامل اصلی تشکیل‌دهنده خاک نیست؟",options:["الف) مواد مادری","ب) پستی و بلندی","ج) زمان","د) آلودگی هوا"],correct:3},
+      {id:2,text:"افق O در خاک عمدتاً شامل چه موادی است؟",options:["الف) مواد معدنی","ب) مواد آلی تجزیه‌نشده","ج) رس","د) شن"],correct:1},
+      {id:3,text:"کدام افق خاک، محل تجمع مواد شسته‌شده از افق A است؟",options:["الف) افق O","ب) افق B","ج) افق C","د) افق R"],correct:1},
+      {id:4,text:"هوادیدگی فیزیکی شامل چه تغییراتی در سنگ می‌شود؟",options:["الف) تغییر شیمیایی","ب) تغییر رنگ","ج) خرد شدن بدون تغییر شیمیایی","د) تجزیه کامل"],correct:2},
+      {id:5,text:"کدام یک از موارد زیر جزء اجزای اصلی تشکیل‌دهنده خاک است؟",options:["الف) پلاستیک","ب) مواد آلی","ج) نفت","د) فلزات سنگین"],correct:1},
+      {id:6,text:"عمق معمول خاک در مناطق معتدله چقدر است؟",options:["الف) ۰٫۵ متر","ب) ۱ متر","ج) ۱٫۵ متر","د) ۲ متر"],correct:2},
+      {id:7,text:"کدام عامل در هوادیدگی شیمیایی نقش دارد؟",options:["الف) نور خورشید","ب) تغییر دما","ج) واکنش‌های شیمیایی","د) فشار مکانیکی"],correct:2},
+      {id:8,text:"خاک‌های آلی حداقل چند درصد ماده آلی دارند؟",options:["الف) ۵٪","ب) ۱۰٪","ج) ۲۰٪","د) ۳۰٪"],correct:2},
+      {id:9,text:"کدام یک از موارد زیر جزء عوامل افزایش‌دهنده مواد در افق A است؟",options:["الف) فرسایش","ب) تبخیر","ج) افزودن مواد آلی","د) شستشوی نیتروژن"],correct:2},
+      {id:10,text:"کدام نوع خاک برای کشاورزی بسیار حاصلخیز است و لایه سطحی تیره دارد؟",options:["الف) آریدیسول","ب) مالیسول","ج) اسپودوسول","د) اکسیسول"],correct:1},
+      {id:11,text:"کدام عامل در تشکیل خاک‌های تکامل‌یافته در مناطق گرم و مرطوب نقش کلیدی دارد؟",options:["الف) کمبود رطوبت","ب) دمای پایین","ج) وجود چهار عامل با شدت زیاد","د) فقدان موجودات زنده"],correct:2},
+      {id:12,text:"کدام افق خاک فاقد خصوصیات افق‌های A و B است؟",options:["الف) افق O","ب) افق B","ج) افق C","د) افق R"],correct:2},
+      {id:13,text:"کدام فرآیند در هوادیدگی شیمیایی رخ می‌دهد؟",options:["الف) شکستن مکانیکی","ب) هیدرولیز","ج) انجماد و ذوب","د) فشار ریشه گیاهان"],correct:1},
+      {id:14,text:"کدام یک از موارد زیر جزء عوامل کاهنده در افق A محسوب می‌شود؟",options:["الف) افزودن مواد آلی","ب) تبخیر آب","ج) بارش باران","د) فعالیت میکروارگانیسم‌ها"],correct:1},
+      {id:15,text:"کدام نوع خاک در مناطق خشک تشکیل می‌شود و دارای افق B است؟",options:["الف) هیستوسول","ب) آریدیسول","ج) مالیسول","د) اکسیسول"],correct:1},
+      {id:16,text:"کدام عامل در فرمول عمومی تشکیل خاک (S = F(Cl, O, R, P, T)) نشان‌دهنده توپوگرافی است؟",options:["الف) Cl","ب) O","ج) R","د) P"],correct:2},
+      {id:17,text:"کدام افق تشخیصی سطحی با رنگ تیره و غنی از مواد آلی مشخص می‌شود؟",options:["الف) اوکریک","ب) مالیک","ج) اسپودیک","د) آرجیلیک"],correct:1},
+      {id:18,text:"کدام نوع خاک از مواد آتشفشانی تشکیل می‌شود؟",options:["الف) اندیسول","ب) ورتیسول","ج) اکسیسول","د) اینسپتیسول"],correct:0},
+      {id:19,text:"فرسایش خاک بیشتر تحت تأثیر کدام عامل انسانی تشدید می‌شود؟",options:["الف) کشاورزی نامناسب","ب) جنگل‌کاری","ج) استفاده از کودهای آلی","د) حفظ پوشش گیاهی"],correct:0},
+      {id:20,text:"کدام یک از موارد زیر جزء عوامل انتقال مواد در خاک است؟",options:["الف) تبخیر","ب) آبشویی","ج) تشعشع","د) دنیتریفیکاسیون"],correct:1},
+      {id:21,text:"کدام فرآیند در تشکیل افق B نقش دارد؟",options:["الف) تبخیر آب","ب) تجمع رس و مواد معدنی","ج) فرسایش بادی","د) تشعشع خورشید"],correct:1},
+      {id:22,text:"کدام نوع خاک دارای قابلیت انقباض و انبساط زیاد است؟",options:["الف) هیستوسول","ب) ورتیسول","ج) جلیسول","د) آلفیسول"],correct:1},
+      {id:23,text:"کدام عامل در عدم تشکیل افق‌های A و B در برخی خاک‌ها مؤثر است؟",options:["الف) بارندگی زیاد","ب) وجود سفره آب زیرزمینی نزدیک سطح","ج) فعالیت شدید میکروارگانیسم‌ها","د) دمای بالا"],correct:1},
+      {id:24,text:"کدام افق در خاک‌های جوان و کم‌تکامل یافته ممکن است وجود نداشته باشد؟",options:["الف) افق C","ب) افق R","ج) افق B","د) افق O"],correct:2},
+      {id:25,text:"کدام نوع خاک در مناطق سرد با لایه منجمد دائمی تشکیل می‌شود؟",options:["الف) جلیسول","ب) اکسیسول","ج) مالیسول","د) اسپودوسول"],correct:0},
+      {id:26,text:"کدام عامل در تشکیل خاک‌های اسپودوسول نقش دارد؟",options:["الف) تجمع اکسید آهن و آلومینیوم","ب) وجود مواد آتشفشانی","ج) انقباض و انبساط رس","د) مواد آلی زیاد"],correct:0},
+      {id:27,text:"کدام یک از موارد زیر جزء عوامل افزایش‌دهنده فعالیت بیولوژیکی خاک است؟",options:["الف) کاهش مواد آلی","ب) افزودن مواد آلی","ج) شستشوی رس","د) فرسایش"],correct:1},
+      {id:28,text:"کدام نوع خاک در مناطق گرمسیری قدیمی و شدیداً هوادیده شده تشکیل می‌شود؟",options:["الف) اکسیسول","ب) اینسپتیسول","ج) انتیسول","د) آلفیسول"],correct:0},
+      {id:29,text:"کدام عامل در تشکیل خاک‌های هیستوسول مانع تجزیه مواد آلی می‌شود؟",options:["الف) دمای بالا","ب) زهکشی خوب","ج) اشباع دائمی آب","د) فعالیت میکروبی زیاد"],correct:2},
+      {id:30,text:"کدام فرآیند در هوادیدگی شیمیایی منجر به تغییر کانی‌ها می‌شود؟",options:["الف) انجماد","ب) هیدراسیون","ج) سایش","د) فشار ریشه"],correct:1},
+      {id:31,text:"اگر یک خاک دارای ۴۰٪ شن، ۴۰٪ سیلت و ۲۰٪ رس باشد، بافت آن چیست؟",options:["الف) لوم رسی","ب) لوم","ج) لوم شنی","د) رس"],correct:1},
+      {id:32,text:"اگر عمق افق A برابر ۲۰ سانتیمتر و عمق افق B برابر ۴۰ سانتیمتر باشد، عمق کل سولوم (افق‌های A و B) چقدر است؟",options:["الف) ۲۰ سانتیمتر","ب) ۴۰ سانتیمتر","ج) ۶۰ سانتیمتر","د) ۸۰ سانتیمتر"],correct:2},
+      {id:33,text:"اگر میزان ماده آلی در یک خاک ۱۵٪ باشد، آیا این خاک معدنی است یا آلی؟",options:["الف) معدنی","ب) آلی","ج) نیمه‌آلی","د) غیرقابل تشخیص"],correct:0},
+      {id:34,text:"اگر در یک خاک ۵٪ ماده آلی وجود داشته باشد و وزن کل نمونه خاک ۲۰۰ گرم باشد، وزن ماده آلی چقدر است؟",options:["الف) ۵ گرم","ب) ۱۰ گرم","ج) ۱۵ گرم","د) ۲۰ گرم"],correct:1},
+      {id:35,text:"اگر افق A دارای ۶٪ ماده آلی باشد و عمق آن ۳۰ سانتیمتر باشد، مقدار تقریبی هوموس در این افق در یک مترمربع چقدر است؟ (چگالی خاک ۱٫۵ گرم/سانتیمتر مکعب)",options:["الف) ۵۴۰ گرم","ب) ۸۱۰ گرم","ج) ۱۰۸۰ گرم","د) ۱۳۵۰ گرم"],correct:1},
+      {id:36,text:"اگر سالانه ۲٫۵ میلیارد تن خاک حاصلخیز در کشور دچار فرسایش شود، این مقدار معادل چند مترمکعب خاک با چگالی متوسط ۱٫۵ گرم بر سانتیمتر مکعب است؟",options:["الف) ۱٫۶۷ میلیارد مترمکعب","ب) ۲٫۵ میلیارد مترمکعب","ج) ۳٫۷۵ میلیارد مترمکعب","د) ۵ میلیارد مترمکعب"],correct:0},
+      {id:37,text:"اگر در یک پروفیل خاک، افق B دارای تجمع ۳۰٪ رس باشد و افق A تنها ۱۰٪ رس داشته باشد، درصد افزایش رس در افق B چقدر است؟",options:["الف) ۱۰۰٪","ب) ۱۵۰٪","ج) ۲۰۰٪","د) ۳۰۰٪"],correct:2},
+      {id:38,text:"اگر یک خاک دارای ۲۵٪ هوا، ۲۵٪ آب، ۴۵٪ مواد معدنی و ۵٪ ماده آلی باشد، درصد حجمی مواد جامد چقدر است؟",options:["الف) ۴۵٪","ب) ۵۰٪","ج) ۵۵٪","د) ۶۰٪"],correct:1},
+      {id:39,text:"اگر در یک منطقه بارندگی سالانه ۵۰۰ میلیمتر باشد و تبخیر سالانه ۳۰۰ میلیمتر، آیا این منطقه برای تشکیل خاک‌های تکامل‌یافته مناسب است؟",options:["الف) خیر، به دلیل بارندگی کم","ب) خیر، به دلیل تبخیر زیاد","ج) خیر، به دلیل هر دو مورد","د) بله، شرایط مناسب است"],correct:2},
+      {id:40,text:"اگر یک خاک دارای افق‌های O, A, E, B, C, R باشد، چند افق اصلی دارد؟",options:["الف) ۴ افق","ب) ۵ افق","ج) ۶ افق","د) ۷ افق"],correct:2}
+    ];
+    const stages=[questions.slice(0,10),questions.slice(10,20),questions.slice(20,30),questions.slice(30,40)];
+    function QuizApp(){
+      const [stage,setStage]=React.useState(0);
+      const [questionIndex,setQuestionIndex]=React.useState(0);
+      const [repeatCount,setRepeatCount]=React.useState(0);
+      const [selected,setSelected]=React.useState(null);
+      const [feedback,setFeedback]=React.useState(null);
+      const [showCorrect,setShowCorrect]=React.useState(false);
+      const [scores,setScores]=React.useState([0,0,0,0]);
+      const [answersCorrect,setAnswersCorrect]=React.useState({});
+      const [showModal,setShowModal]=React.useState(false);
+      const currentStage=stages[stage];
+      const handleSelect=(index)=>{
+        if(feedback==='correct')return;
+        setSelected(index);
+        const q=currentStage[questionIndex];
+        const isCorrect=index===q.correct;
+        setAnswersCorrect(prev=>({...prev,[`${stage}-${questionIndex}-${repeatCount}`]:isCorrect}));
+        if(isCorrect){
+          setFeedback('correct');
+          if(selected===null){
+            setScores(prev=>({...prev,[stage]:prev[stage]+1}));
+          }
+          setTimeout(nextQuestion,1000);
+        }else{
+          setFeedback('incorrect');
+          setShowCorrect(true);
+          setTimeout(() => {
+            setFeedback(null);
+            setShowCorrect(false);
+            setSelected(null);
+          }, 2000);
+        }
+      };
+      const nextQuestion=()=>{
+        setSelected(null);
+        setFeedback(null);
+        setShowCorrect(false);
+        if(repeatCount<2){
+          setRepeatCount(prev=>prev+1);
+        }else if(questionIndex+1<currentStage.length){
+          setQuestionIndex(prev=>prev+1);
+          setRepeatCount(0);
+        }else{
+          setShowModal(true);
+        }
+      };
+      const handleNextStage=()=>{
+        const stageAnswers=Object.keys(answersCorrect)
+          .filter(key=>key.startsWith(`${stage}-`))
+          .map(key=>answersCorrect[key]);
+        const hasIncorrect=stageAnswers.includes(false)||stageAnswers.length<currentStage.length*3;
+        if(hasIncorrect){
+          setQuestionIndex(0);
+          setRepeatCount(0);
+          setAnswersCorrect(prev=>Object.fromEntries(Object.keys(prev)
+            .filter(key=>!key.startsWith(`${stage}-`))
+            .map(key=>[key,prev[key]])));
+        }else if(stage<3){
+          setStage(prev=>prev+1);
+          setQuestionIndex(0);
+          setRepeatCount(0);
+        }else{
+          setStage(0);
+          setQuestionIndex(0);
+          setRepeatCount(0);
+          setScores([0,0,0,0]);
+          setAnswersCorrect({});
+        }
+        setShowModal(false);
+      };
+      const progress=((questionIndex*3+repeatCount+1)/(currentStage.length*3))*100;
+      return (
+        <div class="max-w-3xl mx-auto bg-white shadow-2xl rounded-2xl p-8 question-card">
+          <h1 class="text-3xl font-bold text-emerald-600 text-center mb-6">آزمون خاک‌شناسی - مرحله {stage+1}</h1>
+          <div class="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-600 to-yellow-400 h-4 rounded-full progress-bar" style={{width:`${progress}%`}}></div>
+          </div>
+          <p class="text-center text-gray-600 mb-4 font-medium">سوال {questionIndex+1} از {currentStage.length} (تکرار {repeatCount+1} از ۳)</p>
+          <p class="font-semibold text-xl text-gray-800 mb-8">{currentStage[questionIndex].text}</p>
+          <div class="grid grid-cols-2 gap-4">
+            {currentStage[questionIndex].options.map((opt,i)=>(
+              <button
+                key={i}
+                onClick={()=>handleSelect(i)}
+                class={`w-full p-4 text-lg font-medium rounded-xl shadow-lg btn text-center ${
+                  i===0?'bg-rose-600 hover:bg-rose-700 text-white':
+                  i===1?'bg-emerald-600 hover:bg-emerald-700 text-white':
+                  i===2?'bg-yellow-400 hover:bg-yellow-500 text-gray-800':
+                  'bg-blue-600 hover:bg-blue-700 text-white'
+                } ${showCorrect&&i===currentStage[questionIndex].correct?'bg-emerald-200 text-emerald-800':selected===i&&feedback==='incorrect'?'bg-rose-200 text-rose-800':feedback==='correct'&&i===currentStage[questionIndex].correct?'bg-emerald-200 text-emerald-800':''} ${feedback==='correct'?'cursor-not-allowed opacity-60':''}`}
+                disabled={feedback==='correct'}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+          {feedback==='incorrect'&&(
+            <p class="text-rose-600 mt-6 text-center flex items-center justify-center font-medium">
+              <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              اشتباه! دوباره امتحان کنید.
+            </p>
+          )}
+          {feedback==='correct'&&(
+            <p class="text-emerald-600 mt-6 text-center flex items-center justify-center font-medium">
+              <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              درست! به تکرار یا سوال بعدی می‌رویم.
+            </p>
+          )}
+          {showModal&&(
+            <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center modal modal-visible">
+              <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
+                <h2 class="text-2xl font-bold text-emerald-600 mb-6">نتایج مرحله {stage+1}</h2>
+                <p class="text-lg text-gray-600 mb-4">نمره: {scores[stage]} از {currentStage.length*3}</p>
+                <p class="text-lg text-gray-600 mb-4">کل نمره: {Object.values(scores).reduce((a,b)=>a+b,0)} از {(stage+1)*10*3}</p>
+                {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length*3&&(
+                  <p class="text-rose-600 mb-6 font-medium">برخی سوالات اشتباه بودند، مرحله تکرار می‌شود.</p>
+                )}
+                <button
+                  onClick={handleNextStage}
+                  class="bg-gradient-to-r from-emerald-600 to-yellow-400 text-white px-6 py-3 rounded-xl hover:from-emerald-700 hover:to-yellow-500 btn shadow-lg"
+                >
+                  {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length*3?'تکرار مرحله':stage<3?'مرحله بعدی':'شروع مجدد'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    ReactDOM.render(<QuizApp/>,document.getElementById('root'));
+  </script>
+</body>
+</html>

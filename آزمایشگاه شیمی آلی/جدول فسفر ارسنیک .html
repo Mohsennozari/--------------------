@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>جداول یادگیری تشخیص فسفر و آرسنیک</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card { transition: transform 0.3s, box-shadow 0.3s; }
+    .card:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); }
+    .fade-in { opacity: 0; animation: fadeIn 1s forwards; }
+    .slide-in { transform: translateX(100px); animation: slideIn 0.5s forwards; }
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes slideIn { to { transform: translateX(0); } }
+  </style>
+</head>
+<body dir="rtl" class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center text-blue-800 mb-8">جداول یادگیری تشخیص فسفر و آرسنیک در شیمی آلی</h1>
+
+    <!-- جداول -->
+    <div id="tables" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8"></div>
+
+    <!-- یادداشت‌برداری -->
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">یادداشت‌های شخصی</h2>
+      <textarea id="notes" class="w-full h-24 p-2 border rounded" placeholder="نکات مهم خودت رو اینجا بنویس..."></textarea>
+      <button onclick="saveNotes()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">ذخیره یادداشت</button>
+    </div>
+  </div>
+
+  <script>
+    const tables = [
+      {
+        title: "جدول ۱: تعریف و اهمیت آزمایش",
+        color: "bg-blue-200",
+        content: `
+          <table class="w-full text-right border-collapse">
+            <tr class="bg-blue-300"><th class="p-2">موضوع</th><th class="p-2">توضیح</th></tr>
+            <tr><td class="p-2 border">هدف آزمایش</td><td class="p-2 border">تشخیص فسفر (P) و آرسنیک (As) با Lassaigne’s test.</td></tr>
+            <tr><td class="p-2 border">اهمیت فسفر</td><td class="p-2 border">نقش در DNA، ATP، و فسفولیپیدها.</td></tr>
+            <tr><td class="p-2 border">اهمیت آرسنیک</td><td class="p-2 border">سمی، جایگزین فسفر در واکنش‌های بیوشیمیایی.</td></tr>
+            <tr><td class="p-2 border">اصل آزمایش</td><td class="p-2 border">تبدیل P به Na₃PO₄ و As به Na₃AsO₃ یا Na₃As.</td></tr>
+          </table>
+          <p class="mt-2 text-gray-700">چرا مفید است؟ مقدمه و اهمیت بیوشیمیایی P و As را خلاصه می‌کند.</p>
+        `
+      },
+      {
+        title: "جدول ۲: مواد مورد نیاز",
+        color: "bg-green-200",
+        content: `
+          <table class="w-full text-right border-collapse">
+            <tr class="bg-green-300"><th class="p-2">دسته‌بندی</th><th class="p-2">مواد</th></tr>
+            <tr><td class="p-2 border">ترکیب اولیه</td><td class="p-2 border">ترکیب آلی ناشناخته (۰.۱-۰.۲ گرم یا ۲-۳ قطره).</td></tr>
+            <tr><td class="p-2 border">Fusion</td><td class="p-2 border">سدیم فلزی (اندازه نخود).</td></tr>
+            <tr><td class="p-2 border">تست فسفر</td><td class="p-2 border">HNO₃ غلیظ، آمونیوم مولیبدات، آمونیاک.</td></tr>
+            <tr><td class="p-2 border">تست آرسنیک</td><td class="p-2 border">Zn، H₂SO₄ رقیق، AgNO₃، HgCl₂.</td></tr>
+            <tr><td class="p-2 border">عمومی</td><td class="p-2 border">آب مقطر.</td></tr>
+          </table>
+          <p class="mt-2 text-gray-700">چرا مفید است؟ مواد لازم را به‌صورت دسته‌بندی‌شده برای آماده‌سازی آزمایش نشان می‌دهد.</p>
+        `
+      },
+      {
+        title: "جدول ۳: وسایل مورد نیاز",
+        color: "bg-purple-200",
+        content: `
+          <table class="w-full text-right border-collapse">
+            <tr class="bg-purple-300"><th class="p-2">وسیله</th><th class="p-2">کاربرد</th></tr>
+            <tr><td class="p-2 border">لوله fusion</td><td class="p-2 border">برای ذوب سدیم و ترکیب آلی.</td></tr>
+            <tr><td class="p-2 border">قیف بوخنر</td><td class="p-2 border">صاف کردن Sodium Fusion Extract.</td></tr>
+            <tr><td class="p-2 border">هاون و هاون‌کش</td><td class="p-2 border">خرد کردن و استخراج SFE.</td></tr>
+            <tr><td class="p-2 border">حمام آب/مشعل</td><td class="p-2 border">حرارت دادن محلول‌ها.</td></tr>
+            <tr><td class="p-2 border">هود تهویه</td><td class="p-2 border">ایمنی در برابر بخارات سمی.</td></tr>
+          </table>
+          <p class="mt-2 text-gray-700">چرا مفید است؟ وسایل و کاربردشان را برای آماده‌سازی آزمایشگاه مرور می‌کند.</p>
+        `
+      },
+      {
+        title: "جدول ۴: مراحل آماده‌سازی SFE",
+        color: "bg-blue-200",
+        content: `
+          <table class="w-full text-right border-collapse">
+            <tr class="bg-blue-300"><th class="p-2">مرحله</th><th class="p-2">توضیح</th></tr>
+            <tr><td class="p-2 border">۱. ذوب سدیم</td><td class="p-2 border">سدیم فلزی در لوله fusion ذوب می‌شود.</td></tr>
+            <tr><td class="p-2 border">۲. اضافه کردن ترکیب</td><td class="p-2 border">ترکیب آلی به سدیم ذوب‌شده اضافه می‌شود.</td></tr>
+            <tr><td class="p-2 border">۳. حرارت شدید</td><td class="p-2 border">لوله تا قرمز شدن حرارت داده می‌شود (۳-۵ دقیقه).</td></tr>
+            <tr><td class="p-2 border">۴. استخراج</td><td class="p-2 border">لوله داغ در آب سرد شکسته و صاف می‌شود.</td></tr>
+            <tr><td class="p-2 border">۵. حذف تداخل</td><td class="p-2 border">جوشاندن SFE با HNO₃ برای حذف CN⁻ و S²⁻.</td></tr>
+          </table>
+          <p class="mt-2 text-gray-700">چرا مفید است؟ مراحل آماده‌سازی Sodium Fusion Extract را گام‌به‌گام نشان می‌دهد.</p>
+        `
+      },
+      {
+        title: "جدول ۵: مراحل تست فسفر",
+        color: "bg-green-200",
+        content: `
+          <table class="w-full text-right border-collapse">
+            <tr class="bg-green-300"><th class="p-2">مرحله</th><th class="p-2">توضیح</th><th class="p-2">نتیجه</th></tr>
+            <tr><td class="p-2 border">۱. جوشاندن SFE</td><td class="p-2 border">۲ میلی‌لیتر SFE با HNO₃ جوشانده می‌شود.</td><td class="p-2 border">حذف تداخل‌ها.</td></tr>
+            <tr><td class="p-2 border">۲. قلیایی کردن</td><td class="p-2 border">اضافه کردن آمونیاک تا pH ۹-۱۰.</td><td class="p-2 border">آماده‌سازی برای معرف.</td></tr>
+            <tr><td class="p-2 border">۳. اضافه کردن معرف</td><td class="p-2 border">۵ میلی‌لیتر آمونیوم مولیبدات.</td><td class="p-2 border">-</td></tr>
+            <tr><td class="p-2 border">۴. حرارت</td><td class="p-2 border">گرم کردن در ۶۰-۸۰ درجه (۵ دقیقه).</td><td class="p-2 border">رسوب زرد (NH₄)₃[PMo₁₂O₄₀].</td></tr>
+          </table>
+          <p class="mt-2 text-gray-700">چرا مفید است؟ مراحل تست فسفر را با نتایج هر مرحله خلاصه می‌کند.</p>
+        `
+      },
+      {
+        title: "جدول ۶: مراحل تست آرسنیک (Gutzeit Test)",
+        color: "bg-blue-200",
+        content: `
+          <table class="w-full text-right border-collapse">
+            <tr class="bg-blue-300"><th class="p-2">مرحله</th><th class="p-2">توضیح</th><th class="p-2">نتیجه</th></tr>
+            <tr><td class="p-2 border">۱. جوشاندن SFE</td><td class="p-2 border">۲ میلی‌لیتر SFE با HNO₃ جوشانده می‌شود.</td><td class="p-2 border">حذف تداخل‌ها.</td></tr>
+            <tr><td class="p-2 border">۲. اضافه کردن Zn</td><td class="p-2 border">۱ گرم روی به محلول اضافه می‌شود.</td><td class="p-2 border">احیاکننده.</td></tr>
+            <tr><td class="p-2 border">۳. اضافه کردن H₂SO₄</td><td class="p-2 border">۵ میلی‌لیتر H₂SO₄ رقیق.</td><td class="p-2 border">تولید AsH₃.</td></tr>
+            <tr><td class="p-2 border">۴. تست کاغذ</td><td class="p-2 border">کاغذ صافی با AgNO₃ مرطوب شده.</td><td class="p-2 border">لکه قهوه‌ای-سیاه (Ag₃As).</td></tr>
+          </table>
+          <p class="mt-2 text-gray-700">چرا مفید است؟ مراحل Gutzeit test برای آرسنیک را با نتایج خلاصه می‌کند.</p>
+        `
+      },
+      {
+        title: "جدول ۷: تفسیر نتایج",
+        color: "bg-purple-200",
+        content: `
+          <table class="w-full text-right border-collapse">
+            <tr class="bg-purple-300"><th class="p-2">عنصر</th><th class="p-2">نتیجه مثبت</th><th class="p-2">حساسیت</th></tr>
+            <tr><td class="p-2 border">فسفر (P)</td><td class="p-2 border">رسوب زرد (NH₄)₃[PMo₁₂O₄₀]</td><td class="p-2 border">۰.۰۱%</td></tr>
+            <tr><td class="p-2 border">آرسنیک (As)</td><td class="p-2 border">لکه قهوه‌ای-سیاه (Ag₃As)</td><td class="p-2 border">۰.۰۵%</td></tr>
+            <tr><td class="p-2 border">نتیجه منفی</td><td class="p-2 border">عدم وجود P یا As</td><td class="p-2 border">-</td></tr>
+          </table>
+          <p class="mt-2 text-gray-700">چرا مفید است؟ نتایج مثبت و حساسیت تست‌ها را برای تفسیر سریع نشان می‌دهد.</p>
+        `
+      },
+      {
+        title: "جدول ۸: واکنش‌های شیمیایی کلیدی",
+        color: "bg-green-200",
+        content: `
+          <table class="w-full text-right border-collapse">
+            <tr class="bg-green-300"><th class="p-2">تست</th><th class="p-2">واکنش</th></tr>
+            <tr><td class="p-2 border">فسفر</td><td class="p-2 border">P → Na₃PO₄; PO₄³⁻ + ۱۲MoO₄²⁻ + ۳NH₄⁺ → (NH₄)₃[PMo₁₂O₄₀]</td></tr>
+            <tr><td class="p-2 border">آرسنیک</td><td class="p-2 border">As → Na₃AsO₃; AsH₃ + ۹AgNO₃ → Ag₃As + ۳HNO₃ + ۶H₂O</td></tr>
+          </table>
+          <p class="mt-2 text-gray-700">چرا مفید است؟ واکنش‌های شیمیایی اصلی را برای درک مکانیسم تست‌ها خلاصه می‌کند.</p>
+        `
+      },
+      {
+        title: "جدول ۹: نکات ایمنی",
+        color: "bg-orange-200",
+        content: `
+          <table class="w-full text-right border-collapse">
+            <tr class="bg-orange-300"><th class="p-2">نکته</th><th class="p-2">توضیح</th></tr>
+            <tr><td class="p-2 border">سدیم فلزی</td><td class="p-2 border">واکنش‌پذیر؛ در هود و با پنس استفاده شود.</td></tr>
+            <tr><td class="p-2 border">HNO₃</td><td class="p-2 border">بخارات سمی؛ از عینک و دستکش استفاده شود.</td></tr>
+            <tr><td class="p-2 border">آرسنیک</td><td class="p-2 border">سمی؛ آزمایش در هود و زباله جدا شود.</td></tr>
+            <tr><td class="p-2 border">آتش سدیم</td><td class="p-2 border">با شن خاموش شود، نه آب.</td></tr>
+          </table>
+          <p class="mt-2 text-gray-700">چرا مفید است؟ نکات ایمنی کلیدی را برای جلوگیری از خطرات آزمایشگاه مرور می‌کند.</p>
+        `
+      },
+      {
+        title: "جدول ۱۰: تداخل‌ها و راه‌حل‌ها",
+        color: "bg-purple-200",
+        content: `
+          <table class="w-full text-right border-collapse">
+            <tr class="bg-purple-300"><th class="p-2">تداخل</th><th class="p-2">مشکل</th><th class="p-2">راه‌حل</th></tr>
+            <tr><td class="p-2 border">S و N</td><td class="p-2 border">تشکیل CN⁻ و S²⁻</td><td class="p-2 border">جوشاندن SFE با HNO₃</td></tr>
+            <tr><td class="p-2 border">H₂S در تست As</td><td class="p-2 border">لکه زرد (Ag₂S)</td><td class="p-2 border">اضافه کردن HgCl₂</td></tr>
+            <tr><td class="p-2 border">مولیبدات اضافی</td><td class="p-2 border">رسوب زرد کاذب</td><td class="p-2 border">کنترل حجم معرف</td></tr>
+          </table>
+          <p class="mt-2 text-gray-700">چرا مفید است؟ تداخل‌های احتمالی و راه‌حل‌های آنها را برای دقت در آزمایش خلاصه می‌کند.</p>
+        `
+      }
+    ];
+
+    function loadTables() {
+      const tablesDiv = document.getElementById('tables');
+      tablesDiv.innerHTML = '';
+      tables.forEach(table => {
+        const card = document.createElement('div');
+        card.className = `card ${table.color} p-4 rounded-lg cursor-pointer`;
+        card.innerHTML = `
+          <h3 class="text-lg font-semibold mb-2">${table.title}</h3>
+          <div class="table-content hidden fade-in">${table.content}</div>
+        `;
+        card.onclick = () => {
+          const content = card.querySelector('.table-content');
+          content.classList.toggle('hidden');
+          if (!content.classList.contains('hidden')) {
+            content.classList.add('fade-in');
+          }
+        };
+        tablesDiv.appendChild(card);
+      });
+    }
+
+    function saveNotes() {
+      const notes = document.getElementById('notes').value;
+      localStorage.setItem('userNotes', notes);
+      alert('یادداشت ذخیره شد!');
+    }
+
+    window.onload = () => {
+      document.getElementById('notes').value = localStorage.getItem('userNotes') || '';
+      loadTables();
+      if (!localStorage.getItem('lastVisit')) {
+        localStorage.setItem('lastVisit', new Date());
+      } else {
+        const lastVisit = new Date(localStorage.getItem('lastVisit'));
+        const now = new Date();
+        if ((now - lastVisit) / (1000 * 60 * 60) > 24) {
+          alert('وقت مرور دوباره است!');
+          localStorage.setItem('lastVisit', now);
+        }
+      }
+    };
+  </script>
+</body>
+</html>

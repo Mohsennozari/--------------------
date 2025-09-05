@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>کوئیز تفاوت مواد آلی و معدنی</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card { transition: transform 0.3s, box-shadow 0.3s; }
+    .card:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); }
+    .fade-in { opacity: 0; animation: fadeIn 1s forwards; }
+    .slide-in { transform: translateX(100px); animation: slideIn 0.5s forwards; }
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes slideIn { to { transform: translateX(0); } }
+    .correct { background-color: #10B981; color: white; }
+    .incorrect { background-color: #EF4444; color: white; }
+  </style>
+</head>
+<body dir="rtl" class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center text-blue-800 mb-8">کوئیز تفاوت مواد آلی و معدنی</h1>
+
+    <!-- بخش سوالات ساده -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-green-600 mb-4">سوالات ساده</h2>
+      <div id="quiz-easy" class="mb-4">
+        <p id="question-easy" class="text-lg mb-4"></p>
+        <div id="options-easy" class="space-y-2"></div>
+        <p id="feedback-easy" class="mt-4 text-lg"></p>
+      </div>
+    </div>
+
+    <!-- بخش سوالات متوسط -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-blue-600 mb-4">سوالات متوسط</h2>
+      <div id="quiz-medium" class="mb-4">
+        <p id="question-medium" class="text-lg mb-4"></p>
+        <div id="options-medium" class="space-y-2"></div>
+        <p id="feedback-medium" class="mt-4 text-lg"></p>
+      </div>
+    </div>
+
+    <!-- بخش سوالات سخت -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-purple-600 mb-4">سوالات سخت</h2>
+      <div id="quiz-hard" class="mb-4">
+        <p id="question-hard" class="text-lg mb-4"></p>
+        <div id="options-hard" class="space-y-2"></div>
+        <p id="feedback-hard" class="mt-4 text-lg"></p>
+      </div>
+    </div>
+
+    <!-- بخش سوالات خیلی سخت -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-orange-600 mb-4">سوالات خیلی سخت</h2>
+      <div id="quiz-very-hard" class="mb-4">
+        <p id="question-very-hard" class="text-lg mb-4"></p>
+        <div id="options-very-hard" class="space-y-2"></div>
+        <p id="feedback-very-hard" class="mt-4 text-lg"></p>
+      </div>
+    </div>
+
+    <!-- نوار پیشرفت -->
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold text-gray-700 mb-2">پیشرفت یادگیری</h2>
+      <div class="w-full bg-gray-200 rounded">
+        <div id="progress" class="bg-green-500 h-4 rounded" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- یادداشت‌برداری -->
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">یادداشت‌های شخصی</h2>
+      <textarea id="notes" class="w-full h-24 p-2 border rounded" placeholder="نکات مهم خودت رو اینجا بنویس..."></textarea>
+      <button onclick="saveNotes()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">ذخیره یادداشت</button>
+    </div>
+  </div>
+
+  <script>
+    const quizzes = {
+      easy: [
+        { question: 'مواد آلی عمدتاً شامل کدام عنصر هستند؟', options: ['سدیم', 'کربن', 'آهن', 'کلسیم'], answer: 'کربن' },
+        { question: 'کدام گزینه نمونه‌ای از ماده معدنی است؟', options: ['متان', 'NaCl', 'اتانول', 'گلوکز'], answer: 'NaCl' },
+        { question: 'نوع پیوند غالب در مواد آلی چیست؟', options: ['یونی', 'کووالانسی', 'متالیک', 'هیدروژنی'], answer: 'کووالانسی' },
+        { question: 'مواد معدنی معمولاً در چه حلالی حل می‌شوند؟', options: ['بنزن', 'آب', 'اتر', 'اتانول'], answer: 'آب' },
+        { question: 'نقطه ذوب مواد آلی نسبت به مواد معدنی چگونه است؟', options: ['پایین‌تر', 'بالاتر', 'مساوی', 'نامشخص'], answer: 'پایین‌تر' },
+        { question: 'کدام مورد ماده آلی است؟', options: ['CaCO₃', 'گلوکز', 'NaCl', 'CaO'], answer: 'گلوکز' },
+        { question: 'مواد آلی وقتی حرارت داده می‌شوند چه اتفاقی می‌افتد؟', options: ['ذوب می‌شوند', 'تجزیه می‌شوند', 'تغییر رنگ می‌دهند', 'بی اثر می‌مانند'], answer: 'تجزیه می‌شوند' },
+        { question: 'کدام آزمایش به‌سادگی تفاوت ماده آلی و معدنی را نشان می‌دهد؟', options: ['آزمایش رنگ', 'آزمایش اسیدی-بازی', 'آزمایش سوختن', 'آزمایش فلورسانس'], answer: 'آزمایش سوختن' },
+        { question: 'مواد معدنی معمولاً پیوند:', options: ['کربن-کربن', 'یونی یا فلزی', 'کووالانسی', 'هیدروژنی'], answer: 'یونی یا فلزی' },
+        { question: 'ماده آلی را چگونه می‌توان تعریف کرد؟', options: ['ترکیبات با اسکلت کربنی', 'ترکیبات یونی', 'فلزات خالص', 'نمک‌ها'], answer: 'ترکیبات با اسکلت کربنی' }
+      ],
+      medium: [
+        { question: 'مواد آلی عمدتاً در چه نوع حلال‌هایی حل می‌شوند؟', options: ['آب', 'اسید قوی', 'حلال‌های آلی مثل اتانول', 'محلول‌های بازی'], answer: 'حلال‌های آلی مثل اتانول' },
+        { question: 'مواد معدنی هنگام حرارت دادن چه واکنشی نشان می‌دهند؟', options: ['تجزیه کامل', 'ذوب یا تغییر رنگ بدون تجزیه', 'آزادسازی گاز', 'تولید دود'], answer: 'ذوب یا تغییر رنگ بدون تجزیه' },
+        { question: 'در آزمایش سوختن مواد آلی معمولاً چه آزاد می‌شود؟', options: ['دی‌اکسیدکربن و بخار آب', 'اکسیژن', 'هیدروژن', 'نیتروژن'], answer: 'دی‌اکسیدکربن و بخار آب' },
+        { question: 'واکنش کربنات‌ها با اسید چه گازی تولید می‌کند؟', options: ['نیتروژن', 'هیدروژن', 'دی‌اکسیدکربن', 'اکسیژن'], answer: 'دی‌اکسیدکربن' },
+        { question: 'چرا مواد آلی نقطه ذوب پایین‌تری دارند؟', options: ['پیوندهای ضعیف‌تر و وزن مولکولی کمتر', 'وجود یون‌ها', 'ساختار فلزی', 'خواص مغناطیسی'], answer: 'پیوندهای ضعیف‌تر و وزن مولکولی کمتر' },
+        { question: 'کدامیک از زیر مواد آلی نیست؟', options: ['پروپان', 'اتانول', 'گلوکز', 'CaO'], answer: 'CaO' },
+        { question: 'در آزمایش حلالیت، مواد معدنی معمولاً در چه حلالی حل می‌شوند؟', options: ['اتانول', 'آب', 'بنزن', 'هگزان'], answer: 'آب' },
+        { question: 'طی سوختن کامل ماده آلی، چه محصولاتی تولید می‌شود؟', options: ['دی‌اکسیدکربن و بخار آب', 'کربن و هیدروژن', 'دی اکسید گوگرد', 'اکسیژن آزاد'], answer: 'دی‌اکسیدکربن و بخار آب' },
+        { question: 'کدام جمله درست است؟', options: ['مواد آلی پیوند یونی دارند', 'مواد معدنی بیشتر پیوند کووالانسی دارند', 'مواد معدنی معمولاً نقطه جوش و ذوب بالاتری دارند', 'مواد آلی در آب بهتر حل می‌شوند'], answer: 'مواد معدنی معمولاً نقطه جوش و ذوب بالاتری دارند' },
+        { question: 'در آزمایشگاه شیمی آلی، چرا استفاده از هود ضروری است؟', options: ['برای تهویه و جلوگیری از استنشاق بخارات خطرناک', 'جلوگیری از آتش‌سوزی', 'جلوگیری از برق گرفتگی', 'برای جابجایی ابزار'], answer: 'برای تهویه و جلوگیری از استنشاق بخارات خطرناک' }
+      ],
+      hard: [
+        { question: 'کدام ماده آلی به شکل حلقوی است؟', options: ['NaCl', 'بنزن', 'CaCO₃', 'MgO'], answer: 'بنزن' },
+        { question: 'واکنش کربنات‌ها با اسید به صورت کلی چیست؟', options: ['تولید H₂', 'تجزیه به CO₂ و نمک', 'تولید آب', 'تبدیل به اسید آلی'], answer: 'تجزیه به CO₂ و نمک' },
+        { question: 'پیدا کردن کدام ویژگی به آسانی به تفاوت مواد آلی و معدنی کمک می‌کند؟', options: ['رنگ ظاهری', 'نقطه ذوب', 'واکنش با اسید', 'حلالیت در آب و حلال‌های آلی'], answer: 'حلالیت در آب و حلال‌های آلی' },
+        { question: 'چرا مواد آلی در حلال‌های آلی حل می‌شوند اما نه در آب؟', options: ['به دلیل غیرقطبی بودن اکثر مواد آلی', 'به دلیل قطبی بودن زیاد', 'ساختار یونی دارند', 'وزن مولکولی زیاد'], answer: 'به دلیل غیرقطبی بودن اکثر مواد آلی' },
+        { question: 'گاز CO₂ در کدام آزمایش رایج‌تر آزاد می‌شود؟', options: ['سوختن ماده معدنی', 'واکنش کربنات‌ها با اسید', 'حل شدن ماده آلی در آب', 'حرارت دادن پروپان'], answer: 'واکنش کربنات‌ها با اسید' },
+        { question: 'چرا برخی مواد آلی مانند کربوکسیلیک اسیدها در واکنش اسیدی تولید گاز CO₂ می‌کنند؟', options: ['به علت وجود گروه‌های عاملی واکنش‌پذیر', 'به دلیل فلز بودن ساختار', 'به علت داشتن پیوند یونی', 'به علت حلالیت زیاد'], answer: 'به علت وجود گروه‌های عاملی واکنش‌پذیر' },
+        { question: 'هنگام سوختن یک ماده آلی، تولید خاکستر کربنی چه دلالتی دارد؟', options: ['سوختن ناقص', 'سوختن کامل', 'عدم سوختن', 'وجود فلز'], answer: 'سوختن ناقص' },
+        { question: 'آزمایش حلالیت به چه شکلی به تفکیک کمک می‌کند؟', options: ['نشان می‌دهد مواد آلی و معدنی در حلال متفاوت حل می‌شوند', 'نشان می‌دهد همه مواد در آب حل می‌شوند', 'فقط برای مواد معدنی مفید است', 'همه مواد تغییر قالب می‌دهند'], answer: 'مواد آلی و معدنی در حلال متفاوت حل می‌شوند' },
+        { question: 'مهم‌ترین نقطه قوت آزمایش سوختن چیست؟', options: ['شناسایی سریع تفاوت مواد آلی و معدنی', 'تعیین وزن مولکولی', 'جدا کردن ترکیبات یونی', 'اندازه‌گیری حلالیت'], answer: 'شناسایی سریع تفاوت مواد آلی و معدنی' },
+        { question: 'چرا مواد معدنی اغلب نقطه جوش بسیار بالایی دارند؟', options: ['پیوندهای یونی و شبکه بلوری قوی', 'پیوندهای ضعیف', 'ساختار غیرقطبی', 'ماهیت گازی'], answer: 'پیوندهای یونی و شبکه بلوری قوی' }
+      ],
+      veryHard: [
+        { question: 'چرا برخی مواد آلی هنگام حرارت تجزیه می‌شوند ولی مواد معدنی بی‌تغییر می‌مانند؟', options: ['تفاوت در نوع پیوندها و ساختار شیمیایی', 'تفاوت وزن مولکولی', 'مواد آلی خواص فلزی دارند', 'مواد معدنی واکنش‌پذیرتر هستند'], answer: 'تفاوت در نوع پیوندها و ساختار شیمیایی' },
+        { question: 'چگونه می‌توان از طریق طیف‌سنجی تفاوت مواد آلی و معدنی را متوجه شد؟', options: ['بازتاب نور مرئی', 'شناسایی گروه‌های عاملی مخصوص مواد آلی', 'اندازه‌گیری دما', 'تعیین نقطه ذوب'], answer: 'شناسایی گروه‌های عاملی مخصوص مواد آلی' },
+        { question: 'در واکنش کربنات کلسیم با اسید هیدروکلریک، علت آزاد شدن CO₂ چیست؟', options: ['تجزیه کربنات به یون‌های کربنات و کلسیم', 'تجزیه کربنات به دی‌اکسید کربن و آب', 'تغییر فاز بدون واکنش', 'تبخیر اسید'], answer: 'تجزیه کربنات به دی‌اکسید کربن و آب' },
+        { question: 'چرا برخی مواد آلی در آتش شعله آبی (شعله کامل) تولید می‌کنند؟', options: ['سوختن کامل با تولید CO₂ و H₂O', 'وجود فلزات سنگین', 'واکنش با اکسیژن کم', 'تولید قطران'], answer: 'سوختن کامل با تولید CO₂ و H₂O' },
+        { question: 'ترکیبات آلی با پیوندهای دوگانه چه اثری بر خواص حرارتی دارند؟', options: ['انعطاف‌پذیری بالاتر', 'افزایش نقطه ذوب و جوش', 'کاهش وزن مولکولی', 'غیرقطبی شدن'], answer: 'افزایش نقطه ذوب و جوش' },
+        { question: 'در آزمایش سوختن، بوی نامطبوع و دود سیاه چیست؟', options: ['سوختن ناقص مواد آلی', 'سوختن کامل مواد معدنی', 'اشتعال فلزات', 'تجزیه اسیدها'], answer: 'سوختن ناقص مواد آلی' },
+        { question: 'کدام یک از ترکیبات زیر، آلی نیست؟', options: ['اگزان', 'کلسیم کربنات', 'اتانول', 'پروپان'], answer: 'کلسیم کربنات' },
+        { question: 'مواد معدنی به دلیل ساختار یونی، چه خاصیتی دارند؟', options: ['رسانایی الکتریکی در حالت مذاب', 'انحلال در حلال‌های غیرقطبی', 'نقطه ذوب پایین', 'تجزیه سریع تحت حرارت ملایم'], answer: 'رسانایی الکتریکی در حالت مذاب' },
+        { question: 'واکنش اسیدی-بازی مواد معدنی چگونه است؟', options: ['همیشه گاز تولید می‌شود', 'معمولاً با آزادسازی CO₂ مخصوص کربنات‌ها', 'واکنش نداده', 'تولید بخار آب'], answer: 'معمولاً با آزادسازی CO₂ مخصوص کربنات‌ها' },
+        { question: 'چرا در برخی مواد آلی حلالیت در آب پایین است؟', options: ['ساختار غیرقطبی و عدم تعامل با آب', 'وزن مولکولی زیاد', 'وجود یون‌ها', 'پیوند یونی'], answer: 'ساختار غیرقطبی و عدم تعامل با آب' }
+      ]
+    };
+
+    let currentQuestions = { easy: 0, medium: 0, hard: 0, veryHard: 0 };
+    let score = 0;
+    let answeredQuestions = 0;
+
+    function loadQuestion(level) {
+      const quizDiv = document.getElementById(`quiz-${level}`);
+      const questionDiv = document.getElementById(`question-${level}`);
+      const optionsDiv = document.getElementById(`options-${level}`);
+      const feedbackDiv = document.getElementById(`feedback-${level}`);
+
+      if (currentQuestions[level] < quizzes[level].length) {
+        const q = quizzes[level][currentQuestions[level]];
+        questionDiv.innerText = q.question;
+        optionsDiv.innerHTML = '';
+        q.options.forEach(option => {
+          const button = document.createElement('button');
+          button.innerText = option;
+          button.className = 'bg-gray-200 px-4 py-2 rounded mr-2 hover:bg-gray-300 w-full text-right';
+          button.onclick = () => checkAnswer(level, option, q.answer);
+          optionsDiv.appendChild(button);
+        });
+        feedbackDiv.innerText = '';
+      } else {
+        quizDiv.innerHTML = `<p class="text-lg">کوئیز ${level} تمام شد! امتیاز شما: ${Math.round(score)}</p>`;
+      }
+    }
+
+    function checkAnswer(level, userAnswer, correctAnswer) {
+      const feedbackDiv = document.getElementById(`feedback-${level}`);
+      const options = document.querySelectorAll(`#options-${level} button`);
+      options.forEach(btn => {
+        btn.disabled = true;
+        if (btn.innerText === correctAnswer) {
+          btn.classList.add('correct');
+        } else if (btn.innerText === userAnswer && userAnswer !== correctAnswer) {
+          btn.classList.add('incorrect');
+        }
+      });
+      if (userAnswer === correctAnswer) {
+        feedbackDiv.innerText = 'درست!';
+        feedbackDiv.className = 'text-green-600 mt-4 text-lg';
+        score += 2.5; // هر سوال 2.5 امتیاز برای 100 در کل
+      } else {
+        feedbackDiv.innerText = 'غلط، جواب درست: ' + correctAnswer;
+        feedbackDiv.className = 'text-red-600 mt-4 text-lg';
+      }
+      answeredQuestions++;
+      updateProgress();
+      setTimeout(() => {
+        currentQuestions[level]++;
+        loadQuestion(level);
+      }, 1000);
+    }
+
+    function updateProgress() {
+      const progressPercent = (answeredQuestions / 40) * 100;
+      document.getElementById('progress').style.width = `${progressPercent}%`;
+    }
+
+    function saveNotes() {
+      const notes = document.getElementById('notes').value;
+      localStorage.setItem('userNotes', notes);
+      alert('یادداشت ذخیره شد!');
+    }
+
+    window.onload = () => {
+      document.getElementById('notes').value = localStorage.getItem('userNotes') || '';
+      loadQuestion('easy');
+      loadQuestion('medium');
+      loadQuestion('hard');
+      loadQuestion('veryHard');
+      if (!localStorage.getItem('lastVisit')) {
+        localStorage.setItem('lastVisit', new Date());
+      } else {
+        const lastVisit = new Date(localStorage.getItem('lastVisit'));
+        const now = new Date();
+        if ((now - lastVisit) / (1000 * 60 * 60) > 24) {
+          alert('وقت مرور دوباره است!');
+          localStorage.setItem('lastVisit', now);
+        }
+      }
+    };
+  </script>
+</body>
+</html>

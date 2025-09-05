@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>یادگیری کانی‌های رسی و مواد آلی خاک</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    body{font-family:'Vazir',sans-serif;direction:rtl;background:linear-gradient(to bottom right,#e0f2fe,#d1fae5)}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff');font-weight:normal}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Bold.woff') format('woff');font-weight:bold}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Light.woff') format('woff');font-weight:300}
+    .btn{transition:all 0.3s ease}.btn:hover{transform:scale(1.05);filter:brightness(1.1)}
+    .card{transition:transform 0.5s ease;transform-style:preserve-3d}.card-flipped{transform:rotateY(180deg)}
+    .card-front,.card-back{position:absolute;backface-visibility:hidden;width:100%;height:100%}.card-back{transform:rotateY(180deg)}
+    .progress-bar{transition:width 0.6s ease-in-out}
+    .modal{transition:all 0.4s ease}.modal-hidden{opacity:0;transform:scale(0.9)}.modal-visible{opacity:1;transform:scale(1)}
+    .table-container,.card-container,.chart-container{animation:slideIn 0.5s ease-in}
+    .toast{transition:opacity 0.3s ease-in-out}
+    .table-row{transition:background 0.3s ease}
+    @keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <div id="root" class="container mx-auto p-6 min-h-screen flex items-center justify-center"></div>
+  <script type="text/babel">
+    const questions=[
+      {id:1,text:"کدام یک از کانی‌های رسی دارای بالاترین ظرفیت تبادل کاتیونی (CEC) است؟",options:["الف) کائولینیت","ب) ایلیت","ج) مونت موریلونیت (اسمکتیت)","د) کلریت"],correct:2},
+      {id:2,text:"مهم‌ترین نقش مواد آلی در خاک چیست؟",options:["الف) افزایش دمای خاک","ب) بهبود ساختمان خاک و تشکیل خاکدانه","ج) کاهش نفوذپذیری آب","د) افزایش شوری خاک"],correct:1},
+      {id:3,text:"کانی رسی که خاصیت انبساط و انقباض شدیدی دارد، کدام است؟",options:["الف) ورمیکولیت","ب) ایلیت","ج) مونت موریلونیت","د) کائولینیت"],correct:2},
+      {id:4,text:"هوموس (Humus) چیست؟",options:["الف) بقایای گیاهی تازه","ب) ماده آلی کاملاً تجزیه شده و پایدار","ج) میکروارگانیسم‌های زنده خاک","د) نوعی کانی رسی"],correct:1},
+      {id:5,text:"کانی کائولینیت در کدام نوع خاک به وفور یافت می‌شود؟",options:["الف) خاک‌های جوان (Entisols)","ب) خاک‌های خشک (Aridisols)","ج) خاک‌های بسیار هوادیده گرمسیری (Oxisols)","د) خاک‌های آتشفشانی (Andisols)"],correct:2},
+      {id:6,text:"کدام گزینه در مورد هوموس نادرست است؟",options:["الف) CEC بسیار بالایی دارد.","ب) به سرعت تجزیه می‌شود.","ج) رنگ آن تیره است.","د) در تشکیل خاکدانه‌ها نقش دارد."],correct:1},
+      {id:7,text:"ساختار کانی‌های رسی از چه واحدهایی تشکیل شده است؟",options:["الف) فقط چهاروجهی‌های سیلیکا","ب) فقط هشت‌وجهی‌های آلومینا","ج) ورقه‌های چهاروجهی سیلیکا و هشت‌وجهی آلومینا","د) مکعب‌های کربنات کلسیم"],correct:2},
+      {id:8,text:"کانی ایلیت به دلیل داشتن کدام عنصر بین لایه‌ای، CEC متوسطی دارد؟",options:["الف) سدیم","ب) پتاسیم","ج) کلسیم","د) منیزیم"],correct:1},
+      {id:9,text:"کدام عامل بیشترین نقش را در تشکیل خاکدانه (aggregate) در خاک دارد؟",options:["الف) ذرات ماسه","ب) کانی‌های رسی","ج) هوموس","د) اکسیدهای آهن"],correct:2},
+      {id:10,text:"کانی رسی که در خاک‌های Vertisols غالب است، کدام است؟",options:["الف) کائولینیت","ب) ایلیت","ج) مونت موریلونیت","د) ورمیکولیت"],correct:2},
+      {id:11,text:"دلیل اصلی بار منفی در کانی‌های رسی چیست؟",options:["الف) جذب آب","ب) جانشینی همشکل (Isomorphic Substitution)","ج) وجود کاتیون‌ها","د) نور خورشید"],correct:1},
+      {id:12,text:"کانی ورمیکولیت نسبت به مونت موریلونیت انبساط کمتری دارد زیرا:",options:["الف) ذرات درشت‌تری دارد.","ب) منیزیم بین لایه‌ای دارد.","ج) فاقد بار منفی است.","د) فقط در مناطق خشک یافت می‌شود."],correct:1},
+      {id:13,text:"اولین مرحله در تشکیل مواد آلی خاک چیست؟",options:["الف) تشکیل هوموس","ب) تجزیه بقایای گیاهی و جانوری","ج) شسته شدن به اعماق خاک","د) تبدیل به کانی‌های رسی"],correct:1},
+      {id:14,text:"کدام یک از اجزای مواد آلی خاک ناپایدار و سریع‌التجزیه است؟",options:["الف) هوموس","ب) بقایای تازه گیاهی","ج) اسیدهای هیومیک","د) زیست توده میکروبی"],correct:1},
+      {id:15,text:"کدام نوع کانی رسی برای ساخت سفال و سرامیک استفاده می‌شود؟",options:["الف) مونت موریلونیت","ب) کائولینیت","ج) ایلیت","د) ورمیکولیت"],correct:1},
+      {id:16,text:"کاهش مواد آلی خاک معمولاً منجر به چه می‌شود؟",options:["الف) افزایش نفوذپذیری خاک","ب) فشردگی خاک و کاهش هواگذری","ج) افزایش ظرفیت تبادل کاتیونی","د) کاهش فرسایش آبی"],correct:1},
+      {id:17,text:"pH خاک بر بار الکتریکی کدام جزء بیشترین تأثیر را دارد؟",options:["الف) کانی‌های رسی ۱:۱ مانند کائولینیت","ب) کانی‌های رسی ۲:۱ مانند مونت موریلونیت","ج) هوموس","د) اکسیدهای آهن و آلومینیوم"],correct:2},
+      {id:18,text:"کدام کانی رسی در خاک‌های با هوادیدگی پیشرفته و leaching شدید یافت می‌شود؟",options:["الف) ایلیت","ب) مونت موریلونیت","ج) کائولینیت","د) ورمیکولیت"],correct:2},
+      {id:19,text:"کاتیون‌هایی که توسط CEC خاک جذب می‌شوند، به چه شکلی برای گیاه قابل جذب هستند؟",options:["الف) فقط به صورت adsorbed روی رس‌ها","ب) فقط به صورت محلول در آب خاک","ج) به صورت adsorbed و محلول در آب (تعادل دینامیک)","د) هیچکدام"],correct:2},
+      {id:20,text:"کدام عمل مدیریتی به حفظ و افزایش مواد آلی خاک کمک می‌کند؟",options:["الف) شخم زدن مکرر","ب) افزودن کودهای شیمیایی نیتروژنه به مقدار زیاد","ج) کشت تک‌محصولی","د) افزودن کودهای حیوانی و بقایای گیاهی (کود سبز)"],correct:3},
+      {id:21,text:"بر اساس نمودار، کدام کانی دارای کمترین CEC است؟",options:["الف) اسمکتیت","ب) ورمیکولیت","ج) ایلیت","د) کائولینیت"],correct:3},
+      {id:22,text:"کدام بخش از خاک بیشترین تأثیر را بر ظرفیت نگهداری آب و مواد غذایی دارد؟",options:["الف) ماسه","ب) سیلت","ج) رس","د) شن"],correct:2},
+      {id:23,text:"در یک نمودار که رابطه بین مقدار مواد آلی و پایداری خاکدانه‌ها را نشان می‌دهد، چه رابطه‌ای مشاهده می‌شود؟",options:["الف) رابطه معکوس","ب) رابطه مستقیم","ج) عدم وجود رابطه","د) رابطه منحنی"],correct:1},
+      {id:24,text:"کدام نمودار به درستی توالی هوادگی و تشکیل کانی‌های رسی را نشان می‌دهد؟",options:["الف) ایلیت -> اسمکتیت -> کائولینیت","ب) اسمکتیت -> ایلیت -> کائولینیت","ج) کائولینیت -> ایلیت -> اسمکتیت"],correct:0},
+      {id:25,text:"در یک خاک با بافت لومی، افزودن ماده آلی منجر به کدام تغییر فیزیکی می‌شود؟",options:["الف) افزایش چگالی ظاهری","ب) کاهش نفوذپذیری","ج) افزایش تخلخل","د) کاهش ظرفیت نگهداری آب"],correct:2},
+      {id:26,text:"کدام ترکیب از ویژگی‌ها مربوط به یک خاک حاصلخیز است؟",options:["الف) CEC بالا، ماده آلی کم، pH اسیدی","ب) CEC پایین، ماده آلی بالا، pH خنثی","ج) CEC بالا، ماده آلی بالا، pH نزدیک خنثی","د) CEC پایین، ماده آلی کم، pH قلیایی"],correct:2},
+      {id:27,text:"جانشینی همشکل (جایگزینی Si⁴⁺ با Al³⁺ در ورقه چهاروجهی) منجر به چه می‌شود؟",options:["الف) ایجاد بار مثبت در کانی","ب) ایجاد بار منفی در کانی","ج) خنثی شدن بار کانی","د) از بین رفتن ساختار کانی"],correct:1},
+      {id:28,text:"کدام گزینه به‌طور غیرمستقیم بر CEC خاک تأثیر می‌گذارد؟",options:["الف) بافت خاک","ب) مدیریت مواد آلی خاک","ج) pH خاک","د) همه گزینه‌ها"],correct:3},
+      {id:29,text:"علت اصلی تفاوت CEC بین کانی کائولینیت و مونت موریلونیت چیست؟",options:["الف) تفاوت در رنگ آن‌ها","ب) تفاوت در اندازه ذرات","ج) تفاوت در میزان بار منفی و سطح ویژه","د) تفاوت در منطقه تشکیل"],correct:2},
+      {id:30,text:"کدام عامل می‌تواند باعث تخریب و کاهش مواد آلی خاک شود؟",options:["الف) کشت و کار شدید بدون بازگشت بقایا","ب) کاهش دما","ج) افزایش رطوبت خاک","د) افزودن کودهای آلی"],correct:0},
+      {id:31,text:"هوموس عمدتاً از چه موادی تشکیل شده است؟",options:["الف) قندها و پروتئین‌های ساده","ب) لیگنین، پلی‌فنول‌ها و ترکیبات مقاوم","ج) چربی‌ها و روغن‌ها","د) ویتامین‌ها"],correct:1},
+      {id:32,text:"کانی کلریت به دلیل داشتن کدام لایه بین‌لایه‌ای، CEC پایینی دارد؟",options:["الف) لایه‌های آب","ب) لایه بروسیت (Mg-OH)","ج) یون‌های پتاسیم","د) یون‌های سدیم"],correct:1},
+      {id:33,text:"کدام نوع بار در هوموس وابسته به pH است؟",options:["الف) بار منفی دائمی","ب) بار مثبت","ج) بار متغیر (Variable Charge)","د) بار خنثی"],correct:2},
+      {id:34,text:"کانی‌های رسی در کدام اندازه ذره طبقه‌بندی می‌شوند؟",options:["الف) کمتر از ۰.۰۰۲ میلی‌متر","ب) ۰.۰۵ تا ۲ میلی‌متر","ج) ۰.۰۰۲ تا ۰.۰۵ میلی‌متر","د) بیشتر از ۲ میلی‌متر"],correct:0},
+      {id:35,text:"کدام کانی رسی در نگهداری آب و عناصر غذایی در خاک‌های حاصلخیز نقش کلیدی دارد؟",options:["الف) کائولینیت","ب) ایلیت","ج) مونت موریلونیت","د) کوارتز"],correct:2},
+      {id:36,text:"اسیدهای هیومیک و فولویک از اجزای اصلی کدام بخش از خاک هستند؟",options:["الف) بخش معدنی","ب) مواد آلی (هوموس)","ج) آب خاک","د) هوای خاک"],correct:1},
+      {id:37,text:"چه عواملی بر سرعت تجزیه مواد آلی در خاک تأثیر می‌گذارند؟",options:["الف) دما، رطوبت، نسبت C/N","ب) فقط نوع گیاه","ج) فقط بافت خاک","د) فقط pH خاک"],correct:0},
+      {id:38,text:"دلیل اصلی حاصلخیزی بالای خاک‌های Mollisols چیست؟",options:["الف) داشتن افق آرجیلیک","ب) داشتن افق اکسیک","ج) داشتن افق مولیک (غنی از ماده آلی)","د) داشتن افق اسپودیک"],correct:2},
+      {id:39,text:"از دیدگاه کشاورزی، خاکی با کدام ویژگی مطلوب‌تر است؟",options:["الف) CEC بالا و ماده آلی پایین","ب) CEC پایین و ماده آلی بالا","ج) CEC بالا و ماده آلی بالا","د) CEC پایین و ماده آلی پایین"],correct:2},
+      {id:40,text:"کانی‌های رسی عمدتاً از هوادگی کدام دسته از کانی‌های اولیه تشکیل می‌شوند؟",options:["الف) کوارتز","ب) فلدسپات‌ها","ج) میکاها","د) کربنات‌ها"],correct:1}
+    ];
+    const flashcards=[
+      {id:1,question:"کانی رسی با بالاترین CEC؟",answer:"مونت موریلونیت (اسمکتیت)"},
+      {id:2,question:"پایدارترین جزء مواد آلی خاک؟",answer:"هوموس"},
+      {id:3,question:"کانی رسی اصلی در Vertisols؟",answer:"مونت موریلونیت"},
+      {id:4,question:"کانی رسی با ساختار ۱:۱؟",answer:"کائولینیت"},
+      {id:5,question:"عامل ایجاد بار منفی دائمی در رس؟",answer:"جانشینی همشکل"},
+      {id:6,question:"نقش اصلی مواد آلی در خاک؟",answer:"بهبود ساختمان خاک (خاکدانه‌سازی)"},
+      {id:7,question:"کانی رسی حاوی پتاسیم بین لایه‌ای؟",answer:"ایلیت"},
+      {id:8,question:"محدوده اندازه ذرات رس؟",answer:"کمتر از ۰.۰۰۲ میلی‌متر"},
+      {id:9,question:"ماده‌ای با CEC بالاتر از رس؟",answer:"هوموس"},
+      {id:10,question:"کانی رسی غالب در Oxisols؟",answer:"کائولینیت و اکسیدهای آهن"},
+      {id:11,question:"عامل انبساط و انقباض برخی رس‌ها؟",answer:"جذب و دفع آب توسط کانی‌های ۲:۱ انبساط‌پذیر"},
+      {id:12,question:"ترکیبات اصلی تشکیل‌دهنده هوموس؟",answer:"اسیدهای هیومیک و فولویک"},
+      {id:13,question:"واحد ساختاری کانی‌های رسی؟",answer:"ورقه‌های چهاروجهی سیلیکا و هشت‌وجهی آلومینا"},
+      {id:14,question:"مدیریتی که مواد آلی را کاهش می‌دهد؟",answer:"شخم مکرر و عدم بازگشت بقایا"},
+      {id:15,question:"pHی که بار متغیر هوموس را تحت تأثیر قرار می‌دهد؟",answer:"pH پایین (اسیدی)"},
+      {id:16,question:"کانی که برای سفالسازی استفاده می‌شود؟",answer:"کائولینیت"},
+      {id:17,question:"رابطه بین ماده آلی و ظرفیت نگهداری آب؟",answer:"رابطه مستقیم"},
+      {id:18,question:"عامل چسبندگی در تشکیل خاکدانه؟",answer:"هوموس و اکسیدهای آهن"},
+      {id:19,question:"توالی هوادگی کانی‌های رسی؟",answer:"ایلیت -> اسمکتیت -> کائولینیت"},
+      {id:20,question:"کانی با انبساط محدود به دلیل Mg بین لایه‌ای؟",answer:"ورمیکولیت"}
+    ];
+    const clayTable=[
+      {name:"کائولینیت (۱:۱)",structure:"متناوب",cec:"3-15",expansion:"بسیار کم",environment:"هوادگی پیشرفته",soil:"Oxisols"},
+      {name:"ایلیت (۲:۱)",structure:"غیر انبساط‌پذیر",cec:"20-40",expansion:"کم",environment:"هوادگی متوسط",soil:"widespread"},
+      {name:"مونت موریلونیت (۲:۱)",structure:"انبساط‌پذیر",cec:"80-150",expansion:"بسیار زیاد",environment:"هوادگی کم",soil:"Vertisols"},
+      {name:"ورمیکولیت (۲:۱)",structure:"انبساط‌پذیر محدود",cec:"100-150",expansion:"متوسط",environment:"هوادگی متوسط",soil:"-"}
+    ];
+    const comparisonTable=[
+      {feature:"منشأ",clay:"معدنی (هوادگی)",humus:"آلی (تجزیه)"},
+      {feature:"سرعت تشکیل",clay:"کند",humus:"نسبتاً سریع‌تر"},
+      {feature:"پایداری",clay:"بسیار پایدار",humus:"نیمه پایدار"},
+      {feature:"CEC",clay:"متوسط تا بالا",humus:"بسیار بالا"},
+      {feature:"نقش در ساختمان خاک",clay:"متوسط (بسته به نوع)",humus:"اصلی و بسیار مهم"},
+      {feature:"تأثیرپذیری از مدیریت",clay:"کم",humus:"بسیار زیاد"}
+    ];
+    const tips=[
+      "CEC: هوموس > اسمکتیت > ورمیکولیت > ایلیت > کائولینیت",
+      "ساختمان خاک: هوموس قهرمان اصلی تشکیل خاکدانه است",
+      "مونت موریلونیت عامل اصلی انبساط و انقباض در Vertisols",
+      "کائولینیت در خاک‌های قدیمی و گرمسیری (Oxisols, Ultisols) با CEC پایین",
+      "بار منفی رس‌ها عمدتاً ناشی از جانشینی همشکل است",
+      "هوموس: پایدار، تیره‌رنگ، با CEC بسیار بالا",
+      "مدیریت: کودهای حیوانی، کود سبز و کاهش شخم برای افزایش ماده آلی",
+      "تأثیر pH: بار هوموس و کائولینیت وابسته به pH است (بار متغیر)",
+      "کاتیون‌های جذب‌شده در تعادل پویا با محلول خاک برای جذب گیاه",
+      "توالی هوادگی: ایلیت -> اسمکتیت -> کائولینیت -> اکسیدها"
+    ];
+    function App(){
+      const [mode,setMode]=React.useState('quiz'); // 'quiz', 'flashcards', 'clayTable', 'comparisonTable', 'tips', 'charts'
+      const [questionIndex,setQuestionIndex]=React.useState(0);
+      const [selected,setSelected]=React.useState(null);
+      const [feedback,setFeedback]=React.useState(null);
+      const [score,setScore]=React.useState(0);
+      const [showModal,setShowModal]=React.useState(false);
+      const [currentFlashcardIndex,setCurrentFlashcardIndex]=React.useState(0);
+      const [isFlipped,setIsFlipped]=React.useState(false);
+      const [usedFlashcardIndices,setUsedFlashcardIndices]=React.useState([]);
+      const [showToast,setShowToast]=React.useState(false);
+      const [filter,setFilter]=React.useState('');
+      const chartRef1=React.useRef(null);
+      const chartRef2=React.useRef(null);
+      const chartRef3=React.useRef(null);
+      React.useEffect(()=>{
+        if(mode==='charts'&&chartRef1.current){
+          new Chart(chartRef1.current,{
+            type:'line',
+            data:{
+              labels:[0,1,2,3,4,5],
+              datasets:[{
+                label:'پایداری خاکدانه‌ها',
+                data:[0,20,40,60,80,100],
+                borderColor:'rgb(16,185,129)',
+                tension:0.1
+              }]
+            },
+            options:{scales:{x:{title:{display:true,text:'مقدار ماده آلی (%)'}},y:{title:{display:true,text:'پایداری خاکدانه‌ها'}}}}
+          });
+        }
+        if(mode==='charts'&&chartRef2.current){
+          new Chart(chartRef2.current,{
+            type:'bar',
+            data:{
+              labels:['ماسه','سیلت','رس','هوموس'],
+              datasets:[{
+                label:'ظرفیت تبادل کاتیونی (cmol+/kg)',
+                data:[1,5,50,200],
+                backgroundColor:['#f87171','#facc15','#10b981','#2563eb']
+              }]
+            },
+            options:{scales:{y:{beginAtZero:true,title:{display:true,text:'CEC (cmol+/kg)'}}}}
+          });
+        }
+        if(mode==='charts'&&chartRef3.current){
+          new Chart(chartRef3.current,{
+            type:'line',
+            data:{
+              labels:[2,4,6,8,10],
+              datasets:[
+                {label:'هوموس/کائولینیت',data:[10,20,50,80,90],borderColor:'rgb(16,185,129)',tension:0.3},
+                {label:'رس‌های ۲:۱',data:[80,80,80,80,80],borderColor:'rgb(37,99,235)',tension:0}
+              ]
+            },
+            options:{scales:{x:{title:{display:true,text:'pH خاک'}},y:{title:{display:true,text:'بار منفی'}}}}
+          });
+        }
+        return()=>{if(chartRef1.current)chartRef1.current.getContext('2d').clearRect(0,0,chartRef1.current.width,chartRef1.current.height);if(chartRef2.current)chartRef2.current.getContext('2d').clearRect(0,0,chartRef2.current.width,chartRef2.current.height);if(chartRef3.current)chartRef3.current.getContext('2d').clearRect(0,0,chartRef3.current.width,chartRef3.current.height);};
+      },[mode]);
+      const handleSelect=(index)=>{
+        if(feedback==='correct')return;
+        setSelected(index);
+        const q=questions[questionIndex];
+        const isCorrect=index===q.correct;
+        if(isCorrect){
+          setFeedback('correct');
+          if(selected===null){
+            setScore(prev=>prev+1);
+          }
+          setTimeout(nextQuestion,1000);
+        }else{
+          setFeedback('incorrect');
+          setTimeout(() => {
+            setFeedback(null);
+            setSelected(null);
+          }, 2000);
+        }
+      };
+      const nextQuestion=()=>{
+        setSelected(null);
+        setFeedback(null);
+        if(questionIndex+1<questions.length){
+          setQuestionIndex(prev=>prev+1);
+        }else{
+          setShowModal(true);
+        }
+      };
+      const resetQuiz=()=>{
+        setQuestionIndex(0);
+        setSelected(null);
+        setFeedback(null);
+        setScore(0);
+        setShowModal(false);
+      };
+      const handleFlip=()=>{
+        setIsFlipped(!isFlipped);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 1000);
+      };
+      const handleNextFlashcard=()=>{
+        let nextIndex;
+        if(usedFlashcardIndices.length===flashcards.length){
+          setUsedFlashcardIndices([]);
+        }
+        do{
+          nextIndex=Math.floor(Math.random()*flashcards.length);
+        }while(usedFlashcardIndices.includes(nextIndex));
+        setUsedFlashcardIndices([...usedFlashcardIndices,nextIndex]);
+        setCurrentFlashcardIndex(nextIndex);
+        setIsFlipped(false);
+      };
+      const switchMode=(newMode)=>{
+        setMode(newMode);
+        setQuestionIndex(0);
+        setSelected(null);
+        setFeedback(null);
+        setScore(0);
+        setShowModal(false);
+        setCurrentFlashcardIndex(0);
+        setIsFlipped(false);
+        setUsedFlashcardIndices([]);
+        setShowToast(false);
+        setFilter('');
+      };
+      const filteredClayTable=clayTable.filter(row=>
+        row.name.toLowerCase().includes(filter.toLowerCase())||
+        row.structure.toLowerCase().includes(filter.toLowerCase())||
+        row.cec.toLowerCase().includes(filter.toLowerCase())||
+        row.expansion.toLowerCase().includes(filter.toLowerCase())||
+        row.environment.toLowerCase().includes(filter.toLowerCase())||
+        row.soil.toLowerCase().includes(filter.toLowerCase())
+      );
+      const filteredComparisonTable=comparisonTable.filter(row=>
+        row.feature.toLowerCase().includes(filter.toLowerCase())||
+        row.clay.toLowerCase().includes(filter.toLowerCase())||
+        row.humus.toLowerCase().includes(filter.toLowerCase())
+      );
+      const quizProgress=(questionIndex/questions.length)*100;
+      const flashcardProgress=(usedFlashcardIndices.length/flashcards.length)*100;
+      return (
+        <div class="max-w-4xl mx-auto bg-white shadow-2xl rounded-2xl p-8">
+          <h1 class="text-3xl font-bold text-emerald-600 text-center mb-6">یادگیری کانی‌های رسی و مواد آلی خاک</h1>
+          <div class="flex flex-wrap justify-center gap-4 mb-6">
+            {['quiz','flashcards','clayTable','comparisonTable','tips','charts'].map(m=>(
+              <button
+                key={m}
+                onClick={()=>switchMode(m)}
+                class={`px-6 py-3 rounded-xl shadow-lg btn ${mode===m?'bg-emerald-600 text-white':'bg-gray-200 text-gray-800'}`}
+              >
+                {m==='quiz'?'آزمون':m==='flashcards'?'فلش‌کارت‌ها':m==='clayTable'?'جدول کانی‌های رسی':m==='comparisonTable'?'مقایسه رس و هوموس':m==='tips'?'نکات کلیدی':m==='charts'?'نمودارها':''}
+              </button>
+            ))}
+          </div>
+          {mode==='quiz'&&(
+            <div class="question-card">
+              <div class="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden">
+                <div class="bg-gradient-to-r from-emerald-600 to-yellow-400 h-4 rounded-full progress-bar" style={{width:`${quizProgress}%`}}></div>
+              </div>
+              <p class="text-center text-gray-600 mb-4 font-medium">سوال {questionIndex+1} از {questions.length}</p>
+              <p class="font-semibold text-xl text-gray-800 mb-8">{questions[questionIndex].text}</p>
+              <div class="grid grid-cols-2 gap-4">
+                {questions[questionIndex].options.map((opt,i)=>(
+                  <button
+                    key={i}
+                    onClick={()=>handleSelect(i)}
+                    class={`w-full p-4 text-lg font-medium rounded-xl shadow-lg btn text-center ${
+                      i===0?'bg-rose-600 hover:bg-rose-700 text-white':
+                      i===1?'bg-emerald-600 hover:bg-emerald-700 text-white':
+                      i===2?'bg-yellow-400 hover:bg-yellow-500 text-gray-800':
+                      'bg-blue-600 hover:bg-blue-700 text-white'
+                    } ${selected===i&&feedback==='incorrect'?'bg-rose-200 text-rose-800':feedback==='correct'&&i===questions[questionIndex].correct?'bg-emerald-200 text-emerald-800':''} ${feedback==='correct'?'cursor-not-allowed opacity-60':''}`}
+                    disabled={feedback==='correct'}
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+              {feedback==='incorrect'&&(
+                <p class="text-rose-600 mt-6 text-center flex items-center justify-center font-medium">
+                  <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                  اشتباه! پاسخ صحیح: {questions[questionIndex].options[questions[questionIndex].correct]}
+                </p>
+              )}
+              {feedback==='correct'&&(
+                <p class="text-emerald-600 mt-6 text-center flex items-center justify-center font-medium">
+                  <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  درست!
+                </p>
+              )}
+              {showModal&&(
+                <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center modal modal-visible">
+                  <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
+                    <h2 class="text-2xl font-bold text-emerald-600 mb-6">نتایج آزمون</h2>
+                    <p class="text-lg text-gray-600 mb-4">نمره: {score} از {questions.length}</p>
+                    <button
+                      onClick={resetQuiz}
+                      class="bg-gradient-to-r from-emerald-600 to-yellow-400 text-white px-6 py-3 rounded-xl hover:from-emerald-700 hover:to-yellow-500 btn shadow-lg"
+                    >
+                      شروع مجدد
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          {mode==='flashcards'&&(
+            <div class="card-container">
+              <div class="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden">
+                <div class="bg-gradient-to-r from-emerald-600 to-yellow-400 h-4 rounded-full progress-bar" style={{width:`${flashcardProgress}%`}}></div>
+              </div>
+              <p class="text-center text-gray-600 mb-4 font-medium">کارت {usedFlashcardIndices.length+1} از {flashcards.length}</p>
+              <div class={`relative w-full h-64 bg-white rounded-xl shadow-lg card ${isFlipped?'card-flipped':''}`}>
+                <div class="card-front bg-white rounded-xl flex items-center justify-center p-6 text-center">
+                  <p class="text-xl font-medium text-gray-800">{flashcards[currentFlashcardIndex].question}</p>
+                </div>
+                <div class="card-back bg-emerald-100 rounded-xl flex items-center justify-center p-6 text-center">
+                  <p class="text-xl font-medium text-emerald-800">{flashcards[currentFlashcardIndex].answer}</p>
+                </div>
+              </div>
+              {showToast&&(
+                <div class="toast fixed top-4 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-4 py-2 rounded-xl shadow-lg">
+                  {isFlipped?'پاسخ نمایش داده شد!':'سوال نمایش داده شد!'}
+                </div>
+              )}
+              <div class="flex justify-center mt-6 gap-4">
+                <button
+                  onClick={handleFlip}
+                  class="bg-rose-600 text-white px-6 py-3 rounded-xl hover:bg-rose-700 btn shadow-lg"
+                >
+                  نمایش پاسخ
+                </button>
+                <button
+                  onClick={handleNextFlashcard}
+                  class="bg-gradient-to-r from-emerald-600 to-yellow-400 text-white px-6 py-3 rounded-xl hover:from-emerald-700 hover:to-yellow-500 btn shadow-lg"
+                >
+                  کارت بعدی
+                </button>
+              </div>
+            </div>
+          )}
+          {mode==='clayTable'&&(
+            <div class="table-container">
+              <h2 class="text-2xl font-bold text-blue-600 mb-4">مقایسه کانی‌های رسی</h2>
+              <input
+                type="text"
+                value={filter}
+                onChange={e=>setFilter(e.target.value)}
+                placeholder="فیلتر بر اساس نام، ساختار، CEC، انبساط، محیط یا خاک..."
+                class="w-full p-3 mb-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse">
+                  <thead>
+                    <tr class="bg-blue-600 text-white">
+                      <th class="p-3">نام</th>
+                      <th class="p-3">ساختار</th>
+                      <th class="p-3">CEC (cmol+/kg)</th>
+                      <th class="p-3">انبساط با آب</th>
+                      <th class="p-3">محیط تشکیل</th>
+                      <th class="p-3">خاک مرتبط</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredClayTable.map(row=>(
+                      <tr key={row.name} class="table-row border-b hover:bg-blue-50">
+                        <td class="p-3">{row.name}</td>
+                        <td class="p-3">{row.structure}</td>
+                        <td class="p-3">{row.cec}</td>
+                        <td class="p-3">{row.expansion}</td>
+                        <td class="p-3">{row.environment}</td>
+                        <td class="p-3">{row.soil}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+          {mode==='comparisonTable'&&(
+            <div class="table-container">
+              <h2 class="text-2xl font-bold text-blue-600 mb-4">مقایسه کانی رسی و هوموس</h2>
+              <input
+                type="text"
+                value={filter}
+                onChange={e=>setFilter(e.target.value)}
+                placeholder="فیلتر بر اساس ویژگی، کانی رسی یا هوموس..."
+                class="w-full p-3 mb-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse">
+                  <thead>
+                    <tr class="bg-blue-600 text-white">
+                      <th class="p-3">ویژگی</th>
+                      <th class="p-3">کانی‌های رسی</th>
+                      <th class="p-3">هوموس</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredComparisonTable.map(row=>(
+                      <tr key={row.feature} class="table-row border-b hover:bg-blue-50">
+                        <td class="p-3">{row.feature}</td>
+                        <td class="p-3">{row.clay}</td>
+                        <td class="p-3">{row.humus}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+          {mode==='tips'&&(
+            <div class="table-container">
+              <h2 class="text-2xl font-bold text-blue-600 mb-4">نکات کلیدی برای امتحان</h2>
+              <ul class="list-disc pr-6 text-gray-600">
+                {tips.map((tip,i)=>(
+                  <li key={i} class="p-2 hover:bg-emerald-50 rounded transition-colors">{tip}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {mode==='charts'&&(
+            <div class="chart-container">
+              <h2 class="text-2xl font-bold text-blue-600 mb-4">نمودارهای مفهومی</h2>
+              <div class="space-y-8">
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-800 mb-2">نمودار ۱: رابطه ماده آلی و پایداری خاکدانه‌ها</h3>
+                  <canvas ref={chartRef1} class="w-full h-64"></canvas>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-800 mb-2">نمودار ۲: مقایسه CEC اجزای خاک</h3>
+                  <canvas ref={chartRef2} class="w-full h-64"></canvas>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-800 mb-2">نمودار ۳: تأثیر pH بر بار متغیر</h3>
+                  <canvas ref={chartRef3} class="w-full h-64"></canvas>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    ReactDOM.render(<App/>,document.getElementById('root'));
+  </script>
+</body>
+</html>

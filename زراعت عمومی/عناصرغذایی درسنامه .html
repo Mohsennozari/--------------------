@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>درسنامه زراعت عمومی: مدیریت عناصر غذایی</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#059669',
+                        secondary: '#FBBF24',
+                        highlight: '#FEF3C7', // برای مطالب مهم
+                    },
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans transition-colors duration-300">
+    <!-- Navigation Bar -->
+    <nav class="bg-primary text-white p-4 fixed w-full top-0 shadow-lg z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">درسنامه زراعت عمومی</h1>
+            <div class="flex space-x-4">
+                <a href="#intro" class="hover:underline">مقدمه</a>
+                <a href="#macro" class="hover:underline">عناصر پرمصرف</a>
+                <a href="#micro" class="hover:underline">عناصر کم‌مصرف</a>
+                <a href="#cycle" class="hover:underline">چرخه</a>
+                <a href="#ranges" class="hover:underline">دامنه تأمین</a>
+                <a href="#sources" class="hover:underline">منابع کودها</a>
+                <a href="#application" class="hover:underline">کاربرد کودها</a>
+                <a href="#quiz" class="hover:underline">کوئیز</a>
+                <a href="#flashcards" class="hover:underline">فلش‌کارت</a>
+            </div>
+            <button id="theme-toggle" class="bg-secondary text-primary px-2 py-1 rounded">تم تاریک/روشن</button>
+        </div>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="fixed top-16 left-0 w-full h-2 bg-gray-300 z-10">
+        <div id="progress-bar" class="h-full bg-primary transition-all duration-300" style="width: 0%;"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 mt-20">
+        <!-- Search Bar -->
+        <input type="text" id="search" placeholder="جستجو در محتوا..." class="w-full p-2 mb-4 border rounded dark:bg-gray-800 dark:border-gray-700">
+
+        <!-- Section: مقدمه -->
+        <section id="intro" class="mb-8 p-4 border border-gray-300 rounded bg-white dark:bg-gray-800 dark:border-gray-700">
+            <h2 class="text-2xl font-bold mb-4">مقدمه و عناصر ضروری غذایی گیاهان</h2>
+            <p class="mb-2">گیاهان به ۱۷ عنصر غذایی ضروری نیاز دارند: C, H, O, N, P, K, Ca, Mg, S, Fe, Zn, Cu, Mn, B, Mo, Cl, Ni. C, H, O از هوا و آب، بقیه از خاک. معیارهای ضروری بودن (Arnon & Stout, 1939): تکمیل چرخه زندگی، منحصربه‌فرد بودن نقش، نقش مستقیم در متابولیسم.</p>
+            <p class="mb-2 bg-highlight p-2 rounded">طبقه‌بندی: پرمصرف (N, P, K, Ca, Mg, S) >۱۰۰۰ µg/g خشک؛ کم‌مصرف <۱۰۰ µg/g خشک.</p>
+            <p>چرخه: برداشت محصول عناصر رو خارج می‌کنه، باید جبران بشه.</p>
+        </section>
+
+        <!-- Section: عناصر پرمصرف -->
+        <section id="macro" class="mb-8 p-4 border border-gray-300 rounded bg-white dark:bg-gray-800 dark:border-gray-700">
+            <h2 class="text-2xl font-bold mb-4">عناصر پرمصرف</h2>
+            <table class="w-full border-collapse border border-gray-300 dark:border-gray-700">
+                <thead>
+                    <tr class="bg-primary text-white">
+                        <th class="p-2">عنصر</th>
+                        <th class="p-2">نقش</th>
+                        <th class="p-2">کمبود</th>
+                        <th class="p-2">بیش‌بود</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="p-2 border">N</td>
+                        <td class="p-2 border">کلروفیل، پروتئین، رشد رویشی</td>
+                        <td class="p-2 border bg-highlight">زردی برگ‌های مسن</td>
+                        <td class="p-2 border bg-highlight">رشد بیش‌ازحد، حساسیت به آفات</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">P</td>
+                        <td class="p-2 border">ATP, DNA, رشد ریشه</td>
+                        <td class="p-2 border bg-highlight">ارغوانی برگ‌ها</td>
+                        <td class="p-2 border bg-highlight">کمبود Fe, Zn</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">K</td>
+                        <td class="p-2 border">فعال‌سازی آنزیم‌ها, مقاومت به تنش</td>
+                        <td class="p-2 border bg-highlight">زردی حاشیه برگ‌ها</td>
+                        <td class="p-2 border bg-highlight">کمبود Ca, Mg</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">Ca</td>
+                        <td class="p-2 border">دیواره سلولی, تعدیل هورمون‌ها</td>
+                        <td class="p-2 border bg-highlight">بافت‌مردگی برگ‌های جوان</td>
+                        <td class="p-2 border bg-highlight">کمبود P, K, Mg</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">Mg</td>
+                        <td class="p-2 border">مرکزی کلروفیل, انتقال انرژی</td>
+                        <td class="p-2 border bg-highlight">زردی نواری برگ‌ها</td>
+                        <td class="p-2 border bg-highlight">کمبود Ca, K</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">S</td>
+                        <td class="p-2 border">اسیدهای آمینه, ویتامین‌ها</td>
+                        <td class="p-2 border bg-highlight">زردی برگ‌های جوان</td>
+                        <td class="p-2 border bg-highlight">کاهش جذب NO3-, MoO4-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section: عناصر کم‌مصرف -->
+        <section id="micro" class="mb-8 p-4 border border-gray-300 rounded bg-white dark:bg-gray-800 dark:border-gray-700">
+            <h2 class="text-2xl font-bold mb-4">عناصر کم‌مصرف</h2>
+            <table class="w-full border-collapse border border-gray-300 dark:border-gray-700">
+                <thead>
+                    <tr class="bg-primary text-white">
+                        <th class="p-2">عنصر</th>
+                        <th class="p-2">نقش</th>
+                        <th class="p-2">کمبود</th>
+                        <th class="p-2">بیش‌بود</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="p-2 border">Fe</td>
+                        <td class="p-2 border">انتقال الکترون, کلروفیل</td>
+                        <td class="p-2 border bg-highlight">زردی بین‌رگبرگی جوان</td>
+                        <td class="p-2 border bg-highlight">زردی, بافت‌مردگی</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">Zn</td>
+                        <td class="p-2 border">سنتز سیتوکروم, اکسین</td>
+                        <td class="p-2 border bg-highlight">کوتولگی, سفید شدن</td>
+                        <td class="p-2 border bg-highlight">کاهش جذب P, Cu</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">Cu</td>
+                        <td class="p-2 border">اکسیداسیون, فتوسنتز</td>
+                        <td class="p-2 border bg-highlight">سبز تیره, بافت‌مردگی</td>
+                        <td class="p-2 border bg-highlight">زردی, کوتولگی</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">Mn</td>
+                        <td class="p-2 border">سنتز کلروفیل, انتقال الکترون</td>
+                        <td class="p-2 border bg-highlight">زردی بین‌رگبرگی با نکروز</td>
+                        <td class="p-2 border bg-highlight">لکه‌های قهوه‌ای</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">B</td>
+                        <td class="p-2 border">طویل شدن سلول, غشا</td>
+                        <td class="p-2 border bg-highlight">نکروزه جوانه‌ها</td>
+                        <td class="p-2 border bg-highlight">کاهش فتوسنتز</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 border">Mo</td>
+                        <td class="p-2 border">تثبیت N, احیای نیترات</td>
+                        <td class="p-2 border bg-highlight">تجمع نیترات, کمبود N</td>
+                        <td class="p-2 border bg-highlight">ریزش برگ‌ها</td>
+                    </tr>
+                    <!-- Cl و Ni را اگر محتوا داشت اضافه کن -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section: چرخه -->
+        <section id="cycle" class="mb-8 p-4 border border-gray-300 rounded bg-white dark:bg-gray-800 dark:border-gray-700">
+            <h2 class="text-2xl font-bold mb-4">عناصر غذایی در چرخه تولید و مصرف</h2>
+            <p class="mb-2">با برداشت محصول، عناصر از خاک خارج می‌شوند و باید جبران شوند. چرخه می‌تواند بسته شود از طریق گیاهان, میکروب‌ها, حیوانات یا انسان (بازگشت مواد زاید).</p>
+            <p class="bg-highlight p-2 rounded">نکته مهم: چرخه در مقیاس مزرعه.</p>
+        </section>
+
+        <!-- Section: دامنه تأمین -->
+        <section id="ranges" class="mb-8 p-4 border border-gray-300 rounded bg-white dark:bg-gray-800 dark:border-gray-700">
+            <h2 class="text-2xl font-bold mb-4">دامنه تأمین عناصر غذایی</h2>
+            <ul class="list-disc pl-6">
+                <li class="mb-2 bg-highlight p-2 rounded">کمبود شدید: علامت ظاهری + رشد ضعیف</li>
+                <li class="mb-2">کمبود پنهان: بدون علامت اما کاهش عملکرد</li>
+                <li class="mb-2">بهینه: رشد بیشینه</li>
+                <li class="mb-2 bg-highlight p-2 rounded">لوکس: بیش‌ازحد بدون اثر منفی اما کاهش کارایی</li>
+                <li class="mb-2">سمیت خفیف: کاهش رشد بدون علامت</li>
+                <li class="mb-2 bg-highlight p-2 rounded">سمیت شدید: کاهش شدید عملکرد + بیماری‌ها</li>
+            </ul>
+        </section>
+
+        <!-- Section: منابع کودها -->
+        <section id="sources" class="mb-8 p-4 border border-gray-300 rounded bg-white dark:bg-gray-800 dark:border-gray-700">
+            <h2 class="text-2xl font-bold mb-4">منابع عناصر غذایی و اصلاح‌کننده‌ها</h2>
+            <h3 class="text-xl font-bold mb-2">کودهای شیمیایی</h3>
+            <p class="mb-2">انواع: کامل, غیرکامل, ساده, مرکب, مخلوط. بر اساس عنصر: نیتروژنه (آمونیومی, نیتراتی, etc.), فسفره (سوپرفسفات, تریپل), پتاسه (سولفات, کلرور), میکرو, متفرقه.</p>
+            <h3 class="text-xl font-bold mb-2">کودهای آلی</h3>
+            <p class="mb-2 bg-highlight p-2 rounded">دامی (گاو/گوسفند/طیور, 10-50 تن/هکتار, پوسیده), سبز (بقولات مثل شبدر/یونجه, معادل 10-20 تن دامی), کمپوست/ورمی (از بقایا, ظرفیت رطوبت بالا).</p>
+            <h3 class="text-xl font-bold mb-2">کودهای زیستی</h3>
+            <p class="mb-2">حاوی میکروارگانیسم‌های مفید (باکتریایی, قارچی, etc.). نقش: تثبیت N (ریزوبیوم, ازتوباکتر), حل فسفات, محرک رشد. مزایا: بهبود خاک, افزایش محصول, کاهش آلودگی.</p>
+        </section>
+
+        <!-- Section: کاربرد کودها -->
+        <section id="application" class="mb-8 p-4 border border-gray-300 rounded bg-white dark:bg-gray-800 dark:border-gray-700">
+            <h2 class="text-2xl font-bold mb-4">کاربرد کودها</h2>
+            <p class="mb-2">زمان: پایه (قبل/همزمان کاشت), سرک (پس از رویش).</p>
+            <h3 class="text-xl font-bold mb-2">روش‌ها</h3>
+            <ul class="list-disc pl-6">
+                <li class="mb-2 bg-highlight p-2 rounded">تزریقی: آمونیاک مایع, 10-15 روز قبل کاشت</li>
+                <li class="mb-2">پراکندن: سطحی با دست/کودپاش, مخلوط با خاک</li>
+                <li class="mb-2 bg-highlight p-2 rounded">نواری: 2-5 cm عرض, 5-7 cm فاصله از بذر</li>
+                <li class="mb-2">کناری: کنار ردیف‌ها برای سرک</li>
+                <li class="mb-2 bg-highlight p-2 rounded">کودآبیاری: حل در آب بارانی/قطره‌ای</li>
+                <li class="mb-2">محلول‌پاشی: عمدتا ریزمغذی روی برگ</li>
+            </ul>
+            <p class="bg-highlight p-2 rounded">نکته شوری خاک: کاشت نزدیک داغ‌آب, دو ردیف.</p>
+        </section>
+
+        <!-- Quiz Section -->
+        <section id="quiz" class="mb-8 p-4 border border-gray-300 rounded bg-white dark:bg-gray-800 dark:border-gray-700">
+            <h2 class="text-2xl font-bold mb-4">کوئیز تعاملی</h2>
+            <div id="quiz-container" class="space-y-4">
+                <!-- JS will populate -->
+            </div>
+            <button id="submit-quiz" class="bg-primary text-white px-4 py-2 rounded">ارسال پاسخ‌ها</button>
+            <p id="quiz-score" class="mt-4"></p>
+        </section>
+
+        <!-- Flashcards Section -->
+        <section id="flashcards" class="mb-8 p-4 border border-gray-300 rounded bg-white dark:bg-gray-800 dark:border-gray-700">
+            <h2 class="text-2xl font-bold mb-4">فلش‌کارت‌ها</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="flashcard bg-white dark:bg-gray-800 p-4 rounded shadow cursor-pointer" onclick="this.classList.toggle('flipped')">
+                    <div class="front">نیتروژن: نقش؟</div>
+                    <div class="back">تشکیل کلروفیل و پروتئین</div>
+                </div>
+                <!-- اضافه کردن برای همه عناصر -->
+                <div class="flashcard bg-white dark:bg-gray-800 p-4 rounded shadow cursor-pointer" onclick="this.classList.toggle('flipped')">
+                    <div class="front">فسفر: کمبود؟</div>
+                    <div class="back">ارغوانی شدن برگ‌ها</div>
+                </div>
+                <!-- و غیره برای همه -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Theme Toggle
+        const toggle = document.getElementById('theme-toggle');
+        toggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+        });
+        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+
+        // Progress Bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress-bar').style.width = scrolled + '%';
+        });
+
+        // Search
+        const search = document.getElementById('search');
+        search.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            document.querySelectorAll('section').forEach(sec => {
+                sec.style.display = sec.textContent.toLowerCase().includes(term) ? 'block' : 'none';
+            });
+        });
+
+        // Quiz with more questions
+        const questions = [
+            { q: 'نیتروژن در چه فرمی جذب می‌شه؟', options: ['NO3-', 'NH4+', 'هر دو', 'هیچ‌کدوم'], ans: 2 },
+            { q: 'کمبود فسفر چه علامتی دارد؟', options: ['زردی برگ', 'ارغوانی برگ', 'سوختگی حاشیه', 'کوتولگی'], ans: 1 },
+            // اضافه کردن سوالات بیشتر از محتوا, مثل برای هر عنصر
+            { q: 'دامنه لوکس چیست؟', options: ['کمبود شدید', 'بیش‌ازحد بدون اثر منفی', 'سمیت', 'بهینه'], ans: 1 },
+            { q: 'کود سبز معادل چند تن کود دامی است؟', options: ['5-10', '10-20', '20-30', '30-40'], ans: 1 },
+        ];
+        const quizContainer = document.getElementById('quiz-container');
+        questions.forEach((q, i) => {
+            const div = document.createElement('div');
+            div.innerHTML = `<p>${q.q}</p>${q.options.map((opt, j) => `<label><input type="radio" name="q${i}" value="${j}">${opt}</label>`).join('<br>')}`;
+            quizContainer.appendChild(div);
+        });
+        document.getElementById('submit-quiz').addEventListener('click', () => {
+            let score = 0;
+            questions.forEach((q, i) => {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected && parseInt(selected.value) === q.ans) score++;
+            });
+            document.getElementById('quiz-score').textContent = `امتیاز: ${score}/${questions.length}`;
+        });
+
+        // Flashcard Styles
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .flashcard { perspective: 1000px; height: 200px; }
+            .flashcard.flipped .front { transform: rotateY(180deg); }
+            .flashcard.flipped .back { transform: rotateY(0deg); }
+            .front, .back { backface-visibility: hidden; position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: transform 0.6s; }
+            .front { transform: rotateY(0deg); }
+            .back { transform: rotateY(180deg); }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

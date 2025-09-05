@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>۴۰ فلش‌کارت زراعت عمومی: مدیریت عناصر غذایی</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#059669',
+                        secondary: '#FBBF24',
+                        highlight: '#FEF3C7',
+                    },
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .flashcard {
+            perspective: 1000px;
+            height: 200px;
+            transition: transform 0.3s ease;
+        }
+        .flashcard:hover {
+            transform: scale(1.05);
+        }
+        .flashcard.flipped .front {
+            transform: rotateY(180deg);
+        }
+        .flashcard.flipped .back {
+            transform: rotateY(0deg);
+        }
+        .front, .back {
+            backface-visibility: hidden;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.6s ease-in-out;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            animation: glow 2s infinite alternate;
+        }
+        .front {
+            transform: rotateY(0deg);
+        }
+        .back {
+            transform: rotateY(180deg);
+        }
+        @keyframes glow {
+            from { box-shadow: 0 0 5px rgba(0,0,0,0.2); }
+            to { box-shadow: 0 0 15px rgba(255,255,0,0.8); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans transition-colors duration-300">
+    <nav class="bg-primary text-white p-4 fixed w-full top-0 shadow-lg z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">۴۰ فلش‌کارت تعاملی</h1>
+            <button id="shuffle" class="bg-secondary text-primary px-2 py-1 rounded">جابه‌جایی کارت‌ها</button>
+            <button id="theme-toggle" class="bg-secondary text-primary px-2 py-1 rounded">تم تاریک/روشن</button>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-4 mt-20">
+        <section id="flashcards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Flashcard 1 -->
+            <div class="flashcard bg-yellow-300 dark:bg-yellow-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">تعداد عناصر غذایی ضروری گیاهان؟</div>
+                <div class="back">۱۷ عنصر: C, H, O, N, P, K, Ca, Mg, S, Fe, Zn, Cu, Mn, B, Mo, Cl, Ni</div>
+            </div>
+            <!-- Flashcard 2 -->
+            <div class="flashcard bg-blue-300 dark:bg-blue-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">معیار اول ضروری بودن عنصر؟</div>
+                <div class="back">چرخه زندگی گیاه بدون آن تکمیل نشود.</div>
+            </div>
+            <!-- Flashcard 3 -->
+            <div class="flashcard bg-red-300 dark:bg-red-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">طبقه‌بندی عناصر بر اساس میزان نیاز؟</div>
+                <div class="back">پرمصرف (>۱۰۰۰ µg/g) و کم‌مصرف (<۱۰۰ µg/g)</div>
+            </div>
+            <!-- Flashcard 4 -->
+            <div class="flashcard bg-green-300 dark:bg-green-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">چرخه تولید و مصرف عناصر غذایی؟</div>
+                <div class="back">برداشت محصول عناصر را خارج می‌کند، جبران با بازگشت مواد زاید.</div>
+            </div>
+            <!-- Flashcard 5 -->
+            <div class="flashcard bg-purple-300 dark:bg-purple-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">دامنه بهینه تأمین عناصر؟</div>
+                <div class="back">رشد و عملکرد بیشینه، همه عناصر در سطح مطلوب.</div>
+            </div>
+            <!-- Flashcard 6: نیتروژن نقش -->
+            <div class="flashcard bg-orange-300 dark:bg-orange-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">نقش نیتروژن در گیاه؟</div>
+                <div class="back">تشکیل کلروفیل، پروتئین‌ها، آنزیم‌ها، اسیدهای نوکلئیک؛ تحریک رشد رویشی.</div>
+            </div>
+            <!-- Flashcard 7: نیتروژن کمبود -->
+            <div class="flashcard bg-indigo-300 dark:bg-indigo-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">کمبود نیتروژن؟</div>
+                <div class="back">زردی برگ‌های مسن، کاهش ارتفاع و شاخه‌زنی.</div>
+            </div>
+            <!-- Flashcard 8: نیتروژن بیش‌بود -->
+            <div class="flashcard bg-pink-300 dark:bg-pink-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">بیش‌بود نیتروژن؟</div>
+                <div class="back">رشد بیش‌ازحد، تأخیر گلدهی، افزایش حساسیت به آفات و ورس.</div>
+            </div>
+            <!-- Flashcard 9: فسفر نقش -->
+            <div class="flashcard bg-teal-300 dark:bg-teal-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">نقش فسفر؟</div>
+                <div class="back">تشکیل ATP, DNA؛ رشد ریشه، گلدهی، تسریع رسیدگی.</div>
+            </div>
+            <!-- Flashcard 10: فسفر کمبود -->
+            <div class="flashcard bg-lime-300 dark:bg-lime-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">کمبود فسفر؟</div>
+                <div class="back">ارغوانی شدن برگ‌ها، کاهش رشد ریشه و هوایی.</div>
+            </div>
+            <!-- Flashcard 11: فسفر بیش‌بود -->
+            <div class="flashcard bg-cyan-300 dark:bg-cyan-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">بیش‌بود فسفر؟</div>
+                <div class="back">کمبود پتاسیم، آهن و روی.</div>
+            </div>
+            <!-- Flashcard 12: پتاسیم نقش -->
+            <div class="flashcard bg-amber-300 dark:bg-amber-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">نقش پتاسیم؟</div>
+                <div class="back">فعال‌سازی آنزیم‌ها، فتوسنتز، مقاومت به تنش‌ها، تنظیم روزنه‌ها.</div>
+            </div>
+            <!-- Flashcard 13: پتاسیم کمبود -->
+            <div class="flashcard bg-violet-300 dark:bg-violet-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">کمبود پتاسیم؟</div>
+                <div class="back">زردی و سوختگی حاشیه برگ‌های مسن، فواصل بین‌گره کوتاه.</div>
+            </div>
+            <!-- Flashcard 14: پتاسیم بیش‌بود -->
+            <div class="flashcard bg-fuchsia-300 dark:bg-fuchsia-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">بیش‌بود پتاسیم؟</div>
+                <div class="back">کمبود کلسیم و منیزیم.</div>
+            </div>
+            <!-- Flashcard 15: کلسیم نقش -->
+            <div class="flashcard bg-rose-300 dark:bg-rose-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">نقش کلسیم؟</div>
+                <div class="back">ساختار دیواره سلولی، تعدیل هورمون‌ها، کاهش ریزش گل/میوه.</div>
+            </div>
+            <!-- Flashcard 16: کلسیم کمبود -->
+            <div class="flashcard bg-emerald-300 dark:bg-emerald-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">کمبود کلسیم؟</div>
+                <div class="back">کاهش رشد ریشه، بافت‌مردگی برگ‌های جوان.</div>
+            </div>
+            <!-- Flashcard 17: کلسیم بیش‌بود -->
+            <div class="flashcard bg-sky-300 dark:bg-sky-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">بیش‌بود کلسیم؟</div>
+                <div class="back">کاهش جذب P, K, Mg, B, Cu, Fe, Zn.</div>
+            </div>
+            <!-- Flashcard 18: منیزیم نقش -->
+            <div class="flashcard bg-orange-300 dark:bg-orange-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">نقش منیزیم؟</div>
+                <div class="back">مرکزی کلروفیل، انتقال انرژی، پایداری غشا.</div>
+            </div>
+            <!-- Flashcard 19: منیزیم کمبود -->
+            <div class="flashcard bg-indigo-300 dark:bg-indigo-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">کمبود منیزیم؟</div>
+                <div class="back">زردی نواری برگ‌های مسن (رگبرگ‌ها سبز).</div>
+            </div>
+            <!-- Flashcard 20: منیزیم بیش‌بود -->
+            <div class="flashcard bg-pink-300 dark:bg-pink-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">بیش‌بود منیزیم؟</div>
+                <div class="back">کاهش جذب Ca و K.</div>
+            </div>
+            <!-- Flashcard 21: گوگرد نقش -->
+            <div class="flashcard bg-teal-300 dark:bg-teal-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">نقش گوگرد؟</div>
+                <div class="back">اسیدهای آمینه، ویتامین‌ها، گره در لگوم‌ها، افزایش روغن بذر.</div>
+            </div>
+            <!-- Flashcard 22: گوگرد کمبود -->
+            <div class="flashcard bg-lime-300 dark:bg-lime-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">کمبود گوگرد؟</div>
+                <div class="back">زردی برگ‌های جوان، روشن شدن رگبرگ‌ها.</div>
+            </div>
+            <!-- Flashcard 23: گوگرد بیش‌بود -->
+            <div class="flashcard bg-cyan-300 dark:bg-cyan-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">بیش‌بود گوگرد؟</div>
+                <div class="back">کاهش جذب NO3- و MoO4-.</div>
+            </div>
+            <!-- Flashcard 24: آهن نقش -->
+            <div class="flashcard bg-amber-300 dark:bg-amber-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">نقش آهن؟</div>
+                <div class="back">انتقال الکترون، تشکیل کلروفیل، فعال‌سازی کاتالاز/پراکسیداز.</div>
+            </div>
+            <!-- Flashcard 25: آهن کمبود -->
+            <div class="flashcard bg-violet-300 dark:bg-violet-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">کمبود آهن؟</div>
+                <div class="back">زردی بین‌رگبرگی برگ‌های جوان (تا سفید شدن).</div>
+            </div>
+            <!-- Flashcard 26: آهن بیش‌بود -->
+            <div class="flashcard bg-fuchsia-300 dark:bg-fuchsia-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">بیش‌بود آهن؟</div>
+                <div class="back">زردی، بافت‌مردگی، کوتولگی، محدود شدن رشد ریشه.</div>
+            </div>
+            <!-- Flashcard 27: روی نقش -->
+            <div class="flashcard bg-rose-300 dark:bg-rose-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">نقش روی؟</div>
+                <div class="back">سنتز سیتوکروم/نوکلئوتید، متابولیسم اکسین، تولید کلروفیل.</div>
+            </div>
+            <!-- Flashcard 28: روی کمبود -->
+            <div class="flashcard bg-emerald-300 dark:bg-emerald-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">کمبود روی؟</div>
+                <div class="back">کوتولگی، سفید شدن بین‌رگبرگی، کوچکی برگ‌ها، کاهش پنجه‌زنی.</div>
+            </div>
+            <!-- Flashcard 29: روی بیش‌بود -->
+            <div class="flashcard bg-sky-300 dark:bg-sky-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">بیش‌بود روی؟</div>
+                <div class="back">کاهش جذب P, Cu, Fe, Mn, Mg؛ پراکسیداسیون لیپیدها.</div>
+            </div>
+            <!-- Flashcard 30: مس نقش -->
+            <div class="flashcard bg-yellow-300 dark:bg-yellow-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">نقش مس؟</div>
+                <div class="back">واکنش‌های اکسیداسیون، زنجیره انتقال الکترون فتوسنتز.</div>
+            </div>
+            <!-- Flashcard 31: مس کمبود -->
+            <div class="flashcard bg-blue-300 dark:bg-blue-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">کمبود مس؟</div>
+                <div class="back">سبز تیره برگ‌ها، بافت‌مردگی نوک برگ‌های جوان، ریزش برگ‌ها.</div>
+            </div>
+            <!-- Flashcard 32: مس بیش‌بود -->
+            <div class="flashcard bg-red-300 dark:bg-red-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">بیش‌بود مس؟</div>
+                <div class="back">زردی، بافت‌مردگی، کوتولگی، محدود شدن رشد ریشه.</div>
+            </div>
+            <!-- Flashcard 33: منگنز نقش -->
+            <div class="flashcard bg-green-300 dark:bg-green-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">نقش منگنز؟</div>
+                <div class="back">سنتز کلروفیل، تثبیت CO2، انتقال الکترون، تولید ریبوفلاوین.</div>
+            </div>
+            <!-- Flashcard 34: منگنز کمبود -->
+            <div class="flashcard bg-purple-300 dark:bg-purple-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">کمبود منگنز؟</div>
+                <div class="back">زردی بین‌رگبرگی با نقاط نکروزه کوچک.</div>
+            </div>
+            <!-- Flashcard 35: منگنز بیش‌بود -->
+            <div class="flashcard bg-orange-300 dark:bg-orange-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">بیش‌بود منگنز؟</div>
+                <div class="back">لکه‌های قهوه‌ای در برگ‌های مسن، پژمردگی گیاه.</div>
+            </div>
+            <!-- Flashcard 36: بر نقش -->
+            <div class="flashcard bg-indigo-300 dark:bg-indigo-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">نقش بر؟</div>
+                <div class="back">طویل شدن سلول، ساخت دیواره سلولی، واکنش هورمون‌ها.</div>
+            </div>
+            <!-- Flashcard 37: بر کمبود -->
+            <div class="flashcard bg-pink-300 dark:bg-pink-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">کمبود بر؟</div>
+                <div class="back">نکروزه برگ‌های جوان، سخت شدن ساقه‌ها، بدشکلی میوه.</div>
+            </div>
+            <!-- Flashcard 38: بر بیش‌بود -->
+            <div class="flashcard bg-teal-300 dark:bg-teal-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">بیش‌بود بر؟</div>
+                <div class="back">کاهش فتوسنتز، زردی نوک برگ‌ها، سوختگی حاشیه.</div>
+            </div>
+            <!-- Flashcard 39: مولیبدن نقش -->
+            <div class="flashcard bg-lime-300 dark:bg-lime-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">نقش مولیبدن؟</div>
+                <div class="back">تثبیت N، احیای نیترات، انتقال ترکیبات نیتروژنی.</div>
+            </div>
+            <!-- Flashcard 40: مولیبدن کمبود -->
+            <div class="flashcard bg-cyan-300 dark:bg-cyan-700 shadow-lg cursor-pointer" onclick="this.classList.toggle('flipped')">
+                <div class="front font-bold">کمبود مولیبدن؟</div>
+                <div class="back">تجمع نیترات، کوتولگی، سوختگی حاشیه برگ‌های مسن.</div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Theme Toggle
+        const toggle = document.getElementById('theme-toggle');
+        toggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+        });
+        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
+
+        // Shuffle Cards
+        const shuffleBtn = document.getElementById('shuffle');
+        shuffleBtn.addEventListener('click', () => {
+            const container = document.getElementById('flashcards');
+            const cards = Array.from(container.children);
+            cards.sort(() => Math.random() - 0.5);
+            cards.forEach(card => container.appendChild(card));
+        });
+    </script>
+</body>
+</html>

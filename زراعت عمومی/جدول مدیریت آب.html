@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>یادگیری تعاریف مدیریت آب و آبیاری</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Vazir', sans-serif; } /* فرض فونت پارسی */
+        canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 10; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="max-w-4xl w-full bg-white shadow-lg rounded-lg p-8">
+        <h1 class="text-3xl font-bold text-center mb-8 text-blue-600">یادگیری تعاریف مدیریت آب و آبیاری در مزرعه</h1>
+        <p class="text-center mb-6 text-gray-600">این صفحه شامل ۱۳ جدول است (۱۰ جدول اصلی + ۳ جدول مقایسه و اضافی برای یادگیری بهتر). هر جدول ۳۰ ثانیه نمایش داده می‌شود با شمارش معکوس. پس از پایان، انیمیشن جشن برای ۳ ثانیه و سپس جدول بعدی.</p>
+        
+        <div id="timer" class="text-center text-2xl font-bold text-red-600 mb-4">۳۰ ثانیه باقی‌مانده</div>
+        
+        <div id="table-container" class="overflow-x-auto"></div>
+    </div>
+
+    <canvas id="confetti-canvas" width="100%" height="100%"></canvas>
+
+    <script>
+        const tables = [
+            // جدول ۱
+            `<table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="py-2 px-4 text-center font-bold">جدول ۱: تعریف آبیاری و اهمیت آن</th>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 border">شماره</th>
+                        <th class="py-2 px-4 border">تعریف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="py-2 px-4 border">1</td><td class="py-2 px-4 border">آبیاری عبارت است از رساندن آب کافی به خاک دارای محدودیت رطوبت که قادر به تأمین آب مورد نیاز برای رشد گیاه نباشد.</td></tr>
+                    <tr><td class="py-2 px-4 border">2</td><td class="py-2 px-4 border">آبیاری تکمیلی به آبیاری گفته می‌شود که در زمانی انجام می‌گیرد که باران قادر به تأمین نیاز آبی گیاه نباشد.</td></tr>
+                    <tr><td class="py-2 px-4 border">3</td><td class="py-2 px-4 border">آبیاری کامل زمانی کاربرد دارد که آب به مقدار کافی در اختیار باشد و امکان توسعه سطح زیرکشت نباشد.</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۲
+            `<table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="py-2 px-4 text-center font-bold">جدول ۲: چرخه آب و منابع آب در کشاورزی</th>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 border">شماره</th>
+                        <th class="py-2 px-4 border">تعریف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="py-2 px-4 border">4</td><td class="py-2 px-4 border">چرخه آب در طبیعت به طور کلی در محدوده 16 کیلومتری (یک کیلومتر زیر زمین و 15 کیلومتر بالا) جابجا می‌شود.</td></tr>
+                    <tr><td class="py-2 px-4 border">5</td><td class="py-2 px-4 border">باران عمده‌ترین منبع آب در کره زمین است و بارندگی منبع اصلی آب مورد استفاده در تولیدات کشاورزی به شمار می‌رود.</td></tr>
+                    <tr><td class="py-2 px-4 border">6</td><td class="py-2 px-4 border">منابع آب آبیاری بسته به اقلیم مناطق مختلف متفاوت است؛ در مناطق مرطوب بارندگی منبع اصلی و در مناطق خشک ذخیره آب‌های سطحی و زیرزمینی مورد استفاده قرار می‌گیرد.</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۳
+            `<table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="py-2 px-4 text-center font-bold">جدول ۳: پتانسیل آب در خاک</th>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 border">شماره</th>
+                        <th class="py-2 px-4 border">تعریف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="py-2 px-4 border">7</td><td class="py-2 px-4 border">پتانسیل آب در خاک شامل ماتریک (نیروی جذب توسط ذرات خاک)، اسمزی، ثقلی و فشاری است.</td></tr>
+                    <tr><td class="py-2 px-4 border">8</td><td class="py-2 px-4 border">آب ثقلی آبی است که پس از زهکشی از منافذ درشت خاک خارج شده و برای گیاه قابل استفاده نیست.</td></tr>
+                    <tr><td class="py-2 px-4 border">9</td><td class="py-2 px-4 border">رطوبت ظرفیت زراعی آبی است که در منافذ ریز خاک نگه داشته می‌شود و برای رشد بسیاری از گیاهان بهینه است.</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۴
+            `<table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="py-2 px-4 text-center font-bold">جدول ۴: ظرفیت زراعی و نقطه پژمردگی</th>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 border">شماره</th>
+                        <th class="py-2 px-4 border">تعریف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="py-2 px-4 border">10</td><td class="py-2 px-4 border">ظرفیت زراعی حد بالایی رطوبت خاک است که در آن آب برای گیاه قابل دسترس است.</td></tr>
+                    <tr><td class="py-2 px-4 border">11</td><td class="py-2 px-4 border">نقطه پژمردگی دائمی (PWP) حد پایین رطوبت خاک است که گیاه دیگر قادر به جذب آب نبوده و پژمرده می‌شود.</td></tr>
+                    <tr><td class="py-2 px-4 border">12</td><td class="py-2 px-4 border">آب قابل دسترس گیاه شامل بخشی است که به راحتی در اختیار گیاه قرار می‌گیرد (آب سهل الوصول) و حدود 75 درصد کل آب قابل دسترس است.</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۵
+            `<table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="py-2 px-4 text-center font-bold">جدول ۵: نیاز آبی گیاه و عوامل مؤثر</th>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 border">شماره</th>
+                        <th class="py-2 px-4 border">تعریف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="py-2 px-4 border">13</td><td class="py-2 px-4 border">نیاز آبی گیاه به میزان آبی گفته می‌شود که محصول در طول دوره رشد مصرف می‌کند.</td></tr>
+                    <tr><td class="py-2 px-4 border">14</td><td class="py-2 px-4 border">عوامل مؤثر بر نیاز آبی گیاه شامل عوامل گیاهی، خاکی، اقلیمی و زراعی است.</td></tr>
+                    <tr><td class="py-2 px-4 border">15</td><td class="py-2 px-4 border">در شرایط مدیریت یکسان، برخی محصولات از آب موجود به طور کارآمدتری استفاده می‌کنند.</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۶
+            `<table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="py-2 px-4 text-center font-bold">جدول ۶: انواع روش‌های آبیاری سطحی</th>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 border">شماره</th>
+                        <th class="py-2 px-4 border">تعریف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="py-2 px-4 border">16</td><td class="py-2 px-4 border">آبیاری سطحی روشی است که در آن آب به وسیله نیروی ثقل در سطح مزرعه جاری می‌شود.</td></tr>
+                    <tr><td class="py-2 px-4 border">17</td><td class="py-2 px-4 border">آبیاری غرقابی به روش کرتی، نواری و جوی پشته‌ای تقسیم می‌شود.</td></tr>
+                    <tr><td class="py-2 px-4 border">18</td><td class="py-2 px-4 border">آبیاری کرتی روش غرقابی کنترل شده در زمین‌های مسطح است که رواناب ندارد.</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۷
+            `<table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="py-2 px-4 text-center font-bold">جدول ۷: محدودیت‌ها و معایب آبیاری سطحی</th>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 border">شماره</th>
+                        <th class="py-2 px-4 border">تعریف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="py-2 px-4 border">19</td><td class="py-2 px-4 border">محدودیت‌های آبیاری سطحی شامل ناهمواری زمین، شدت نفوذ پذیری خاک، نیاز به نیروی کارگری و میزان مصرف آب است.</td></tr>
+                    <tr><td class="py-2 px-4 border">20</td><td class="py-2 px-4 border">معایب آبیاری سطحی شامل پخش غیر یکنواخت آب، نیاز نیروی کارگری زیاد و هزینه بالای تسطیح اراضی است.</td></tr>
+                    <tr><td class="py-2 px-4 border">21</td><td class="py-2 px-4 border">تولید سله و سختی جوانه‌زنی بذرها از مشکلات آبیاری نواری در خاک‌های با بافت ریز است.</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۸
+            `<table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="py-2 px-4 text-center font-bold">جدول ۸: آبیاری بارانی و قطره‌ای</th>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 border">شماره</th>
+                        <th class="py-2 px-4 border">تعریف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="py-2 px-4 border">22</td><td class="py-2 px-4 border">آبیاری بارانی روشی است که آب به صورت قطرات باران مانند از بالا روی مزرعه پخش می‌شود.</td></tr>
+                    <tr><td class="py-2 px-4 border">23</td><td class="py-2 px-4 border">آبیاری قطره‌ای روشی است که به وسیله قطره‌چکان‌ها آب به صورت تدریجی و مستقیم به خاک نزدیک ریشه‌ها می‌رسد.</td></tr>
+                    <tr><td class="py-2 px-4 border">24</td><td class="py-2 px-4 border">مزایای آبیاری قطره‌ای شامل کاهش مصرف آب و افزایش کارایی استفاده از آب است.</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۹
+            `<table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="py-2 px-4 text-center font-bold">جدول ۹: محدودیت‌ها و معایب آبیاری قطره‌ای</th>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 border">شماره</th>
+                        <th class="py-2 px-4 border">تعریف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="py-2 px-4 border">25</td><td class="py-2 px-4 border">محدودیت آبیاری قطره‌ای شامل حرکت محدود آب در خاک و عدم امکان توسعه ریشه زیاد است.</td></tr>
+                    <tr><td class="py-2 px-4 border">26</td><td class="py-2 px-4 border">گرفتگی قطره چکان‌ها با املاح و مواد معلق آب از مشکلات رایج آبیاری قطره‌ای است.</td></tr>
+                    <tr><td class="py-2 px-4 border">27</td><td class="py-2 px-4 border">آبیاری قطره‌ای برای محصولات متراکم مناسب نیست زیرا آب به تمام گیاهان نمی‌رسد.</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۱۰
+            `<table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-blue-200">
+                        <th colspan="2" class="py-2 px-4 text-center font-bold">جدول ۱۰: راندمان آبیاری</th>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 border">شماره</th>
+                        <th class="py-2 px-4 border">تعریف</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="py-2 px-4 border">28</td><td class="py-2 px-4 border">راندمان کلی سیستم آبیاری نسبت آبی است که به وسیله گیاه مصرف می‌شود به آب برداشت شده از منبع.</td></tr>
+                    <tr><td class="py-2 px-4 border">29</td><td class="py-2 px-4 border">راندمان انتقال آب در کانال‌ها بسته به نوع کانال و طول آن متفاوت است.</td></tr>
+                    <tr><td class="py-2 px-4 border">30</td><td class="py-2 px-4 border">راندمان بالای 40 تا 50 درصد در کل مجموعه آبیاری بیانگر راندمان خوب و راندمان 20 تا 30 درصد بیانگر راندمان پایین است.</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول اضافی ۱۱: مقایسه روش‌های آبیاری
+            `<table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-green-200">
+                        <th colspan="5" class="py-2 px-4 text-center font-bold">جدول ۱۱: مقایسه روش‌های آبیاری (اضافی برای یادگیری)</th>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 border">روش</th>
+                        <th class="py-2 px-4 border">راندمان تقریبی</th>
+                        <th class="py-2 px-4 border">مصرف آب</th>
+                        <th class="py-2 px-4 border">هزینه اولیه</th>
+                        <th class="py-2 px-4 border">مناسب برای</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="py-2 px-4 border">سطحی</td><td class="py-2 px-4 border">50-60%</td><td class="py-2 px-4 border">بالا</td><td class="py-2 px-4 border">پایین</td><td class="py-2 px-4 border">زمین‌های مسطح، محصولات غرقابی</td></tr>
+                    <tr><td class="py-2 px-4 border">بارانی</td><td class="py-2 px-4 border">70-80%</td><td class="py-2 px-4 border">متوسط</td><td class="py-2 px-4 border">متوسط</td><td class="py-2 px-4 border">زمین‌های ناهموار، کنترل دما</td></tr>
+                    <tr><td class="py-2 px-4 border">قطره‌ای</td><td class="py-2 px-4 border">90-95%</td><td class="py-2 px-4 border">پایین</td><td class="py-2 px-4 border">بالا</td><td class="py-2 px-4 border">گیاهان ردیفی، صرفه‌جویی آب</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول اضافی ۱۲: عوامل مؤثر بر نیاز آبی
+            `<table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-green-200">
+                        <th colspan="3" class="py-2 px-4 text-center font-bold">جدول ۱۲: عوامل مؤثر بر نیاز آبی گیاه (اضافی برای یادگیری)</th>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 border">دسته</th>
+                        <th class="py-2 px-4 border">عوامل</th>
+                        <th class="py-2 px-4 border">توضیح</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="py-2 px-4 border">گیاهی</td><td class="py-2 px-4 border">اندازه برگ، الگوی ریشه</td><td class="py-2 px-4 border">گیاهان با ریشه عمیق آب کمتری نیاز دارند.</td></tr>
+                    <tr><td class="py-2 px-4 border">خاکی</td><td class="py-2 px-4 border">بافت، ترکیب شیمیایی</td><td class="py-2 px-4 border">خاک شنی آب کمتری نگه می‌دارد.</td></tr>
+                    <tr><td class="py-2 px-4 border">اقلیمی</td><td class="py-2 px-4 border">دما، باد، رطوبت</td><td class="py-2 px-4 border">دمای بالا نیاز آبی را افزایش می‌دهد.</td></tr>
+                    <tr><td class="py-2 px-4 border">زراعی</td><td class="py-2 px-4 border">تراکم کاشت، زمان آبیاری</td><td class="py-2 px-4 border">مدیریت خوب نیاز را کاهش می‌دهد.</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول اضافی ۱۳: انواع گیاهان بر اساس نیاز آبی
+            `<table class="min-w-full bg-white border border-gray-300">
+                <thead>
+                    <tr class="bg-green-200">
+                        <th colspan="3" class="py-2 px-4 text-center font-bold">جدول ۱۳: انواع گیاهان بر اساس نیاز آبی (اضافی برای یادگیری)</th>
+                    </tr>
+                    <tr>
+                        <th class="py-2 px-4 border">نوع گیاه</th>
+                        <th class="py-2 px-4 border">نیاز آبی</th>
+                        <th class="py-2 px-4 border">مثال</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="py-2 px-4 border">هیدروفیت</td><td class="py-2 px-4 border">بالا (غرقابی)</td><td class="py-2 px-4 border">برنج</td></tr>
+                    <tr><td class="py-2 px-4 border">مزوفیت</td><td class="py-2 px-4 border">متوسط</td><td class="py-2 px-4 border">گندم، ذرت</td></tr>
+                    <tr><td class="py-2 px-4 border">زروفیت</td><td class="py-2 px-4 border">پایین</td><td class="py-2 px-4 border">کاکتوس، گیاهان بیابانی</td></tr>
+                </tbody>
+            </table>`
+        ];
+
+        let currentIndex = 0;
+        let timerInterval;
+        const tableContainer = document.getElementById('table-container');
+        const timerElement = document.getElementById('timer');
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        function showTable(index) {
+            if (index >= tables.length) {
+                tableContainer.innerHTML = '<p class="text-center text-xl font-bold text-green-600">پایان! همه جدول‌ها نمایش داده شد.</p>';
+                timerElement.style.display = 'none';
+                return;
+            }
+            tableContainer.innerHTML = tables[index];
+            let timeLeft = 30;
+            timerElement.textContent = `${timeLeft} ثانیه باقی‌مانده`;
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = `${timeLeft} ثانیه باقی‌مانده`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    launchConfetti();
+                    setTimeout(() => {
+                        currentIndex++;
+                        showTable(currentIndex);
+                    }, 3000);
+                }
+            }, 1000);
+        }
+
+        function launchConfetti() {
+            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#f0f'];
+            let particles = [];
+            for (let i = 0; i < 300; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 4 + 1,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vx: Math.random() * 20 - 10,
+                    vy: Math.random() * 20 - 10,
+                    life: 300
+                });
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    if (p.life > 0) {
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                        ctx.fillStyle = p.color;
+                        ctx.fill();
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += 0.1; // gravity
+                        p.life--;
+                    }
+                });
+                if (particles.some(p => p.life > 0)) {
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            animate();
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        showTable(currentIndex);
+    </script>
+</body>
+</html>

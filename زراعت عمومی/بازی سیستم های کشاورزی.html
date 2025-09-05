@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی سازماندهی مطالب کشاورزی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.23.0/cytoscape.min.js"></script>
+    <style>
+        body { font-family: 'Vazir', sans-serif; }
+        #cy { width: 100%; height: 600px; border: 1px solid #ccc; }
+        .tooltip { position: absolute; background: #fff; border: 1px solid #ccc; padding: 8px; max-width: 200px; z-index: 10; }
+    </style>
+</head>
+<body class="bg-gray-100 p-4">
+    <div class="container mx-auto max-w-5xl bg-white p-6 rounded-lg shadow-lg">
+        <h1 class="text-2xl font-bold mb-4 text-center">بازی سازماندهی مطالب کشاورزی</h1>
+        <p class="text-center mb-4">مدل مورد نظر را انتخاب کنید، گره‌ها را جابجا کنید، و با لایه‌بندی مطالب را سازماندهی کنید. امتیاز بر اساس گره‌ها، ارتباطات و لایه‌ها محاسبه می‌شود.</p>
+        
+        <div class="flex flex-wrap gap-4 mb-4 justify-center">
+            <select id="modelSelect" class="p-2 border rounded">
+                <option value="initial">مدل اولیه (۱۰ گروه ۴ تایی)</option>
+                <option value="thematic">مدل موضوعی (۵ گروه ۸ تایی)</option>
+                <option value="hierarchical">مدل سلسله‌مراتبی (۴ لایه ۱۰ تایی)</option>
+                <option value="practical">مدل کاربردی (۴ گروه ۱۰ تایی)</option>
+            </select>
+            <button id="layoutHierarchy" class="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600">لایه‌بندی سلسله‌مراتبی</button>
+            <button id="layoutCircle" class="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600">لایه‌بندی دایره‌ای</button>
+            <button id="clear" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">پاک کردن</button>
+        </div>
+        
+        <div id="cy" class="mb-4"></div>
+        <p id="score" class="text-center font-bold">امتیاز: ۰</p>
+        <p class="text-center text-sm">امتیاز = تعداد گره‌ها + ۲ × تعداد ارتباطات + ۳ × تعداد لایه‌ها</p>
+    </div>
+
+    <script>
+        const models = {
+            initial: [
+                {
+                    nodes: [
+                        { id: "نظام‌های زراعی", definition: "را می‌توان از دیدگاه‌های مختلف مانند سنتی، صنعتی، کم‌نهاده و پرنهاده تقسیم‌بندی کرد.", category: "red" },
+                        { id: "سیستم‌های زراعی", definition: "شامل الگوی کشت، عملیات زراعی و تعامل آن‌ها با منابع، تجهیزات و فناوری‌های موجود است.", category: "red" },
+                        { id: "الگوی کشت", definition: "تعیین نظام کشاورزی با مزیت اقتصادی پایدار بر اساس سیاست‌های کلان، دانش بومی و پتانسیل منطقه است.", category: "red" },
+                        { id: "انتخاب سیستم زراعی", definition: "تحت تأثیر شرایط اکولوژیکی، اقتصادی، اجتماعی و سیاسی منطقه قرار دارد.", category: "red" }
+                    ],
+                    edges: [{ source: "نظام‌های زراعی", target: "سیستم‌های زراعی" }, { source: "سیستم‌های زراعی", target: "الگوی کشت" }]
+                },
+                {
+                    nodes: [
+                        { id: "هدف سیستم زراعی پایدار", definition: "استفاده بهینه و سودمند از منابع طبیعی به صورت پایدار است.", category: "blue" },
+                        { id: "تنوع زیستی", definition: "در کشاورزی پایدار از اهمیت زیادی برخوردار است.", category: "blue" },
+                        { id: "افزایش بهره‌وری و حفظ منابع پایه", definition: "اهداف اصلی توسعه نظام‌های کشاورزی پایدار است.", category: "blue" },
+                        { id: "مدیریت منابع آبی و خاکی", definition: "از اصول مهم پایداری سیستم‌های کشاورزی است.", category: "blue" }
+                    ],
+                    edges: [{ source: "هدف سیستم زراعی پایدار", target: "تنوع زیستی" }, { source: "هدف سیستم زراعی پایدار", target: "مدیریت منابع آبی و خاکی" }]
+                },
+                {
+                    nodes: [
+                        { id: "نظام‌های زراعی سنتی", definition: "بر اساس دانش بومی و نهاده‌های محلی و بوم‌سازگار اداره می‌شوند.", category: "green" },
+                        { id: "کشاورزی زیستی (ارگانیک)", definition: "بر اصول اکولوژیکی تولید محصولات بدون مصرف کود و سموم شیمیایی تاکید دارد.", category: "green" },
+                        { id: "کشاورزی ارگانیک", definition: "محصول سالم با کیفیت بالا تولید می‌کند ولی نیازمند مقررات و استانداردهای خاص است.", category: "green" },
+                        { id: "سیستم‌های کشاورزی سنتی", definition: "بیشتر در جوامع بومی و روستایی مطرح است.", category: "green" }
+                    ],
+                    edges: [{ source: "نظام‌های زراعی سنتی", target: "کشاورزی زیستی (ارگانیک)" }, { source: "کشاورزی زیستی (ارگانیک)", target: "کشاورزی ارگانیک" }]
+                },
+                {
+                    nodes: [
+                        { id: "نظام‌های زراعی صنعتی", definition: "نهاده‌محور، پرهزینه و وابسته به نهاده‌های خارجی مانند کود شیمیایی، سموم و انرژی فسیلی هستند.", category: "yellow" },
+                        { id: "کشاورزی متمرکز", definition: "شامل حذف گیاهان خودرو، جلوگیری از تغذیه جانوران از محصولات و نگهداری دام در مکان‌های محافظت شده است.", category: "yellow" },
+                        { id: "سیستم‌های زراعی صنعتی", definition: "برای تولید تجاری و انبوه به نهاده‌های پرهزینه وابسته هستند.", category: "yellow" },
+                        { id: "حذف گیاهان خودرو و محافظت از محصولات", definition: "بهره‌وری زمین را افزایش می‌دهد.", category: "yellow" }
+                    ],
+                    edges: [{ source: "نظام‌های زراعی صنعتی", target: "سیستم‌های زراعی صنعتی" }, { source: "سیستم‌های زراعی صنعتی", target: "کشاورزی متمرکز" }]
+                },
+                {
+                    nodes: [
+                        { id: "تناوب زراعی", definition: "ترتیب متفاوت کاشت گیاهان در سال‌های متوالی است که به بهبود کیفیت خاک و کاهش آفات کمک می‌کند.", category: "red" },
+                        { id: "حضور تناوب مناسب", definition: "در کاهش نیاز به استفاده از آفتکش‌ها مؤثر است.", category: "red" },
+                        { id: "تناوب صحیح", definition: "برای بهبود حاصلخیزی خاک و کاهش آفات اهمیت دارد.", category: "red" },
+                        { id: "در تناوب", definition: "باید از تکرار پشت سرهم گیاهان مشابه خودداری شود.", category: "red" }
+                    ],
+                    edges: [{ source: "تناوب زراعی", target: "تناوب صحیح" }, { source: "تناوب زراعی", target: "حضور تناوب مناسب" }]
+                },
+                {
+                    nodes: [
+                        { id: "انتخاب تناوب مناسب", definition: "به قوانین دولتی، شرایط اکولوژیکی، توپوگرافی و وضعیت بازار بستگی دارد.", category: "blue" },
+                        { id: "تنظیم جدول تناوبی", definition: "به صورت مربع، تعداد سال‌های اجرای تناوب مساوی با تعداد قطعات زمین است.", category: "blue" },
+                        { id: "رعایت فاصله زمانی", definition: "مناسب بین برداشت محصول و کاشت محصول بعدی ضروری است.", category: "blue" },
+                        { id: "تنظیم مناسب تناوب", definition: "باعث کاهش هزینه‌های حمل و نقل و افزایش اشتغال می‌شود.", category: "blue" }
+                    ],
+                    edges: [{ source: "انتخاب تناوب مناسب", target: "تنظیم جدول تناوبی" }, { source: "انتخاب تناوب مناسب", target: "رعایت فاصله زمانی" }]
+                },
+                {
+                    nodes: [
+                        { id: "آیش‌بندی", definition: "یعنی در نظر گرفتن دوره‌ای برای استراحت زمین جهت بازسازی حاصلخیزی خاک.", category: "green" },
+                        { id: "آیش", definition: "به عنوان راهکاری برای بازسازی خاک در تناوب و افزایش عملکرد محصول کاربرد دارد.", category: "green" },
+                        { id: "کاهش حاصلخیزی خاک و خشکسالی", definition: "از چالش‌های مهم کشاورزی در ایران است.", category: "green" },
+                        { id: "بررسی شرایط اقلیمی و خاکی", definition: "منطقه در انتخاب محصولات کشاورزی ضروری است.", category: "green" }
+                    ],
+                    edges: [{ source: "آیش‌بندی", target: "آیش" }, { source: "آیش‌بندی", target: "کاهش حاصلخیزی خاک و خشکسالی" }]
+                },
+                {
+                    nodes: [
+                        { id: "حبوبات در تناوب", definition: "بهتر است بین دو گیاه غلات دانه‌ریز قرار گیرند چون به تثبیت ازت کمک می‌کنند.", category: "yellow" },
+                        { id: "گیاهان علوفه‌ای چندساله", definition: "معمولاً در ابتدای تناوب قرار می‌گیرند.", category: "yellow" },
+                        { id: "عوامل مؤثر بر انتخاب محصول و تناوب", definition: "شامل عوامل اقتصادی، اجتماعی، خاک و اقلیم می‌باشند.", category: "yellow" },
+                        { id: "برنامه‌ریزی کشت", definition: "در سطح مزرعه به صورت آیش‌بندی و تناوب انجام می‌شود.", category: "yellow" }
+                    ],
+                    edges: [{ source: "برنامه‌ریزی کشت", target: "حبوبات در تناوب" }, { source: "برنامه‌ریزی کشت", target: "گیاهان علوفه‌ای چندساله" }]
+                },
+                {
+                    nodes: [
+                        { id: "نوسانات قیمت محصولات کشاورزی", definition: "مشکلاتی برای کشاورزان و برنامه‌ریزی کشت ایجاد می‌کند.", category: "red" },
+                        { id: "تغییر اقلیم", definition: "می‌تواند بر الگوی کشت و تناوب اثر منفی بگذارد.", category: "red" },
+                        { id: "استفاده از فناوری‌های نوین", definition: "در کشاورزی موجب افزایش بهره‌وری و کاهش هزینه‌ها می‌شود.", category: "red" },
+                        { id: "وجود اطلاعات دقیق و بانک اطلاعاتی", definition: "جامع برای برنامه‌ریزی کشت اهمیت دارد.", category: "red" }
+                    ],
+                    edges: [{ source: "تغییر اقلیم", target: "نوسانات قیمت محصولات کشاورزی" }, { source: "استفاده از فناوری‌های نوین", target: "وجود اطلاعات دقیق و بانک اطلاعاتی" }]
+                },
+                {
+                    nodes: [
+                        { id: "دانش بومی کشاورزان", definition: "نقش کلیدی در انتخاب و اجرای الگوی کشت دارد.", category: "blue" },
+                        { id: "توسعه صنایع تبدیلی", definition: "مرتبط با کشاورزی در ارتقای بهره‌وری بخش کشاورزی نقش مهمی دارد.", category: "blue" },
+                        { id: "استفاده بهینه از نهاده‌ها و نیروی کار", definition: "در بهبود عملکرد کشاورزی موثر است.", category: "blue" },
+                        { id: "سیستم‌های زراعی رایج در ایران", definition: "شامل نظام‌های کشاورزی کم‌نهاده و پرنهاده است.", category: "blue" }
+                    ],
+                    edges: [{ source: "دانش بومی کشاورزان", target: "توسعه صنایع تبدیلی" }, { source: "دانش بومی کشاورزان", target: "استفاده بهینه از نهاده‌ها و نیروی کار" }]
+                }
+            ],
+            thematic: [
+                {
+                    nodes: [
+                        { id: "هدف سیستم زراعی پایدار", definition: "استفاده بهینه و سودمند از منابع طبیعی به صورت پایدار است.", category: "red" },
+                        { id: "تنوع زیستی", definition: "در کشاورزی پایدار از اهمیت زیادی برخوردار است.", category: "red" },
+                        { id: "افزایش بهره‌وری و حفظ منابع پایه", definition: "اهداف اصلی توسعه نظام‌های کشاورزی پایدار است.", category: "red" },
+                        { id: "مدیریت منابع آبی و خاکی", definition: "از اصول مهم پایداری سیستم‌های کشاورزی است.", category: "red" },
+                        { id: "کشاورزی زیستی (ارگانیک)", definition: "بر اصول اکولوژیکی تولید محصولات بدون مصرف کود و سموم شیمیایی تاکید دارد.", category: "red" },
+                        { id: "کشاورزی ارگانیک", definition: "محصول سالم با کیفیت بالا تولید می‌کند ولی نیازمند مقررات و استانداردهای خاص است.", category: "red" },
+                        { id: "دانش بومی کشاورزان", definition: "نقش کلیدی در انتخاب و اجرای الگوی کشت دارد.", category: "red" },
+                        { id: "تغییر اقلیم", definition: "می‌تواند بر الگوی کشت و تناوب اثر منفی بگذارد.", category: "red" }
+                    ],
+                    edges: [{ source: "هدف سیستم زراعی پایدار", target: "تنوع زیستی" }, { source: "هدف سیستم زراعی پایدار", target: "کشاورزی زیستی (ارگانیک)" }]
+                },
+                {
+                    nodes: [
+                        { id: "تناوب زراعی", definition: "ترتیب متفاوت کاشت گیاهان در سال‌های متوالی است که به بهبود کیفیت خاک و کاهش آفات کمک می‌کند.", category: "blue" },
+                        { id: "حضور تناوب مناسب", definition: "در کاهش نیاز به استفاده از آفتکش‌ها مؤثر است.", category: "blue" },
+                        { id: "تناوب صحیح", definition: "برای بهبود حاصلخیزی خاک و کاهش آفات اهمیت دارد.", category: "blue" },
+                        { id: "در تناوب", definition: "باید از تکرار پشت سرهم گیاهان مشابه خودداری شود.", category: "blue" },
+                        { id: "انتخاب تناوب مناسب", definition: "به قوانین دولتی، شرایط اکولوژیکی، توپوگرافی و وضعیت بازار بستگی دارد.", category: "blue" },
+                        { id: "تنظیم جدول تناوبی", definition: "به صورت مربع، تعداد سال‌های اجرای تناوب مساوی با تعداد قطعات زمین است.", category: "blue" },
+                        { id: "رعایت فاصله زمانی", definition: "مناسب بین برداشت محصول و کاشت محصول بعدی ضروری است.", category: "blue" },
+                        { id: "تنظیم مناسب تناوب", definition: "باعث کاهش هزینه‌های حمل و نقل و افزایش اشتغال می‌شود.", category: "blue" }
+                    ],
+                    edges: [{ source: "تناوب زراعی", target: "تناوب صحیح" }, { source: "انتخاب تناوب مناسب", target: "تنظیم جدول تناوبی" }]
+                },
+                {
+                    nodes: [
+                        { id: "آیش‌بندی", definition: "یعنی در نظر گرفتن دوره‌ای برای استراحت زمین جهت بازسازی حاصلخیزی خاک.", category: "green" },
+                        { id: "آیش", definition: "به عنوان راهکاری برای بازسازی خاک در تناوب و افزایش عملکرد محصول کاربرد دارد.", category: "green" },
+                        { id: "کاهش حاصلخیزی خاک و خشکسالی", definition: "از چالش‌های مهم کشاورزی در ایران است.", category: "green" },
+                        { id: "بررسی شرایط اقلیمی و خاکی", definition: "منطقه در انتخاب محصولات کشاورزی ضروری است.", category: "green" },
+                        { id: "حبوبات در تناوب", definition: "بهتر است بین دو گیاه غلات دانه‌ریز قرار گیرند چون به تثبیت ازت کمک می‌کنند.", category: "green" },
+                        { id: "گیاهان علوفه‌ای چندساله", definition: "معمولاً در ابتدای تناوب قرار می‌گیرند.", category: "green" },
+                        { id: "عوامل مؤثر بر انتخاب محصول و تناوب", definition: "شامل عوامل اقتصادی، اجتماعی، خاک و اقلیم می‌باشند.", category: "green" },
+                        { id: "برنامه‌ریزی کشت", definition: "در سطح مزرعه به صورت آیش‌بندی و تناوب انجام می‌شود.", category: "green" }
+                    ],
+                    edges: [{ source: "آیش‌بندی", target: "آیش" }, { source: "برنامه‌ریزی کشت", target: "حبوبات در تناوب" }]
+                },
+                {
+                    nodes: [
+                        { id: "نظام‌های زراعی صنعتی", definition: "نهاده‌محور، پرهزینه و وابسته به نهاده‌های خارجی مانند کود شیمیایی، سموم و انرژی فسیلی هستند.", category: "yellow" },
+                        { id: "سیستم‌های زراعی صنعتی", definition: "برای تولید تجاری و انبوه به نهاده‌های پرهزینه وابسته هستند.", category: "yellow" },
+                        { id: "استفاده از فناوری‌های نوین", definition: "در کشاورزی موجب افزایش بهره‌وری و کاهش هزینه‌ها می‌شود.", category: "yellow" },
+                        { id: "وجود اطلاعات دقیق و بانک اطلاعاتی", definition: "جامع برای برنامه‌ریزی کشت اهمیت دارد.", category: "yellow" },
+                        { id: "استفاده بهینه از نهاده‌ها و نیروی کار", definition: "در بهبود عملکرد کشاورزی موثر است.", category: "yellow" },
+                        { id: "کشاورزی متمرکز", definition: "شامل حذف گیاهان خودرو، جلوگیری از تغذیه جانوران از محصولات و نگهداری دام در مکان‌های محافظت شده است.", category: "yellow" },
+                        { id: "حذف گیاهان خودرو و محافظت از محصولات", definition: "بهره‌وری زمین را افزایش می‌دهد.", category: "yellow" },
+                        { id: "سیستم‌های زراعی رایج در ایران", definition: "شامل نظام‌های کشاورزی کم‌نهاده و پرنهاده است.", category: "yellow" }
+                    ],
+                    edges: [{ source: "نظام‌های زراعی صنعتی", target: "سیستم‌های زراعی صنعتی" }, { source: "استفاده از فناوری‌های نوین", target: "وجود اطلاعات دقیق و بانک اطلاعاتی" }]
+                },
+                {
+                    nodes: [
+                        { id: "نظام‌های زراعی سنتی", definition: "بر اساس دانش بومی و نهاده‌های محلی و بوم‌سازگار اداره می‌شوند.", category: "red" },
+                        { id: "سیستم‌های کشاورزی سنتی", definition: "بیشتر در جوامع بومی و روستایی مطرح است.", category: "red" },
+                        { id: "نوسانات قیمت محصولات کشاورزی", definition: "مشکلاتی برای کشاورزان و برنامه‌ریزی کشت ایجاد می‌کند.", category: "red" },
+                        { id: "توسعه صنایع تبدیلی", definition: "مرتبط با کشاورزی در ارتقای بهره‌وری بخش کشاورزی نقش مهمی دارد.", category: "red" },
+                        { id: "نظام‌های زراعی", definition: "را می‌توان از دیدگاه‌های مختلف مانند سنتی، صنعتی، کم‌نهاده و پرنهاده تقسیم‌بندی کرد.", category: "red" },
+                        { id: "سیستم‌های زراعی", definition: "شامل الگوی کشت، عملیات زراعی و تعامل آن‌ها با منابع، تجهیزات و فناوری‌های موجود است.", category: "red" },
+                        { id: "الگوی کشت", definition: "تعیین نظام کشاورزی با مزیت اقتصادی پایدار بر اساس سیاست‌های کلان، دانش بومی و پتانسیل منطقه است.", category: "red" },
+                        { id: "انتخاب سیستم زراعی", definition: "تحت تأثیر شرایط اکولوژیکی، اقتصادی، اجتماعی و سیاسی منطقه قرار دارد.", category: "red" }
+                    ],
+                    edges: [{ source: "نظام‌های زراعی", target: "نظام‌های زراعی سنتی" }, { source: "سیستم‌های زراعی", target: "الگوی کشت" }]
+                }
+            ],
+            hierarchical: [
+                {
+                    nodes: [
+                        { id: "نظام‌های زراعی", definition: "را می‌توان از دیدگاه‌های مختلف مانند سنتی، صنعتی، کم‌نهاده و پرنهاده تقسیم‌بندی کرد.", category: "red" },
+                        { id: "سیستم‌های زراعی", definition: "شامل الگوی کشت، عملیات زراعی و تعامل آن‌ها با منابع، تجهیزات و فناوری‌های موجود است.", category: "red" },
+                        { id: "الگوی کشت", definition: "تعیین نظام کشاورزی با مزیت اقتصادی پایدار بر اساس سیاست‌های کلان، دانش بومی و پتانسیل منطقه است.", category: "red" },
+                        { id: "انتخاب سیستم زراعی", definition: "تحت تأثیر شرایط اکولوژیکی، اقتصادی، اجتماعی و سیاسی منطقه قرار دارد.", category: "red" },
+                        { id: "هدف سیستم زراعی پایدار", definition: "استفاده بهینه و سودمند از منابع طبیعی به صورت پایدار است.", category: "red" },
+                        { id: "تنوع زیستی", definition: "در کشاورزی پایدار از اهمیت زیادی برخوردار است.", category: "red" },
+                        { id: "افزایش بهره‌وری و حفظ منابع پایه", definition: "اهداف اصلی توسعه نظام‌های کشاورزی پایدار است.", category: "red" },
+                        { id: "مدیریت منابع آبی و خاکی", definition: "از اصول مهم پایداری سیستم‌های کشاورزی است.", category: "red" },
+                        { id: "دانش بومی کشاورزان", definition: "نقش کلیدی در انتخاب و اجرای الگوی کشت دارد.", category: "red" },
+                        { id: "سیستم‌های زراعی رایج در ایران", definition: "شامل نظام‌های کشاورزی کم‌نهاده و پرنهاده است.", category: "red" }
+                    ],
+                    edges: [{ source: "نظام‌های زراعی", target: "سیستم‌های زراعی" }, { source: "سیستم‌های زراعی", target: "الگوی کشت" }, { source: "هدف سیستم زراعی پایدار", target: "تنوع زیستی" }]
+                },
+                {
+                    nodes: [
+                        { id: "نظام‌های زراعی سنتی", definition: "بر اساس دانش بومی و نهاده‌های محلی و بوم‌سازگار اداره می‌شوند.", category: "blue" },
+                        { id: "کشاورزی زیستی (ارگانیک)", definition: "بر اصول اکولوژیکی تولید محصولات بدون مصرف کود و سموم شیمیایی تاکید دارد.", category: "blue" },
+                        { id: "کشاورزی ارگانیک", definition: "محصول سالم با کیفیت بالا تولید می‌کند ولی نیازمند مقررات و استانداردهای خاص است.", category: "blue" },
+                        { id: "سیستم‌های کشاورزی سنتی", definition: "بیشتر در جوامع بومی و روستایی مطرح است.", category: "blue" },
+                        { id: "نظام‌های زراعی صنعتی", definition: "نهاده‌محور، پرهزینه و وابسته به نهاده‌های خارجی مانند کود شیمیایی، سموم و انرژی فسیلی هستند.", category: "blue" },
+                        { id: "سیستم‌های زراعی صنعتی", definition: "برای تولید تجاری و انبوه به نهاده‌های پرهزینه وابسته هستند.", category: "blue" },
+                        { id: "کشاورزی متمرکز", definition: "شامل حذف گیاهان خودرو، جلوگیری از تغذیه جانوران از محصولات و نگهداری دام در مکان‌های محافظت شده است.", category: "blue" },
+                        { id: "حذف گیاهان خودرو و محافظت از محصولات", definition: "بهره‌وری زمین را افزایش می‌دهد.", category: "blue" },
+                        { id: "تناوب زراعی", definition: "ترتیب متفاوت کاشت گیاهان در سال‌های متوالی است که به بهبود کیفیت خاک و کاهش آفات کمک می‌کند.", category: "blue" },
+                        { id: "تناوب صحیح", definition: "برای بهبود حاصلخیزی خاک و کاهش آفات اهمیت دارد.", category: "blue" }
+                    ],
+                    edges: [{ source: "نظام‌های زراعی سنتی", target: "کشاورزی زیستی (ارگانیک)" }, { source: "نظام‌های زراعی صنعتی", target: "سیستم‌های زراعی صنعتی" }, { source: "تناوب زراعی", target: "تناوب صحیح" }]
+                },
+                {
+                    nodes: [
+                        { id: "آیش‌بندی", definition: "یعنی در نظر گرفتن دوره‌ای برای استراحت زمین جهت بازسازی حاصلخیزی خاک.", category: "green" },
+                        { id: "آیش", definition: "به عنوان راهکاری برای بازسازی خاک در تناوب و افزایش عملکرد محصول کاربرد دارد.", category: "green" },
+                        { id: "حبوبات در تناوب", definition: "بهتر است بین دو گیاه غلات دانه‌ریز قرار گیرند چون به تثبیت ازت کمک می‌کنند.", category: "green" },
+                        { id: "گیاهان علوفه‌ای چندساله", definition: "معمولاً در ابتدای تناوب قرار می‌گیرند.", category: "green" },
+                        { id: "برنامه‌ریزی کشت", definition: "در سطح مزرعه به صورت آیش‌بندی و تناوب انجام می‌شود.", category: "green" },
+                        { id: "انتخاب تناوب مناسب", definition: "به قوانین دولتی، شرایط اکولوژیکی، توپوگرافی و وضعیت بازار بستگی دارد.", category: "green" },
+                        { id: "تنظیم جدول تناوبی", definition: "به صورت مربع، تعداد سال‌های اجرای تناوب مساوی با تعداد قطعات زمین است.", category: "green" },
+                        { id: "رعایت فاصله زمانی", definition: "مناسب بین برداشت محصول و کاشت محصول بعدی ضروری است.", category: "green" },
+                        { id: "استفاده از فناوری‌های نوین", definition: "در کشاورزی موجب افزایش بهره‌وری و کاهش هزینه‌ها می‌شود.", category: "green" },
+                        { id: "وجود اطلاعات دقیق و بانک اطلاعاتی", definition: "جامع برای برنامه‌ریزی کشت اهمیت دارد.", category: "green" }
+                    ],
+                    edges: [{ source: "آیش‌بندی", target: "آیش" }, { source: "برنامه‌ریزی کشت", target: "حبوبات در تناوب" }, { source: "انتخاب تناوب مناسب", target: "تنظیم جدول تناوبی" }]
+                },
+                {
+                    nodes: [
+                        { id: "کاهش حاصلخیزی خاک و خشکسالی", definition: "از چالش‌های مهم کشاورزی در ایران است.", category: "yellow" },
+                        { id: "نوسانات قیمت محصولات کشاورزی", definition: "مشکلاتی برای کشاورزان و برنامه‌ریزی کشت ایجاد می‌کند.", category: "yellow" },
+                        { id: "تغییر اقلیم", definition: "می‌تواند بر الگوی کشت و تناوب اثر منفی بگذارد.", category: "yellow" },
+                        { id: "عوامل مؤثر بر انتخاب محصول و تناوب", definition: "شامل عوامل اقتصادی، اجتماعی، خاک و اقلیم می‌باشند.", category: "yellow" },
+                        { id: "تنظیم مناسب تناوب", definition: "باعث کاهش هزینه‌های حمل و نقل و افزایش اشتغال می‌شود.", category: "yellow" },
+                        { id: "توسعه صنایع تبدیلی", definition: "مرتبط با کشاورزی در ارتقای بهره‌وری بخش کشاورزی نقش مهمی دارد.", category: "yellow" },
+                        { id: "استفاده بهینه از نهاده‌ها و نیروی کار", definition: "در بهبود عملکرد کشاورزی موثر است.", category: "yellow" },
+                        { id: "بررسی شرایط اقلیمی و خاکی", definition: "منطقه در انتخاب محصولات کشاورزی ضروری است.", category: "yellow" },
+                        { id: "حضور تناوب مناسب", definition: "در کاهش نیاز به استفاده از آفتکش‌ها مؤثر است.", category: "yellow" },
+                        { id: "در تناوب", definition: "باید از تکرار پشت سرهم گیاهان مشابه خودداری شود.", category: "yellow" }
+                    ],
+                    edges: [{ source: "تغییر اقلیم", target: "کاهش حاصلخیزی خاک و خشکسالی" }, { source: "عوامل مؤثر بر انتخاب محصول و تناوب", target: "بررسی شرایط اقلیمی و خاکی" }]
+                }
+            ],
+            practical: [
+                {
+                    nodes: [
+                        { id: "برنامه‌ریزی کشت", definition: "در سطح مزرعه به صورت آیش‌بندی و تناوب انجام می‌شود.", category: "red" },
+                        { id: "آیش‌بندی", definition: "یعنی در نظر گرفتن دوره‌ای برای استراحت زمین جهت بازسازی حاصلخیزی خاک.", category: "red" },
+                        { id: "آیش", definition: "به عنوان راهکاری برای بازسازی خاک در تناوب و افزایش عملکرد محصول کاربرد دارد.", category: "red" },
+                        { id: "تناوب زراعی", definition: "ترتیب متفاوت کاشت گیاهان در سال‌های متوالی است که به بهبود کیفیت خاک و کاهش آفات کمک می‌کند.", category: "red" },
+                        { id: "تناوب صحیح", definition: "برای بهبود حاصلخیزی خاک و کاهش آفات اهمیت دارد.", category: "red" },
+                        { id: "حضور تناوب مناسب", definition: "در کاهش نیاز به استفاده از آفتکش‌ها مؤثر است.", category: "red" },
+                        { id: "تنظیم جدول تناوبی", definition: "به صورت مربع، تعداد سال‌های اجرای تناوب مساوی با تعداد قطعات زمین است.", category: "red" },
+                        { id: "رعایت فاصله زمانی", definition: "مناسب بین برداشت محصول و کاشت محصول بعدی ضروری است.", category: "red" },
+                        { id: "تنظیم مناسب تناوب", definition: "باعث کاهش هزینه‌های حمل و نقل و افزایش اشتغال می‌شود.", category: "red" },
+                        { id: "مدیریت منابع آبی و خاکی", definition: "از اصول مهم پایداری سیستم‌های کشاورزی است.", category: "red" }
+                    ],
+                    edges: [{ source: "برنامه‌ریزی کشت", target: "آیش‌بندی" }, { source: "تناوب زراعی", target: "تناوب صحیح" }, { source: "آیش‌بندی", target: "آیش" }]
+                },
+                {
+                    nodes: [
+                        { id: "انتخاب تناوب مناسب", definition: "به قوانین دولتی، شرایط اکولوژیکی، توپوگرافی و وضعیت بازار بستگی دارد.", category: "blue" },
+                        { id: "عوامل مؤثر بر انتخاب محصول و تناوب", definition: "شامل عوامل اقتصادی، اجتماعی، خاک و اقلیم می‌باشند.", category: "blue" },
+                        { id: "حبوبات در تناوب", definition: "بهتر است بین دو گیاه غلات دانه‌ریز قرار گیرند چون به تثبیت ازت کمک می‌کنند.", category: "blue" },
+                        { id: "گیاهان علوفه‌ای چندساله", definition: "معمولاً در ابتدای تناوب قرار می‌گیرند.", category: "blue" },
+                        { id: "در تناوب", definition: "باید از تکرار پشت سرهم گیاهان مشابه خودداری شود.", category: "blue" },
+                        { id: "بررسی شرایط اقلیمی و خاکی", definition: "منطقه در انتخاب محصولات کشاورزی ضروری است.", category: "blue" },
+                        { id: "الگوی کشت", definition: "تعیین نظام کشاورزی با مزیت اقتصادی پایدار بر اساس سیاست‌های کلان، دانش بومی و پتانسیل منطقه است.", category: "blue" },
+                        { id: "انتخاب سیستم زراعی", definition: "تحت تأثیر شرایط اکولوژیکی، اقتصادی، اجتماعی و سیاسی منطقه قرار دارد.", category: "blue" },
+                        { id: "دانش بومی کشاورزان", definition: "نقش کلیدی در انتخاب و اجرای الگوی کشت دارد.", category: "blue" },
+                        { id: "سیستم‌های زراعی", definition: "شامل الگوی کشت، عملیات زراعی و تعامل آن‌ها با منابع، تجهیزات و فناوری‌های موجود است.", category: "blue" }
+                    ],
+                    edges: [{ source: "الگوی کشت", target: "انتخاب سیستم زراعی" }, { source: "انتخاب تناوب مناسب", target: "حبوبات در تناوب" }]
+                },
+                {
+                    nodes: [
+                        { id: "هدف سیستم زراعی پایدار", definition: "استفاده بهینه و سودمند از منابع طبیعی به صورت پایدار است.", category: "green" },
+                        { id: "تنوع زیستی", definition: "در کشاورزی پایدار از اهمیت زیادی برخوردار است.", category: "green" },
+                        { id: "افزایش بهره‌وری و حفظ منابع پایه", definition: "اهداف اصلی توسعه نظام‌های کشاورزی پایدار است.", category: "green" },
+                        { id: "کشاورزی زیستی (ارگانیک)", definition: "بر اصول اکولوژیکی تولید محصولات بدون مصرف کود و سموم شیمیایی تاکید دارد.", category: "green" },
+                        { id: "کشاورزی ارگانیک", definition: "محصول سالم با کیفیت بالا تولید می‌کند ولی نیازمند مقررات و استانداردهای خاص است.", category: "green" },
+                        { id: "استفاده از فناوری‌های نوین", definition: "در کشاورزی موجب افزایش بهره‌وری و کاهش هزینه‌ها می‌شود.", category: "green" },
+                        { id: "وجود اطلاعات دقیق و بانک اطلاعاتی", definition: "جامع برای برنامه‌ریزی کشت اهمیت دارد.", category: "green" },
+                        { id: "استفاده بهینه از نهاده‌ها و نیروی کار", definition: "در بهبود عملکرد کشاورزی موثر است.", category: "green" },
+                        { id: "نظام‌های زراعی سنتی", definition: "بر اساس دانش بومی و نهاده‌های محلی و بوم‌سازگار اداره می‌شوند.", category: "green" },
+                        { id: "سیستم‌های کشاورزی سنتی", definition: "بیشتر در جوامع بومی و روستایی مطرح است.", category: "green" }
+                    ],
+                    edges: [{ source: "هدف سیستم زراعی پایدار", target: "تنوع زیستی" }, { source: "کشاورزی زیستی (ارگانیک)", target: "کشاورزی ارگانیک" }]
+                },
+                {
+                    nodes: [
+                        { id: "کاهش حاصلخیزی خاک و خشکسالی", definition: "از چالش‌های مهم کشاورزی در ایران است.", category: "yellow" },
+                        { id: "نوسانات قیمت محصولات کشاورزی", definition: "مشکلاتی برای کشاورزان و برنامه‌ریزی کشت ایجاد می‌کند.", category: "yellow" },
+                        { id: "تغییر اقلیم", definition: "می‌تواند بر الگوی کشت و تناوب اثر منفی بگذارد.", category: "yellow" },
+                        { id: "نظام‌های زراعی صنعتی", definition: "نهاده‌محور، پرهزینه و وابسته به نهاده‌های خارجی مانند کود شیمیایی، سموم و انرژی فسیلی هستند.", category: "yellow" },
+                        { id: "سیستم‌های زراعی صنعتی", definition: "برای تولید تجاری و انبوه به نهاده‌های پرهزینه وابسته هستند.", category: "yellow" },
+                        { id: "کشاورزی متمرکز", definition: "شامل حذف گیاهان خودرو، جلوگیری از تغذیه جانوران از محصولات و نگهداری دام در مکان‌های محافظت شده است.", category: "yellow" },
+                        { id: "حذف گیاهان خودرو و محافظت از محصولات", definition: "بهره‌وری زمین را افزایش می‌دهد.", category: "yellow" },
+                        { id: "توسعه صنایع تبدیلی", definition: "مرتبط با کشاورزی در ارتقای بهره‌وری بخش کشاورزی نقش مهمی دارد.", category: "yellow" },
+                        { id: "نظام‌های زراعی", definition: "را می‌توان از دیدگاه‌های مختلف مانند سنتی، صنعتی، کم‌نهاده و پرنهاده تقسیم‌بندی کرد.", category: "yellow" },
+                        { id: "سیستم‌های زراعی رایج در ایران", definition: "شامل نظام‌های کشاورزی کم‌نهاده و پرنهاده است.", category: "yellow" }
+                    ],
+                    edges: [{ source: "نظام‌های زراعی", target: "نظام‌های زراعی صنعتی" }, { source: "تغییر اقلیم", target: "کاهش حاصلخیزی خاک و خشکسالی" }]
+                }
+            ]
+        };
+
+        let cy = cytoscape({
+            container: document.getElementById('cy'),
+            style: [
+                { selector: 'node', style: { 'background-color': '#666', 'label': 'data(id)', 'text-wrap': 'wrap', 'text-max-width': '100px', 'font-size': '12px', 'color': '#fff', 'text-outline-color': '#000', 'text-outline-width': '1px' } },
+                { selector: 'edge', style: { 'width': 2, 'line-color': '#ccc', 'target-arrow-color': '#ccc', 'target-arrow-shape': 'triangle', 'curve-style': 'bezier' } },
+                { selector: '.red', style: { 'background-color': 'red' } },
+                { selector: '.blue', style: { 'background-color': 'blue' } },
+                { selector: '.green', style: { 'background-color': 'green' } },
+                { selector: '.yellow', style: { 'background-color': 'yellow' } }
+            ],
+            layout: { name: 'grid' }
+        });
+
+        function loadModel(modelName) {
+            cy.elements().remove();
+            const groups = models[modelName];
+            groups.forEach(group => {
+                group.nodes.forEach(node => {
+                    cy.add({ group: 'nodes', data: { id: node.id, definition: node.definition }, classes: node.category });
+                });
+                group.edges.forEach(edge => {
+                    cy.add({ group: 'edges', data: { id: `e${cy.edges().length}`, source: edge.source, target: edge.target } });
+                });
+            });
+            cy.layout({ name: 'grid' }).run();
+            updateScore();
+        }
+
+        function updateScore(isLayout = false) {
+            const nodes = cy.nodes().length;
+            const edges = cy.edges().length;
+            const layers = isLayout ? Math.max(1, cy.nodes().maxDegree() || 0) : 0;
+            const score = nodes + 2 * edges + 3 * layers;
+            document.getElementById('score').textContent = `امتیاز: ${score}`;
+        }
+
+        document.getElementById('modelSelect').addEventListener('change', (e) => {
+            loadModel(e.target.value);
+        });
+
+        document.getElementById('layoutHierarchy').addEventListener('click', () => {
+            cy.layout({ name: 'breadthfirst' }).run();
+            updateScore(true);
+        });
+
+        document.getElementById('layoutCircle').addEventListener('click', () => {
+            cy.layout({ name: 'circle' }).run();
+            updateScore(true);
+        });
+
+        document.getElementById('clear').addEventListener('click', () => {
+            cy.elements().remove();
+            updateScore();
+        });
+
+        // نمایش تعریف با هاور
+        cy.on('mouseover', 'node', function(evt) {
+            const node = evt.target;
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.textContent = node.data('definition');
+            document.body.appendChild(tooltip);
+            const pos = node.renderedPosition();
+            tooltip.style.left = `${pos.x + 10}px`;
+            tooltip.style.top = `${pos.y + 10}px`;
+        });
+
+        cy.on('mouseout', 'node', function() {
+            document.querySelectorAll('.tooltip').forEach(t => t.remove());
+        });
+
+        // بارگذاری مدل اولیه
+        loadModel('initial');
+    </script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>یادگیری مقایسه‌ای مدیریت آب و آبیاری</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Vazir', sans-serif; background: linear-gradient(to bottom, #e0f7fa, #ffffff); }
+        #water-container {
+            width: 50px;
+            height: 200px;
+            border: 2px solid #0288d1;
+            border-radius: 0 0 10px 10px;
+            overflow: hidden;
+            position: relative;
+            background: #e3f2fd;
+            margin: 0 auto 20px;
+        }
+        #water-level {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #2196f3, #0d47a1);
+            transition: height 1s linear;
+            position: absolute;
+            bottom: 0;
+        }
+        #table-container table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        #table-container th {
+            background: linear-gradient(to right, #4caf50, #8bc34a);
+            color: white;
+            padding: 12px;
+            border: 1px solid #388e3c;
+        }
+        #table-container td {
+            padding: 12px;
+            border: 1px solid #81c784;
+            background: linear-gradient(to bottom, #f1f8e9, #dcedc8);
+            transition: background 0.3s;
+        }
+        #table-container td:hover {
+            background: linear-gradient(to bottom, #dcedc8, #c5e1a5);
+        }
+        canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 10; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="max-w-4xl w-full bg-white shadow-lg rounded-lg p-8">
+        <h1 class="text-3xl font-bold text-center mb-8 text-blue-600">یادگیری مقایسه‌ای مدیریت آب و آبیاری در مزرعه</h1>
+        <p class="text-center mb-6 text-gray-600">این صفحه شامل ۱۰ جدول مقایسه‌ای است. هر جدول ۳۰ ثانیه نمایش داده می‌شود با ظرف آب رنگی که خالی می‌شود. پس از پایان، انیمیشن جشن برای ۳ ثانیه و سپس جدول بعدی.</p>
+        
+        <div id="water-container">
+            <div id="water-level"></div>
+        </div>
+        
+        <div id="table-container" class="overflow-x-auto"></div>
+    </div>
+
+    <canvas id="confetti-canvas" width="100%" height="100%"></canvas>
+
+    <script>
+        const tables = [
+            // جدول ۱: مقایسه روش‌های آبیاری اصلی
+            `<table class="min-w-full">
+                <thead>
+                    <tr>
+                        <th colspan="5">جدول ۱: مقایسه روش‌های آبیاری اصلی</th>
+                    </tr>
+                    <tr>
+                        <th>روش</th>
+                        <th>راندمان (%)</th>
+                        <th>مصرف آب</th>
+                        <th>هزینه اولیه</th>
+                        <th>مناسب برای</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>سطحی</td><td>۵۰-۶۰</td><td>بالا</td><td>پایین</td><td>زمین‌های مسطح، گیاهان غرقابی</td></tr>
+                    <tr><td>بارانی</td><td>۷۰-۸۰</td><td>متوسط</td><td>متوسط</td><td>زمین‌های ناهموار، کنترل دما</td></tr>
+                    <tr><td>قطره‌ای</td><td>۹۰-۹۵</td><td>پایین</td><td>بالا</td><td>گیاهان ردیفی، مناطق خشک</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۲: مقایسه انواع آبیاری سطحی
+            `<table class="min-w-full">
+                <thead>
+                    <tr>
+                        <th colspan="5">جدول ۲: مقایسه انواع آبیاری سطحی</th>
+                    </tr>
+                    <tr>
+                        <th>نوع</th>
+                        <th>ویژگی اصلی</th>
+                        <th>مزایا</th>
+                        <th>معایب</th>
+                        <th>مناسب برای</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>کرتی</td><td>غرقابی کنترل شده</td><td>بدون رواناب</td><td>نیاز به تسطیح</td><td>زمین مسطح</td></tr>
+                    <tr><td>نواری</td><td>جریان در نوارها</td><td>کمتر تسطیح</td><td>سله‌سازی در خاک ریز</td><td>شیب ملایم</td></tr>
+                    <tr><td>جوی پشته‌ای</td><td>آب در جوی‌ها</td><td>برای گیاهان حساس</td><td>نیاز به نیروی کار</td><td>گیاهان ردیفی</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۳: مقایسه گیاهان بر اساس نیاز آبی
+            `<table class="min-w-full">
+                <thead>
+                    <tr>
+                        <th colspan="4">جدول ۳: مقایسه گیاهان بر اساس نیاز آبی</th>
+                    </tr>
+                    <tr>
+                        <th>نوع گیاه</th>
+                        <th>نیاز آبی</th>
+                        <th>مثال</th>
+                        <th>سازگاری</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>هیدروفیت</td><td>بالا</td><td>برنج</td><td>غرقاب</td></tr>
+                    <tr><td>مزوفیت</td><td>متوسط</td><td>گندم</td><td>رطوبت متوسط</td></tr>
+                    <tr><td>زروفیت</td><td>پایین</td><td>کاکتوس</td><td>خشکی</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۴: مقایسه عوامل مؤثر بر نیاز آبی
+            `<table class="min-w-full">
+                <thead>
+                    <tr>
+                        <th colspan="4">جدول ۴: مقایسه عوامل مؤثر بر نیاز آبی</th>
+                    </tr>
+                    <tr>
+                        <th>عامل</th>
+                        <th>نوع</th>
+                        <th>تأثیر</th>
+                        <th>مثال</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>گیاهی</td><td>اندازه برگ</td><td>افزایش تعرق</td><td>برگ بزرگ: بیشتر آب</td></tr>
+                    <tr><td>خاکی</td><td>بافت</td><td>نگهداری آب</td><td>شنی: کمتر نگهداری</td></tr>
+                    <tr><td>اقلیمی</td><td>دما</td><td>افزایش تبخیر</td><td>گرم: بیشتر نیاز</td></tr>
+                    <tr><td>زراعی</td><td>تراکم</td><td>رقابت</td><td>بالا: بیشتر آب</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۵: مقایسه آبیاری کامل و کم‌آبیاری
+            `<table class="min-w-full">
+                <thead>
+                    <tr>
+                        <th colspan="4">جدول ۵: مقایسه آبیاری کامل و کم‌آبیاری</th>
+                    </tr>
+                    <tr>
+                        <th>نوع</th>
+                        <th>تأمین نیاز</th>
+                        <th>مزایا</th>
+                        <th>معایب</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>کامل</td><td>۱۰۰%</td><td>عملکرد بالا</td><td>مصرف زیاد آب</td></tr>
+                    <tr><td>کم‌آبیاری</td><td>کمتر از ۱۰۰%</td><td>صرفه‌جویی آب</td><td>کاهش عملکرد</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۶: مقایسه منابع آب در مناطق مختلف
+            `<table class="min-w-full">
+                <thead>
+                    <tr>
+                        <th colspan="4">جدول ۶: مقایسه منابع آب در مناطق مختلف</th>
+                    </tr>
+                    <tr>
+                        <th>منطقه</th>
+                        <th>منبع اصلی</th>
+                        <th>مزایا</th>
+                        <th>چالش‌ها</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>مرطوب</td><td>بارندگی</td><td>طبیعی و رایگان</td><td>نامنظم</td></tr>
+                    <tr><td>خشک</td><td>چاه/رودخانه</td><td>قابل کنترل</td><td>کمبود</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۷: مقایسه راندمان کانال‌های انتقال آب
+            `<table class="min-w-full">
+                <thead>
+                    <tr>
+                        <th colspan="4">جدول ۷: مقایسه راندمان کانال‌های انتقال آب</th>
+                    </tr>
+                    <tr>
+                        <th>نوع کانال</th>
+                        <th>راندمان (%)</th>
+                        <th>ماده</th>
+                        <th>معایب</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>خاکی</td><td>۶۰-۷۰</td><td>خاک</td><td>نشت بالا</td></tr>
+                    <tr><td>بتنی</td><td>۸۵-۹۵</td><td>بتن</td><td>هزینه بالا</td></tr>
+                    <tr><td>لوله‌ای</td><td>۹۵+</td><td>پلاستیک/فلز</td><td>نصب پیچیده</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۸: مقایسه مراحل رشد گیاه و حساسیت به خشکی
+            `<table class="min-w-full">
+                <thead>
+                    <tr>
+                        <th colspan="4">جدول ۸: مقایسه مراحل رشد گیاه و حساسیت به خشکی</th>
+                    </tr>
+                    <tr>
+                        <th>مرحله</th>
+                        <th>حساسیت</th>
+                        <th>نیاز آبی</th>
+                        <th>تأثیر خشکی</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>رویشی</td><td>بالا</td><td>متوسط</td><td>کاهش رشد</td></tr>
+                    <tr><td>گلدهی</td><td>خیلی بالا</td><td>بالا</td><td>افت عملکرد</td></tr>
+                    <tr><td>رسیدگی</td><td>پایین</td><td>کم</td><td>کم تأثیر</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۹: مقایسه مزایا و معایب آبیاری بارانی
+            `<table class="min-w-full">
+                <thead>
+                    <tr>
+                        <th colspan="3">جدول ۹: مقایسه مزایا و معایب آبیاری بارانی</th>
+                    </tr>
+                    <tr>
+                        <th>جنبه</th>
+                        <th>مزایا</th>
+                        <th>معایب</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>آب</td><td>صرفه‌جویی</td><td>تبخیر در باد</td></tr>
+                    <tr><td>پوشش</td><td>یکنواخت</td><td>سله در خاک رسی</td></tr>
+                    <tr><td>کنترل</td><td>دما و علف</td><td>هزینه انرژی</td></tr>
+                </tbody>
+            </table>`,
+
+            // جدول ۱۰: مقایسه کارایی مصرف آب در گیاهان
+            `<table class="min-w-full">
+                <thead>
+                    <tr>
+                        <th colspan="4">جدول ۱۰: مقایسه کارایی مصرف آب در گیاهان</th>
+                    </tr>
+                    <tr>
+                        <th>گیاه</th>
+                        <th>کارایی (kg/m³)</th>
+                        <th>عامل اصلی</th>
+                        <th>بهینه‌سازی</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>ذرت</td><td>۱-۲</td><td>ریشه عمیق</td><td>کم‌آبیاری</td></tr>
+                    <tr><td>گندم</td><td>۰.۵-۱</td><td>تراکم روزنه</td><td>رقم مقاوم</td></tr>
+                    <tr><td>پنبه</td><td>۰.۲-۰.۵</td><td>برگ پهن</td><td>قطره‌ای</td></tr>
+                </tbody>
+            </table>`
+        ];
+
+        let currentIndex = 0;
+        let timerInterval;
+        const tableContainer = document.getElementById('table-container');
+        const waterLevel = document.getElementById('water-level');
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        function showTable(index) {
+            if (index >= tables.length) {
+                tableContainer.innerHTML = '<p class="text-center text-xl font-bold text-green-600">پایان! همه جدول‌ها نمایش داده شد.</p>';
+                waterLevel.style.display = 'none';
+                return;
+            }
+            tableContainer.innerHTML = tables[index];
+            waterLevel.style.height = '100%';
+            let timeLeft = 30;
+            let heightStep = 100 / timeLeft;
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                waterLevel.style.height = `${(timeLeft / 30) * 100}%`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    launchConfetti();
+                    setTimeout(() => {
+                        currentIndex++;
+                        showTable(currentIndex);
+                    }, 3000);
+                }
+            }, 1000);
+        }
+
+        function launchConfetti() {
+            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#f0f'];
+            let particles = [];
+            for (let i = 0; i < 300; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 4 + 1,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vx: Math.random() * 20 - 10,
+                    vy: Math.random() * 20 - 10,
+                    life: 300
+                });
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    if (p.life > 0) {
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                        ctx.fillStyle = p.color;
+                        ctx.fill();
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += 0.1;
+                        p.life--;
+                    }
+                });
+                if (particles.some(p => p.life > 0)) {
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            animate();
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        showTable(currentIndex);
+    </script>
+</body>
+</html>

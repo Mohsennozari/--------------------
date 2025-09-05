@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمون تستی: نظام‌های زراعی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background: url('https://images.unsplash.com/photo-1500595046743-ee5a3a111d86?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        .card {
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .option-btn {
+            font-size: 1.25rem;
+            padding: 1rem;
+            margin: 0.5rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            min-height: 4rem;
+            word-break: break-word;
+        }
+        .option-btn:hover {
+            transform: scale(1.05);
+        }
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            animation: slideIn 0.5s ease-out, slideOut 0.5s ease-in 2s forwards;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); }
+            to { transform: translateX(100%); }
+        }
+        .water-container {
+            width: 50px;
+            height: 100px;
+            border: 2px solid #1e40af;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            background: #e0f7fa;
+        }
+        .water {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            bottom: 0;
+        }
+        .water.easy { background: linear-gradient(to top, #15803d, #86efac); animation: drain-easy 5s linear forwards; }
+        .water.medium { background: linear-gradient(to top, #1e40af, #60a5fa); animation: drain-medium 10s linear forwards; }
+        .water.hard { background: linear-gradient(to top, #c2410c, #fb923c); animation: drain-hard 15s linear forwards; }
+        .water.advanced { background: linear-gradient(to top, #b91c1c, #f87171); animation: drain-advanced 20s linear forwards; }
+        @keyframes drain-easy { 0% { height: 100%; } 100% { height: 0; background: linear-gradient(to top, #86efac, #d1fae5); } }
+        @keyframes drain-medium { 0% { height: 100%; } 100% { height: 0; background: linear-gradient(to top, #60a5fa, #bfdbfe); } }
+        @keyframes drain-hard { 0% { height: 100%; } 100% { height: 0; background: linear-gradient(to top, #fb923c, #fed7aa); } }
+        @keyframes drain-advanced { 0% { height: 100%; } 100% { height: 0; background: linear-gradient(to top, #f87171, #fecaca); } }
+        .fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('https://cdn.fontcdn.ir/Fonts/Vazirmatn/Vazirmatn-Regular.woff2') format('woff2');
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white bg-opacity-90 rounded-xl shadow-2xl p-6 max-w-4xl w-full border-4 border-yellow-500">
+        <h1 class="text-3xl font-bold text-center text-green-700 mb-6">🌾 آزمون تستی: نظام‌های زراعی 🌾</h1>
+        <div id="progress" class="text-center mb-4 text-lg text-gray-700"></div>
+        <div class="flex justify-center mb-4">
+            <div class="water-container">
+                <div class="water"></div>
+            </div>
+        </div>
+        <div id="question-container" class="bg-gradient-to-r from-green-200 to-green-400 p-6 rounded-lg border-2 border-green-500 card">
+            <p id="question-text" class="text-xl text-center mb-4"></p>
+            <div id="options" class="grid grid-cols-2 gap-4"></div>
+        </div>
+        <div class="mt-4 flex justify-center space-x-4">
+            <button id="prev-question" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">قبلی</button>
+            <button id="next-question" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">بعدی</button>
+            <button id="reset-quiz" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">ریست</button>
+        </div>
+        <canvas id="fireworks" class="fireworks hidden"></canvas>
+        <div id="toast-container"></div>
+    </div>
+
+    <script>
+        const questions = [
+            // آسان (1-10, 5 ثانیه)
+            { level: 'آسان', question: 'نظام‌های زراعی را از چه دیدگاه‌هایی می‌توان تقسیم‌بندی کرد؟', options: ['سنتی، صنعتی، کم‌نهاده و پرنهاده', 'فقط سنتی و صنعتی', 'فقط کم‌نهاده', 'هیچ‌کدام'], correct: 0, time: 5000 },
+            { level: 'آسان', question: 'نظام‌های زراعی سنتی بر اساس چه چیزی اداره می‌شوند؟', options: ['دانش بومی و نهاده‌های محلی', 'کود شیمیایی', 'انرژی فسیلی', 'هیچ‌کدام'], correct: 0, time: 5000 },
+            { level: 'آسان', question: 'کشاورزی زیستی بر چه اصولی تاکید دارد؟', options: ['تولید بدون کود و سموم شیمیایی', 'استفاده از کود شیمیایی', 'انرژی فسیلی', 'هیچ‌کدام'], correct: 0, time: 5000 },
+            { level: 'آسان', question: 'نظام‌های زراعی صنعتی وابسته به چه چیزی هستند؟', options: ['نهاده‌های خارجی مانند کود شیمیایی', 'دانش بومی', 'نهاده‌های محلی', 'هیچ‌کدام'], correct: 0, time: 5000 },
+            { level: 'آسان', question: 'کشاورزی متمرکز شامل چه چیزی است؟', options: ['حذف گیاهان خودرو', 'استفاده از کود شیمیایی', 'انرژی فسیلی', 'هیچ‌کدام'], correct: 0, time: 5000 },
+            { level: 'آسان', question: 'سیستم‌های زراعی شامل چه چیزی است؟', options: ['الگوی کشت و عملیات زراعی', 'فقط الگوی کشت', 'فقط عملیات زراعی', 'هیچ‌کدام'], correct: 0, time: 5000 },
+            { level: 'آسان', question: 'انتخاب سیستم زراعی تحت تأثیر چه شرایطی است؟', options: ['اکولوژیکی، اقتصادی، اجتماعی', 'فقط اقتصادی', 'فقط اجتماعی', 'هیچ‌کدام'], correct: 0, time: 5000 },
+            { level: 'آسان', question: 'هدف سیستم زراعی پایدار چیست؟', options: ['استفاده بهینه از منابع طبیعی', 'استفاده از کود شیمیایی', 'انرژی فسیلی', 'هیچ‌کدام'], correct: 0, time: 5000 },
+            { level: 'آسان', question: 'الگوی کشت بر اساس چه چیزی تعیین می‌شود؟', options: ['سیاست‌های کلان و دانش بومی', 'فقط سیاست‌های کلان', 'فقط دانش بومی', 'هیچ‌کدام'], correct: 0, time: 5000 },
+            { level: 'آسان', question: 'عوامل مؤثر بر انتخاب محصول شامل چه چیزی است؟', options: ['اقتصادی، اجتماعی، خاک و اقلیم', 'فقط اقتصادی', 'فقط اجتماعی', 'هیچ‌کدام'], correct: 0, time: 5000 },
+            // متوسط (11-20, 10 ثانیه)
+            { level: 'متوسط', question: 'برنامه‌ریزی کشت در سطح مزرعه به چه صورت است؟', options: ['آیش‌بندی و تناوب', 'فقط آیش‌بندی', 'فقط تناوب', 'هیچ‌کدام'], correct: 0, time: 10000 },
+            { level: 'متوسط', question: 'آیش‌بندی یعنی چه؟', options: ['استراحت زمین برای بازسازی خاک', 'کاشت مداوم', 'استفاده از کود', 'هیچ‌کدام'], correct: 0, time: 10000 },
+            { level: 'متوسط', question: 'تناوب زراعی چیست؟', options: ['ترتیب متفاوت کاشت گیاهان', 'کاشت یک گیاه تکراری', 'هیچ‌کدام', 'هر دو'], correct: 0, time: 10000 },
+            { level: 'متوسط', question: 'تناوب مناسب در چه چیزی مؤثر است؟', options: ['کاهش آفتکش‌ها', 'افزایش آفتکش‌ها', 'هیچ‌کدام', 'هر دو'], correct: 0, time: 10000 },
+            { level: 'متوسط', question: 'انتخاب تناوب به چه بستگی دارد؟', options: ['قوانین دولتی و شرایط اکولوژیکی', 'فقط قوانین دولتی', 'فقط شرایط اکولوژیکی', 'هیچ‌کدام'], correct: 0, time: 10000 },
+            { level: 'متوسط', question: 'حبوبات در تناوب کجا قرار می‌گیرند؟', options: ['بین دو گیاه غلات', 'در ابتدا', 'در انتها', 'هیچ‌کدام'], correct: 0, time: 10000 },
+            { level: 'متوسط', question: 'گیاهان علوفه‌ای چندساله کجا قرار می‌گیرند؟', options: ['در ابتدای تناوب', 'در انتها', 'در وسط', 'هیچ‌کدام'], correct: 0, time: 10000 },
+            { level: 'متوسط', question: 'در تناوب از چه چیزی خودداری شود؟', options: ['تکرار پشت سرهم گیاهان مشابه', 'کاشت متفاوت', 'هیچ‌کدام', 'هر دو'], correct: 0, time: 10000 },
+            { level: 'متوسط', question: 'تنظیم جدول تناوبی به صورت مربع چگونه است؟', options: ['تعداد سال‌ها مساوی تعداد قطعات', 'تعداد سال‌ها کمتر', 'تعداد سال‌ها بیشتر', 'هیچ‌کدام'], correct: 0, time: 10000 },
+            { level: 'متوسط', question: 'رعایت فاصله زمانی بین برداشت و کاشت ضروری است؟', options: ['بله', 'خیر', 'گاهی', 'هیچ‌کدام'], correct: 0, time: 10000 },
+            // سخت (21-30, 15 ثانیه)
+            { level: 'سخت', question: 'مدیریت منابع آبی و خاکی از اصول مهم چه چیزی است؟', options: ['پایداری سیستم‌های کشاورزی', 'کاشت مداوم', 'استفاده از کود', 'هیچ‌کدام'], correct: 0, time: 15000 },
+            { level: 'سخت', question: 'نوسانات قیمت محصولات چه مشکلاتی ایجاد می‌کند؟', options: ['برای کشاورزان و برنامه‌ریزی', 'هیچ مشکلی', 'فقط برای کشاورزان', 'هیچ‌کدام'], correct: 0, time: 15000 },
+            { level: 'سخت', question: 'کاهش حاصلخیزی خاک از چالش‌های کشاورزی در ایران است؟', options: ['بله', 'خیر', 'گاهی', 'هیچ‌کدام'], correct: 0, time: 15000 },
+            { level: 'سخت', question: 'اهداف توسعه نظام‌های کشاورزی پایدار چیست؟', options: ['افزایش بهره‌وری و حفظ منابع', 'کاهش بهره‌وری', 'هیچ‌کدام', 'هر دو'], correct: 0, time: 15000 },
+            { level: 'سخت', question: 'تغییر اقلیم بر الگوی کشت اثر دارد؟', options: ['منفی', 'مثبت', 'هیچ', 'هر دو'], correct: 0, time: 15000 },
+            { level: 'سخت', question: 'دانش بومی کشاورزان در چه چیزی نقش دارد؟', options: ['انتخاب الگوی کشت', 'کود شیمیایی', 'انرژی فسیلی', 'هیچ‌کدام'], correct: 0, time: 15000 },
+            { level: 'سخت', question: 'فناوری‌های نوین موجب چه می‌شود؟', options: ['افزایش بهره‌وری و کاهش هزینه', 'افزایش هزینه', 'هیچ‌کدام', 'هر دو'], correct: 0, time: 15000 },
+            { level: 'سخت', question: 'سیستم‌های زراعی رایج در ایران چیست؟', options: ['کم‌نهاده و پرنهاده', 'فقط کم‌نهاده', 'فقط پرنهاده', 'هیچ‌کدام'], correct: 0, time: 15000 },
+            { level: 'سخت', question: 'کشاورزی ارگانیک نیازمند چه چیزی است؟', options: ['مقررات و استانداردهای خاص', 'کود شیمیایی', 'انرژی فسیلی', 'هیچ‌کدام'], correct: 0, time: 15000 },
+            { level: 'سخت', question: 'تناوب صحیح برای چه اهمیت دارد؟', options: ['بهبود خاک و کاهش آفات', 'افزایش آفات', 'هیچ‌کدام', 'هر دو'], correct: 0, time: 15000 },
+            // پیشرفته (31-40, 20 ثانیه)
+            { level: 'پیشرفته', question: 'سیستم‌های زراعی صنعتی وابسته به چه هستند؟', options: ['نهاده‌های پرهزینه', 'دانش بومی', 'نهاده‌های محلی', 'هیچ‌کدام'], correct: 0, time: 20000 },
+            { level: 'پیشرفته', question: 'تنوع زیستی در کشاورزی پایدار اهمیت دارد؟', options: ['بله', 'خیر', 'گاهی', 'هیچ‌کدام'], correct: 0, time: 20000 },
+            { level: 'پیشرفته', question: 'سیستم‌های کشاورزی سنتی در کجا مطرح است؟', options: ['جوامع بومی و روستایی', 'شهرها', 'صنعتی', 'هیچ‌کدام'], correct: 0, time: 20000 },
+            { level: 'پیشرفته', question: 'حذف گیاهان خودرو بهره‌وری را افزایش می‌دهد؟', options: ['بله', 'خیر', 'گاهی', 'هیچ‌کدام'], correct: 0, time: 20000 },
+            { level: 'پیشرفته', question: 'استفاده بهینه از نهاده‌ها موثر است؟', options: ['در بهبود عملکرد کشاورزی', 'در کاهش عملکرد', 'هیچ‌کدام', 'هر دو'], correct: 0, time: 20000 },
+            { level: 'پیشرفته', question: 'بررسی شرایط اقلیمی در انتخاب محصولات ضروری است؟', options: ['بله', 'خیر', 'گاهی', 'هیچ‌کدام'], correct: 0, time: 20000 },
+            { level: 'پیشرفته', question: 'بانک اطلاعاتی برای برنامه‌ریزی کشت اهمیت دارد؟', options: ['بله', 'خیر', 'گاهی', 'هیچ‌کدام'], correct: 0, time: 20000 },
+            { level: 'پیشرفته', question: 'تناوب مناسب باعث کاهش هزینه‌های حمل و نقل می‌شود؟', options: ['بله', 'خیر', 'گاهی', 'هیچ‌کدام'], correct: 0, time: 20000 },
+            { level: 'پیشرفته', question: 'آیش برای بازسازی خاک کاربرد دارد؟', options: ['بله', 'خیر', 'گاهی', 'هیچ‌کدام'], correct: 0, time: 20000 },
+            { level: 'پیشرفته', question: 'توسعه صنایع تبدیلی نقش مهمی دارد؟', options: ['در ارتقای بهره‌وری', 'در کاهش بهره‌وری', 'هیچ‌کدام', 'هر دو'], correct: 0, time: 20000 }
+        ];
+
+        let currentQuestion = 0;
+        let timer;
+        const clickSound = new Audio('https://cdn.pixabay.com/audio/2023/08/08/audio_3f6b7b2c4b.mp3');
+        const transitionSound = new Audio('https://cdn.pixabay.com/audio/2023/08/08/audio_4e7b2b3c5c.mp3');
+
+        // مدیریت خطای localStorage
+        try {
+            currentQuestion = parseInt(localStorage.getItem('currentQuestion')) || 0;
+        } catch (e) {
+            console.error('خطا در دسترسی به localStorage:', e);
+            currentQuestion = 0;
+        }
+
+        // بررسی بارگذاری فونت
+        document.fonts.ready.then(() => {
+            if (!document.fonts.check('16px Vazirmatn')) {
+                console.warn('فونت Vazirmatn بارگذاری نشد، فونت پیش‌فرض استفاده می‌شود.');
+            }
+        });
+
+        function showToast(message, type) {
+            const toast = `<div class="toast bg-${type === 'error' ? 'red' : 'green'}-500 text-white p-3 rounded-lg shadow-lg">${message}</div>`;
+            $('#toast-container').append(toast);
+            setTimeout(() => $('#toast-container .toast').first().remove(), 2500);
+        }
+
+        function resetWaterAnimation(level, time) {
+            $('.water').remove();
+            const water = $('<div class="water"></div>').addClass(level.toLowerCase());
+            $('.water-container').append(water);
+        }
+
+        function showFireworks() {
+            const canvas = document.getElementById('fireworks');
+            canvas.classList.remove('hidden');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const particles = [];
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 5 + 2,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    vx: (Math.random() - 0.5) * 12,
+                    vy: (Math.random() - 0.5) * 12
+                });
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.15;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                });
+                if (Date.now() < startTime + 5000) requestAnimationFrame(animate);
+                else canvas.classList.add('hidden');
+            }
+            const startTime = Date.now();
+            animate();
+        }
+
+        function showQuestion(index) {
+            if (index < 0) {
+                index = questions.length - 1;
+                showToast('به آخرین سوال رسیدید، بازگشت به ابتدا!', 'success');
+            } else if (index >= questions.length) {
+                index = 0;
+                showToast('همه سوالات تمام شدند، بازگشت به ابتدا!', 'success');
+            }
+            currentQuestion = index;
+            try {
+                localStorage.setItem('currentQuestion', currentQuestion);
+            } catch (e) {
+                console.error('خطا در ذخیره localStorage:', e);
+            }
+            const q = questions[currentQuestion];
+            let bgColor, borderColor;
+            if (q.level === 'آسان') {
+                bgColor = 'from-green-200 to-green-400';
+                borderColor = 'border-green-500';
+            } else if (q.level === 'متوسط') {
+                bgColor = 'from-blue-200 to-blue-400';
+                borderColor = 'border-blue-500';
+            } else if (q.level === 'سخت') {
+                bgColor = 'from-orange-200 to-orange-400';
+                borderColor = 'border-orange-500';
+            } else {
+                bgColor = 'from-red-200 to-red-400';
+                borderColor = 'border-red-500';
+            }
+            $('#question-container').removeClass().addClass(`bg-gradient-to-r ${bgColor} p-6 rounded-lg border-2 ${borderColor} card`);
+            $('#question-container').removeClass('bg-red-200 shake');
+            resetWaterAnimation(q.level, q.time);
+            setTimeout(() => {
+                $('#question-text').text(q.question);
+                $('#options').empty();
+                q.options.forEach((opt, i) => {
+                    const btn = `<button class="option-btn bg-white text-gray-800 border-2 border-gray-300 w-full" data-index="${i}">${opt}</button>`;
+                    $('#options').append(btn);
+                });
+                $('#question-container').addClass('show');
+                $('#progress').text(`سوال ${currentQuestion + 1} از ${questions.length} - سطح: ${q.level}`);
+            }, 500);
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                transitionSound.play().catch(e => console.error('خطا در پخش صدا:', e));
+                showQuestion(currentQuestion + 1);
+            }, q.time);
+        }
+
+        $(document).on('click', '.option-btn', function() {
+            const selected = parseInt($(this).data('index'));
+            const q = questions[currentQuestion];
+            clearTimeout(timer);
+            if (selected === q.correct) {
+                showToast('پاسخ درست! 🎉', 'success');
+                transitionSound.play().catch(e => console.error('خطا در پخش صدا:', e));
+                showFireworks();
+                setTimeout(() => showQuestion(currentQuestion + 1), 5000);
+            } else {
+                $('#question-container').addClass('bg-red-200 shake');
+                showToast('پاسخ غلط! 😔', 'error');
+                clickSound.play().catch(e => console.error('خطا در پخش صدا:', e));
+                setTimeout(() => showQuestion(currentQuestion + 1), 2000);
+            }
+        });
+
+        $('#next-question').on('click', () => {
+            clickSound.play().catch(e => console.error('خطا در پخش صدا:', e));
+            clearTimeout(timer);
+            showQuestion(currentQuestion + 1);
+        });
+
+        $('#prev-question').on('click', () => {
+            clickSound.play().catch(e => console.error('خطا در پخش صدا:', e));
+            clearTimeout(timer);
+            showQuestion(currentQuestion - 1);
+        });
+
+        $('#reset-quiz').on('click', () => {
+            clickSound.play().catch(e => console.error('خطا در پخش صدا:', e));
+            clearTimeout(timer);
+            showToast('آزمون ریست شد!', 'success');
+            showQuestion(0);
+        });
+
+        // شروع با سوال ذخیره‌شده یا اولین سوال
+        showQuestion(currentQuestion);
+    </script>
+</body>
+</html>

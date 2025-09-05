@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>برداشت و انبارداری محصولات زراعی</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .water-container {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+      border-radius: 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    .water-effect {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top, rgba(59, 130, 246, 0.5), transparent);
+      animation: waterRise 30s linear forwards;
+      z-index: 0;
+    }
+    @keyframes waterRise {
+      0% { height: 0%; }
+      100% { height: 100%; }
+    }
+    .card-content {
+      position: relative;
+      z-index: 1;
+      padding: 1.5rem;
+      color: #1a202c;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+  <div class="container mx-auto">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">درسنامه: برداشت و انبارداری محصولات زراعی</h1>
+    <div id="card-container" class="grid grid-cols-1 gap-6">
+      <!-- Cards will be dynamically inserted here -->
+    </div>
+  </div>
+
+  <script>
+    const concepts = [
+      {
+        title: "مقدمه برداشت",
+        description: "برداشت محصول مرحله‌ای پس از کاشت و داشت است که زمان و نحوه آن به نوع گیاه و مصرف آن بستگی دارد. برداشت دقیق، منافع اقتصادی و رضایت کشاورز را افزایش می‌دهد."
+      },
+      {
+        title: "انواع برداشت (دانه‌ای)",
+        description: "محصولات دانه‌ای مانند گندم، جو، برنج، ذرت و لوبیا برای مصرف دانه برداشت می‌شوند."
+      },
+      {
+        title: "انواع برداشت (غیر دانه‌ای)",
+        description: "شامل مصرف گل (زعفران)، قسمت‌های علفی (یونجه، شبدر)، اندام زیرزمینی (چغندرقند، سیب‌زمینی)، میوه‌ای (گوجه، خیار)، ساقه‌ای (نیشکر) و برگی (چای، توتون)."
+      },
+      {
+        title: "شاخص برداشت",
+        description: "شاخص برداشت = عملکرد اقتصادی ÷ عملکرد کل (وزن خشک گیاه). این شاخص میزان بهره‌وری محصول را نشان می‌دهد."
+      },
+      {
+        title: "رسیدگی فیزیولوژیک",
+        description: "توقف انتقال مواد فتوسنتزی به اندام اقتصادی، مانند رسیدگی غلات."
+      },
+      {
+        title: "رسیدگی تجاری",
+        description: "زمانی که محصول بیشترین ارزش اقتصادی را دارد، ممکن است قبل یا بعد از رسیدگی فیزیولوژیک باشد."
+      },
+      {
+        title: "روش‌های برداشت",
+        description: "شامل برداشت دستی (با داس یا دروگر) و مکانیزه (با کمباین، دروگر، غده‌کن). برداشت مکانیزه نیاز به رسیدگی یکنواخت و مقاومت به ریزش دانه دارد."
+      },
+      {
+        title: "برداشت غلات دانه‌ریز",
+        description: "علائم رسیدگی: زرد شدن ساقه، تغییر رنگ برگ و سنبله، رطوبت دانه 14–16%. برداشت زودهنگام باعث فساد و دیرهنگام باعث ریزش دانه می‌شود."
+      },
+      {
+        title: "برداشت حبوبات",
+        description: "عدم یکنواختی رسیدگی زیاد است. برداشت وقتی 75٪ غلاف‌ها رسیده باشند یا با کمک علف‌کش‌ها انجام می‌شود."
+      },
+      {
+        title: "برداشت گیاهان علوفه‌ای",
+        description: "تعادل بین کیفیت و کمیت در اوایل تا اواسط گلدهی. شامل درو، ردیف‌کنی، بسته‌بندی و خردکردن برای سیلو."
+      },
+      {
+        title: "برداشت گیاهان غده‌ای و ریشه‌ای",
+        description: "سیب‌زمینی: برگ‌ها زرد، پوست ضخیم، غده جداشدنی. چغندرقند: برگ‌های قهوه‌ای و زرد، برداشت در اوج عملکرد و عیار قند."
+      },
+      {
+        title: "انبارداری محصولات",
+        description: "ذخیره‌سازی برای عرضه خارج از فصل، محدودیت انتقال و ذخیره استراتژیک. نیاز به کنترل دما، رطوبت و اکسیژن."
+      },
+      {
+        title: "شرایط انبارداری",
+        description: "کاهش فساد و تنفس محصول، محافظت از آفات، کپک‌ها و باکتری‌ها. انبارها باید مجهز به تهویه و عایق باشند."
+      },
+      {
+        title: "اصول ساخت انبار",
+        description: "کف مقاوم به رطوبت، دیواره و سقف بدون درز، تهویه مناسب. رطوبت بهینه (گندم 13٪، برنج 14٪) و کاهش اکسیژن برای کنترل آفات."
+      }
+    ];
+
+    const cardContainer = document.getElementById('card-container');
+    let currentIndex = 0;
+
+    function displayCard(index) {
+      cardContainer.innerHTML = '';
+      const concept = concepts[index];
+      const card = document.createElement('div');
+      card.className = 'water-container max-w-md mx-auto';
+      card.innerHTML = `
+        <div class="water-effect"></div>
+        <div class="card-content">
+          <h2 class="text-2xl font-semibold text-gray-800 mb-4">${concept.title}</h2>
+          <p class="text-gray-600">${concept.description}</p>
+        </div>
+      `;
+      cardContainer.appendChild(card);
+    }
+
+    function nextCard() {
+      currentIndex = (currentIndex + 1) % concepts.length;
+      displayCard(currentIndex);
+    }
+
+    // Display first card
+    displayCard(currentIndex);
+
+    // Auto transition every 30 seconds
+    setInterval(nextCard, 30000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فلش کارت‌های آمادگی امتحان عوامل خسارت‌زا</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        .flip-card {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* Safari */
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        .flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="max-w-3xl w-full bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">فلش کارت‌های آمادگی امتحان عوامل خسارت‌زا در گیاهان کشاورزی</h1>
+        <div id="flashcard-container" class="flip-card w-full h-80">
+            <div class="flip-card-inner relative w-full h-full">
+                <div class="flip-card-front absolute w-full h-full bg-blue-500 text-white rounded-lg flex items-center justify-center p-6">
+                    <p id="question" class="text-lg font-semibold text-center"></p>
+                </div>
+                <div class="flip-card-back absolute w-full h-full bg-green-500 text-white rounded-lg flex items-center justify-center p-6">
+                    <p id="answer" class="text-lg font-semibold text-center"></p>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-between mt-4">
+            <button id="prev-btn" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 disabled:opacity-50" disabled>قبلی</button>
+            <span id="card-counter" class="text-gray-600 font-semibold"></span>
+            <button id="next-btn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">بعدی</button>
+        </div>
+    </div>
+
+    <script>
+        const flashcards = [
+            { question: "عوامل اصلی خسارت زای گیاهان کشاورزی چیست؟", answer: "آفات (حشرات، کنه‌ها، جوندگان)، بیماری‌های گیاهی (قارچ‌ها، ویروس‌ها، باکتری‌ها، نماتدها) و علف‌های هرز." },
+            { question: "متداول‌ترین عامل کاهش عملکرد محصولات زراعی کدام است؟", answer: "تنش‌های زیستی شامل آفات، بیماری‌ها و علف‌های هرز." },
+            { question: "آستانه خسارت چیست؟", answer: "کمترین تراکم آفت که در زیر آن، خسارت قابل توجهی به محصول وارد نمی‌شود." },
+            { question: "آستانه آسیب اقتصادی (EIL) به چه معناست؟", answer: "حداقل تراکم جمعیت آفت که باعث خسارت اقتصادی شده و توجیه اقتصادی برای کنترل آفت فراهم می‌آورد." },
+            { question: "تفاوت آستانه اقتصادی و آستانه عمل چیست؟", answer: "آستانه عمل تراکمی است که باید عمل کنترل انجام شود تا از رسیدن به آستانه آسیب اقتصادی جلوگیری کند." },
+            { question: "آفات کلیدی چیست؟", answer: "آفت‌هایی که مهم، دائمی و کنترل آنها دشوار است و تأثیر عمده‌ای بر محصول دارند." },
+            { question: "انواع روش‌های کنترل آفات را نام ببرید.", answer: "کنترل قانونی (قرنطینه)، فیزیکی، زراعی (اکولوژیک)، شیمیایی، بیولوژیک، استفاده از گیاهان مقاوم، مدیریت تلفیقی، ریشه کنی." },
+            { question: "هدف اصلی مبارزه بیولوژیک چیست؟", answer: "کاهش جمعیت آفات با استفاده از عوامل زنده طبیعی و ایجاد تعادل طبیعی در اکوسیستم." },
+            { question: "پارازیتوئید چیست؟", answer: "بندپایانی که مرحله نابالغ آن داخل یا روی میزبان زندگی می‌کند و در نهایت میزبان را از بین می‌برد." },
+            { question: "شکارگر در مبارزه بیولوژیک به چه معناست؟", answer: "موجوداتی که آزادانه از شکار تغذیه کرده و وابسته به تنها یک میزبان نیستند." },
+            { question: "مثلث بیماری‌زایی شامل چه عواملی است؟", answer: "پاتوژن (عامل بیماری‌زا)، میزبان حساس و شرایط محیطی مساعد." },
+            { question: "دوره کمون بیماری چیست؟", answer: "فاصله زمانی بین عفونت و ظهور علائم بیماری." },
+            { question: "سه روش کلی مبارزه با بیماری گیاهی را نام ببرید.", answer: "مبارزه زراعی، فیزیکی، بیولوژیک، شیمیایی و مدیریت تلفیقی." },
+            { question: "نقش بهداشت مزرعه در مدیریت بیماری‌ها چیست؟", answer: "حذف بقایای گیاهی و عوامل بیماری‌زا و کاهش جمعیت پاتوژن‌ها." },
+            { question: "قارچ‌کش‌های سیستمی چیستند؟", answer: "ترکیباتی که پس از جذب توسط گیاه، در تمام قسمت‌ها حرکت کرده و از داخل محافظت می‌کنند." },
+            { question: "قارچ‌کش ریشه‌کن‌کننده به چه معنی است؟", answer: "قارچ‌کش‌هایی که عامل بیماری‌زا را به صورت مستقیم از بین می‌برند." },
+            { question: "علائم عمومی بیماری‌های گیاهی کدامند؟", answer: "کلروز (زردی)، نکروز (مرگ بافت)، موزاییک، سفیدک، سیاهک، زنگ، پوسیدگی، پژمردگی، شانکر، پیچیدگی برگ، گال." },
+            { question: "تفاوت بیماری‌های عفونی و غیر عفونی چیست؟", answer: "عفونی ناشی از عوامل زنده است؛ غیرعفونی ناشی از عوامل محیطی یا فیزیولوژیکی." },
+            { question: "قارچ‌ها چگونه موجب بیماری گیاهی می‌شوند؟", answer: "تولید اسپور، نفوذ به سلول گیاه، تخریب بافت و تولید توکسین‌ها." },
+            { question: "تعریف علف هرز چیست؟", answer: "گیاه ناخواسته‌ای که در محل کشت گیاه اصلی رشد کرده و موجب کاهش عملکرد می‌شود." },
+            { question: "علف‌های هرز چه نوع ضررهایی به کشاورزی وارد می‌کنند؟", answer: "کاهش کیفیت و کمیت محصول، افزایش هزینه‌ها، تهدید سلامت حیوانات و انسان، رقابت بر سر منابع." },
+            { question: "دوره بحرانی کنترل علف‌های هرز به چه معناست؟", answer: "دوره زمانی در فصل رشد که کنترل به موقع علف هرز مانع کاهش عملکرد محصول می‌شود." },
+            { question: "روش‌های کنترل علف‌های هرز را نام ببرید.", answer: "شیمیایی (علف‌کش‌ها)، زراعی (تناوب، آیش، مالچ)، مکانیکی (وجین، شخم)، بیولوژیک (حشرات و بیماری‌ها)." },
+            { question: "مزایای کشت مخلوط در کنترل علف هرز چیست؟", answer: "سایه‌اندازی، کاهش تراکم علف هرز و کاهش نیاز به سموم." },
+            { question: "تفاوت سموم سیستمیک و نیمه سیستمیک چیست؟", answer: "سیستمیک در کل گیاه حرکت می‌کند؛ نیمه سیستمیک حرکت اندک دارد و در گیاه محدود است." },
+            { question: "خصوصیات یک آفت‌کش مطلوب را نام ببرید.", answer: "مؤثر، بی‌خطر برای انسان و محیط، مقرون‌به‌صرفه، پایداری کم، عدم ایجاد مزه و بو در محصول." },
+            { question: "تعریف مبارزه تلفیقی آفات چیست؟", answer: "استفاده همزمان و هماهنگ از روش‌های مختلف کنترل بر اساس شرایط اقتصادی و محیطی." },
+            { question: "چگونه می‌توان حساسیت گیاه به آفات را کاهش داد؟", answer: "استفاده از ارقام مقاوم یا متحمل و مدیریت اکولوژیک." },
+            { question: "وظایف اصلی یک گیاه سالم چیست؟", answer: "تقسیم سلولی، جذب آب و مواد غذایی، فتوسنتز، انتقال مواد، ذخیره محصولات فتوسنتزی، تولید بذر." },
+            { question: "عوامل بیماری‌زای زنده در گیاهان کدامند؟", answer: "قارچ‌ها، باکتری‌ها، ویروس‌ها، نماتدها، پروتوزوئرها، ویروئیدها و انگل‌های گلدار." },
+            { question: "روش‌های انتقال بیمارگرهای گیاهی چیست؟", answer: "فعال (حرکت نماتدها) و غیر فعال (باد، آب، حشرات، انسان)." },
+            { question: "معنای «مبارزه قانونی» در مدیریت آفات چیست؟", answer: "جلوگیری از ورود و انتقال آفات و بیماری‌ها با قرنطینه و قوانین ممنوعیت." },
+            { question: "کاربرد آفتاب‌دهی خاک چیست؟", answer: "با افزایش دمای خاک، محل رشد عوامل بیماری‌زا کاهش می‌یابد." },
+            { question: "بیماری فیزیولوژیک چیست؟", answer: "بیماری ناشی از عوامل غیرزنده مانند کمبود مواد غذایی یا شرایط نامناسب محیطی." },
+            { question: "انواع اثرات سموم بر بدن موجودات زنده چگونه طبقه‌بندی می‌شود؟", answer: "فیزیکی، پروتوپالسمی، عصبی." },
+            { question: "اقدامات پیشگیرانه برای جلوگیری از بیماری‌زایی کدامند؟", answer: "قرنطینه، کنترل ناقلین، کشت سالم، تنظیم تاریخ کشت، رعایت بهداشت." },
+            { question: "نقش آیش در مدیریت آفات چیست؟", answer: "کاهش منابع غذایی و زیستگاه‌های آفت از طریق نکاشت زمین." },
+            { question: "اهمیت بهداشت مزرعه در مدیریت آفات چیست؟", answer: "کاهش بقای آفات و پاتوژن‌ها با حذف بقایای گیاهی و آلوده." },
+            { question: "سموم گوارشی چگونه وارد آفت می‌شوند؟", answer: "جذب از طریق لوله گوارش حشرات با قطعات دهانی ساینده." },
+            { question: "مزایای استفاده از گیاهان تله چیست؟", answer: "جذب آفات به گیاهان خاص و کاهش خسارت روی محصول اصلی." }
+        ];
+
+        let currentCard = 0;
+        const flashcardContainer = document.getElementById('flashcard-container');
+        const questionEl = document.getElementById('question');
+        const answerEl = document.getElementById('answer');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const cardCounter = document.getElementById('card-counter');
+
+        function updateCard() {
+            questionEl.textContent = flashcards[currentCard].question;
+            answerEl.textContent = flashcards[currentCard].answer;
+            cardCounter.textContent = `${currentCard + 1} از ${flashcards.length}`;
+            prevBtn.disabled = currentCard === 0;
+            nextBtn.disabled = currentCard === flashcards.length - 1;
+            flashcardContainer.classList.remove('flipped');
+        }
+
+        flashcardContainer.addEventListener('click', () => {
+            flashcardContainer.classList.toggle('flipped');
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentCard > 0) {
+                currentCard--;
+                updateCard();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentCard < flashcards.length - 1) {
+                currentCard++;
+                updateCard();
+            }
+        });
+
+        updateCard();
+    </script>
+</body>
+</html>

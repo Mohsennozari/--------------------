@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی تطبیق کلمات کلیدی و تعاریف</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Vazir', sans-serif; } /* فرض بر این است که فونت فارسی موجود است، иначе استفاده از فونت پیش‌فرض */
+        .draggable { cursor: move; }
+        .dropzone { min-height: 50px; border: 2px dashed #ccc; }
+        .correct { border-color: green; }
+        .incorrect { border-color: red; }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="container mx-auto max-w-4xl bg-white p-6 rounded-lg shadow-lg">
+        <h1 class="text-2xl font-bold mb-4 text-center">بازی تطبیق کلمات کلیدی و تعاریف</h1>
+        <p class="text-center mb-6">در هر مرحله، تعاریف را به کلمات کلیدی مربوطه بکشید و رها کنید. اگر درست باشد، به طور خودکار به مرحله بعدی می‌روید.</p>
+        
+        <div id="game" class="grid grid-cols-2 gap-8">
+            <div id="keywords" class="space-y-4">
+                <!-- کلمات کلیدی اینجا قرار می‌گیرند -->
+            </div>
+            <div id="definitions" class="space-y-4">
+                <!-- تعاریف شافل شده اینجا قرار می‌گیرند -->
+            </div>
+        </div>
+        
+        <button id="check" class="mt-6 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 block mx-auto">بررسی</button>
+        <p id="message" class="text-center mt-4"></p>
+        <p id="progress" class="text-center mt-2">مرحله: 1/20</p>
+    </div>
+
+    <script>
+        const pairs = [
+            { keyword: "نظام‌های زراعی", definition: "را می‌توان از دیدگاه‌های مختلف مانند سنتی، صنعتی، کم‌نهاده و پرنهاده تقسیم‌بندی کرد." },
+            { keyword: "نظام‌های زراعی سنتی", definition: "بر اساس دانش بومی و نهاده‌های محلی و بوم‌سازگار اداره می‌شوند." },
+            { keyword: "کشاورزی زیستی (ارگانیک)", definition: "بر اصول اکولوژیکی تولید محصولات بدون مصرف کود و سموم شیمیایی تاکید دارد." },
+            { keyword: "نظام‌های زراعی صنعتی", definition: "نهاده‌محور، پرهزینه و وابسته به نهاده‌های خارجی مانند کود شیمیایی، سموم و انرژی فسیلی هستند." },
+            { keyword: "کشاورزی متمرکز", definition: "شامل حذف گیاهان خودرو، جلوگیری از تغذیه جانوران از محصولات و نگهداری دام در مکان‌های محافظت شده است." },
+            { keyword: "سیستم‌های زراعی", definition: "شامل الگوی کشت، عملیات زراعی و تعامل آن‌ها با منابع، تجهیزات و فناوری‌های موجود است." },
+            { keyword: "انتخاب سیستم زراعی", definition: "تحت تأثیر شرایط اکولوژیکی، اقتصادی، اجتماعی و سیاسی منطقه قرار دارد." },
+            { keyword: "هدف سیستم زراعی پایدار", definition: "استفاده بهینه و سودمند از منابع طبیعی به صورت پایدار است." },
+            { keyword: "الگوی کشت", definition: "تعیین نظام کشاورزی با مزیت اقتصادی پایدار بر اساس سیاست‌های کلان، دانش بومی و پتانسیل منطقه است." },
+            { keyword: "عوامل مؤثر بر انتخاب محصول و تناوب", definition: "شامل عوامل اقتصادی، اجتماعی، خاک و اقلیم می‌باشند." },
+            { keyword: "برنامه‌ریزی کشت", definition: "در سطح مزرعه به صورت آیش‌بندی و تناوب انجام می‌شود." },
+            { keyword: "آیش‌بندی", definition: "یعنی در نظر گرفتن دوره‌ای برای استراحت زمین جهت بازسازی حاصلخیزی خاک." },
+            { keyword: "تناوب زراعی", definition: "ترتیب متفاوت کاشت گیاهان در سال‌های متوالی است که به بهبود کیفیت خاک و کاهش آفات کمک می‌کند." },
+            { keyword: "حضور تناوب مناسب", definition: "در کاهش نیاز به استفاده از آفتکش‌ها مؤثر است." },
+            { keyword: "انتخاب تناوب مناسب", definition: "به قوانین دولتی، شرایط اکولوژیکی، توپوگرافی و وضعیت بازار بستگی دارد." },
+            { keyword: "حبوبات در تناوب", definition: "بهتر است بین دو گیاه غلات دانه‌ریز قرار گیرند چون به تثبیت ازت کمک می‌کنند." },
+            { keyword: "گیاهان علوفه‌ای چندساله", definition: "معمولاً در ابتدای تناوب قرار می‌گیرند." },
+            { keyword: "در تناوب", definition: "باید از تکرار پشت سرهم گیاهان مشابه خودداری شود." },
+            { keyword: "تنظیم جدول تناوبی", definition: "به صورت مربع، تعداد سال‌های اجرای تناوب مساوی با تعداد قطعات زمین است." },
+            { keyword: "رعایت فاصله زمانی", definition: "مناسب بین برداشت محصول و کاشت محصول بعدی ضروری است." },
+            { keyword: "مدیریت منابع آبی و خاکی", definition: "از اصول مهم پایداری سیستم‌های کشاورزی است." },
+            { keyword: "نوسانات قیمت محصولات کشاورزی", definition: "مشکلاتی برای کشاورزان و برنامه‌ریزی کشت ایجاد می‌کند." },
+            { keyword: "کاهش حاصلخیزی خاک و خشکسالی", definition: "از چالش‌های مهم کشاورزی در ایران است." },
+            { keyword: "افزایش بهره‌وری و حفظ منابع پایه", definition: "اهداف اصلی توسعه نظام‌های کشاورزی پایدار است." },
+            { keyword: "تغییر اقلیم", definition: "می‌تواند بر الگوی کشت و تناوب اثر منفی بگذارد." },
+            { keyword: "دانش بومی کشاورزان", definition: "نقش کلیدی در انتخاب و اجرای الگوی کشت دارد." },
+            { keyword: "استفاده از فناوری‌های نوین", definition: "در کشاورزی موجب افزایش بهره‌وری و کاهش هزینه‌ها می‌شود." },
+            { keyword: "سیستم‌های زراعی رایج در ایران", definition: "شامل نظام‌های کشاورزی کم‌نهاده و پرنهاده است." },
+            { keyword: "کشاورزی ارگانیک", definition: "محصول سالم با کیفیت بالا تولید می‌کند ولی نیازمند مقررات و استانداردهای خاص است." },
+            { keyword: "تناوب صحیح", definition: "برای بهبود حاصلخیزی خاک و کاهش آفات اهمیت دارد." },
+            { keyword: "سیستم‌های زراعی صنعتی", definition: "برای تولید تجاری و انبوه به نهاده‌های پرهزینه وابسته هستند." },
+            { keyword: "تنوع زیستی", definition: "در کشاورزی پایدار از اهمیت زیادی برخوردار است." },
+            { keyword: "سیستم‌های کشاورزی سنتی", definition: "بیشتر در جوامع بومی و روستایی مطرح است." },
+            { keyword: "حذف گیاهان خودرو و محافظت از محصولات", definition: "بهره‌وری زمین را افزایش می‌دهد." },
+            { keyword: "استفاده بهینه از نهاده‌ها و نیروی کار", definition: "در بهبود عملکرد کشاورزی موثر است." },
+            { keyword: "بررسی شرایط اقلیمی و خاکی", definition: "منطقه در انتخاب محصولات کشاورزی ضروری است." },
+            { keyword: "وجود اطلاعات دقیق و بانک اطلاعاتی", definition: "جامع برای برنامه‌ریزی کشت اهمیت دارد." },
+            { keyword: "تنظیم مناسب تناوب", definition: "باعث کاهش هزینه‌های حمل و نقل و افزایش اشتغال می‌شود." },
+            { keyword: "آیش", definition: "به عنوان راهکاری برای بازسازی خاک در تناوب و افزایش عملکرد محصول کاربرد دارد." },
+            { keyword: "توسعه صنایع تبدیلی", definition: "مرتبط با کشاورزی در ارتقای بهره‌وری بخش کشاورزی نقش مهمی دارد." }
+        ];
+
+        const groups = [];
+        for (let i = 0; i < pairs.length; i += 2) {
+            groups.push(pairs.slice(i, i + 2));
+        }
+
+        let currentGroup = 0;
+        const keywordsDiv = document.getElementById('keywords');
+        const definitionsDiv = document.getElementById('definitions');
+        const checkBtn = document.getElementById('check');
+        const message = document.getElementById('message');
+        const progress = document.getElementById('progress');
+
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        function loadGroup() {
+            const group = groups[currentGroup];
+            keywordsDiv.innerHTML = '';
+            definitionsDiv.innerHTML = '';
+            message.textContent = '';
+            progress.textContent = `مرحله: ${currentGroup + 1}/20`;
+
+            group.forEach((pair, index) => {
+                const kwDiv = document.createElement('div');
+                kwDiv.className = 'flex items-center space-x-4';
+                kwDiv.innerHTML = `
+                    <div class="w-1/2 p-2 bg-blue-100 rounded">${pair.keyword}</div>
+                    <div id="drop${index}" class="dropzone w-1/2 p-2 rounded"></div>
+                `;
+                keywordsDiv.appendChild(kwDiv);
+            });
+
+            const defs = shuffle(group.map(p => p.definition));
+            defs.forEach((def, index) => {
+                const defDiv = document.createElement('div');
+                defDiv.className = 'draggable p-2 bg-green-100 rounded mb-2';
+                defDiv.textContent = def;
+                defDiv.draggable = true;
+                defDiv.dataset.def = def;
+                defDiv.addEventListener('dragstart', dragStart);
+                definitionsDiv.appendChild(defDiv);
+            });
+        }
+
+        function dragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.dataset.def);
+            e.dataTransfer.setData('sourceId', e.target.id);
+        }
+
+        keywordsDiv.addEventListener('dragover', e => e.preventDefault());
+        keywordsDiv.addEventListener('drop', e => {
+            e.preventDefault();
+            const def = e.dataTransfer.getData('text/plain');
+            const target = e.target.closest('.dropzone');
+            if (target && target.children.length === 0) {
+                const dropped = document.createElement('div');
+                dropped.className = 'p-2 bg-green-100 rounded';
+                dropped.textContent = def;
+                dropped.dataset.def = def;
+                target.appendChild(dropped);
+            }
+        });
+
+        checkBtn.addEventListener('click', () => {
+            const drops = [...document.querySelectorAll('.dropzone')];
+            let correct = true;
+            groups[currentGroup].forEach((pair, index) => {
+                const drop = drops[index];
+                const droppedDef = drop.querySelector('div')?.dataset.def;
+                if (droppedDef !== pair.definition) {
+                    drop.classList.add('incorrect');
+                    drop.classList.remove('correct');
+                    correct = false;
+                } else {
+                    drop.classList.add('correct');
+                    drop.classList.remove('incorrect');
+                }
+            });
+            if (correct) {
+                message.textContent = 'درست است! رفتن به مرحله بعدی...';
+                setTimeout(() => {
+                    currentGroup++;
+                    if (currentGroup < groups.length) {
+                        loadGroup();
+                    } else {
+                        message.textContent = 'تبریک! تمام مراحل تمام شد.';
+                        checkBtn.disabled = true;
+                    }
+                }, 1500);
+            } else {
+                message.textContent = 'اشتباه است. دوباره امتحان کنید.';
+                setTimeout(() => {
+                    drops.forEach(drop => {
+                        drop.innerHTML = '';
+                        drop.classList.remove('incorrect', 'correct');
+                    });
+                    // تعاریف را دوباره لود نمی‌کنیم، کاربر می‌تواند دوباره بکشد
+                }, 1000);
+            }
+        });
+
+        loadGroup();
+    </script>
+</body>
+</html>

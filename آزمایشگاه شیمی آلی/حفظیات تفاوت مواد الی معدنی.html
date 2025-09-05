@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>یادگیری جذاب تفاوت مواد آلی و معدنی</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card { transition: transform 0.3s, box-shadow 0.3s; }
+    .card:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); }
+    .fade-in { opacity: 0; animation: fadeIn 1s forwards; }
+    .slide-in { transform: translateX(100px); animation: slideIn 0.5s forwards; }
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes slideIn { to { transform: translateX(0); } }
+    .flip-card { perspective: 1000px; }
+    .flip-card-inner { transition: transform 0.6s; transform-style: preserve-3d; }
+    .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+    .flip-card-front, .flip-card-back { backface-visibility: hidden; position: absolute; width: 100%; height: 100%; }
+    .flip-card-back { transform: rotateY(180deg); }
+    .correct { background-color: #10B981; color: white; }
+    .incorrect { background-color: #EF4444; color: white; }
+  </style>
+</head>
+<body dir="rtl" class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center text-blue-800 mb-8">یادگیری جذاب تفاوت مواد آلی و معدنی</h1>
+
+    <!-- جدول مقایسه‌ای -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-green-600 mb-4">جدول مقایسه‌ای مواد آلی و معدنی</h2>
+      <table class="w-full text-right border-collapse">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="p-2">ویژگی</th>
+            <th class="p-2">مواد آلی</th>
+            <th class="p-2">مواد معدنی</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="cursor-pointer" onclick="showTableDetail('تعریف', 'ترکیبات با اسکلت کربنی', 'ترکیبات فاقد اسکلت کربنی، اغلب یونی')">
+            <td class="p-2 border">تعریف</td>
+            <td class="p-2 border">ترکیبات با اسکلت کربنی</td>
+            <td class="p-2 border">ترکیبات فاقد اسکلت کربنی، اغلب یونی</td>
+          </tr>
+          <tr class="cursor-pointer" onclick="showTableDetail('ترکیب شیمیایی', 'پیوند کووالانسی (C-H)', 'پیوند یونی یا فلزی')">
+            <td class="p-2 border">ترکیب شیمیایی</td>
+            <td class="p-2 border">پیوند کووالانسی (C-H)</td>
+            <td class="p-2 border">پیوند یونی یا فلزی</td>
+          </tr>
+          <tr class="cursor-pointer" onclick="showTableDetail('ویژگی‌های فیزیکی', 'نقطه ذوب و جوش پایین، حساس به حرارت', 'نقطه ذوب و جوش بالا، مقاوم به حرارت')">
+            <td class="p-2 border">ویژگی‌های فیزیکی</td>
+            <td class="p-2 border">نقطه ذوب و جوش پایین، حساس به حرارت</td>
+            <td class="p-2 border">نقطه ذوب و جوش بالا، مقاوم به حرارت</td>
+          </tr>
+          <tr class="cursor-pointer" onclick="showTableDetail('حلالیت', 'در حلال‌های آلی (اتانول، بنزن)', 'در آب')">
+            <td class="p-2 border">حلالیت</td>
+            <td class="p-2 border">در حلال‌های آلی (اتانول، بنزن)</td>
+            <td class="p-2 border">در آب</td>
+          </tr>
+        </tbody>
+      </table>
+      <div id="table-detail" class="hidden fade-in mt-4 p-4 bg-gray-100 rounded-lg">
+        <p id="table-detail-text" class="text-lg"></p>
+        <button onclick="closeTableDetail()" class="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">بستن</button>
+      </div>
+    </div>
+
+    <!-- فلش‌کارت‌ها -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-purple-600 mb-4">فلش‌کارت‌های حفظی</h2>
+      <div id="flashcards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+    </div>
+
+    <!-- بازی حفظی -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-orange-600 mb-4">بازی حفظی</h2>
+      <div id="game">
+        <p id="game-question" class="text-lg mb-4"></p>
+        <div id="game-options" class="space-y-2"></div>
+        <p id="game-feedback" class="mt-4 text-lg"></p>
+      </div>
+    </div>
+
+    <!-- نوار پیشرفت -->
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold text-gray-700 mb-2">پیشرفت یادگیری</h2>
+      <div class="w-full bg-gray-200 rounded">
+        <div id="progress" class="bg-green-500 h-4 rounded" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- یادداشت‌برداری -->
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">یادداشت‌های شخصی</h2>
+      <textarea id="notes" class="w-full h-24 p-2 border rounded" placeholder="نکات مهم خودت رو اینجا بنویس..."></textarea>
+      <button onclick="saveNotes()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">ذخیره یادداشت</button>
+    </div>
+  </div>
+
+  <script>
+    const flashcardsData = [
+      { question: 'مواد آلی چیست؟', answer: 'ترکیبات با اسکلت کربنی شامل C، H، O، N' },
+      { question: 'مواد معدنی چیست؟', answer: 'ترکیبات فاقد اسکلت کربنی، اغلب یونی' },
+      { question: 'پیوند مواد آلی؟', answer: 'کووالانسی (C-H)' },
+      { question: 'پیوند مواد معدنی؟', answer: 'یونی یا کووالانسی فلزی' },
+      { question: 'نقطه ذوب مواد آلی؟', answer: 'پایین، حساس به حرارت' },
+      { question: 'نقطه ذوب مواد معدنی؟', answer: 'بالا، مقاوم به حرارت' },
+      { question: 'حلالیت مواد آلی؟', answer: 'در حلال‌های آلی (اتانول، بنزن)' },
+      { question: 'حلالیت مواد معدنی؟', answer: 'در آب' },
+      { question: 'آزمایش سوختن مواد آلی؟', answer: 'دود، بوی سوختگی، شعله، خاکستر کربنی' },
+      { question: 'آزمایش سوختن مواد معدنی؟', answer: 'معمولاً نمی‌سوزند، بدون شعله' },
+      { question: 'آزمایش حرارت مواد آلی؟', answer: 'تجزیه، تولید CO₂ و H₂O' },
+      { question: 'آزمایش حرارت مواد معدنی؟', answer: 'ذوب یا تغییر رنگ بدون تجزیه' },
+      { question: 'آزمایش حل大部分 آلی؟', answer: 'حل در اتانول یا بنزن' },
+      { question: 'آزمایش حلالیت معدنی؟', answer: 'حل در آب' },
+      { question: 'واکنش کربنات‌ها با اسید؟', answer: 'آزادسازی گاز CO₂' },
+      { question: 'نمونه مواد آلی؟', answer: 'متان، اتانول، گلوکز، پروپان' },
+      { question: 'نمونه مواد معدنی؟', answer: 'NaCl، CaCO₃، CaO' },
+      { question: 'نکته ایمنی ۱؟', answer: 'استفاده از هود برای مواد فرار' },
+      { question: 'نکته ایمنی ۲؟', answer: 'پوشیدن دستکش و عینک ایمنی' },
+      { question: 'نکته ایمنی ۳؟', answer: 'رعایت فاصله با شعله و تجهیزات حرارتی' }
+    ];
+
+    const gameQuestions = flashcardsData.map(f => ({
+      question: f.question,
+      answer: f.answer,
+      options: [
+        f.answer,
+        flashcardsData[Math.floor(Math.random() * flashcardsData.length)].answer,
+        flashcardsData[Math.floor(Math.random() * flashcardsData.length)].answer,
+        flashcardsData[Math.floor(Math.random() * flashcardsData.length)].answer
+      ].sort(() => Math.random() - 0.5)
+    }));
+
+    let currentGameQuestion = 0;
+    let score = 0;
+
+    // نمایش جدول مقایسه‌ای
+    function showTableDetail(feature, organic, inorganic) {
+      const detailDiv = document.getElementById('table-detail');
+      const detailText = document.getElementById('table-detail-text');
+      detailText.innerText = `${feature}:\nمواد آلی: ${organic}\nمواد معدنی: ${inorganic}`;
+      detailDiv.classList.remove('hidden');
+      detailDiv.classList.add('fade-in');
+    }
+
+    function closeTableDetail() {
+      document.getElementById('table-detail').classList.add('hidden');
+    }
+
+    // فلش‌کارت‌ها
+    function loadFlashcards() {
+      const flashcardsDiv = document.getElementById('flashcards');
+      flashcardsDiv.innerHTML = '';
+      flashcardsData.forEach(f => {
+        const card = document.createElement('div');
+        card.className = 'flip-card card relative h-40';
+        card.innerHTML = `
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-purple-100 p-4 rounded-lg flex items-center justify-center">${f.question}</div>
+            <div class="flip-card-back bg-purple-200 p-4 rounded-lg flex items-center justify-center">${f.answer}</div>
+          </div>
+        `;
+        card.onclick = () => card.classList.toggle('flipped');
+        flashcardsDiv.appendChild(card);
+      });
+    }
+
+    // بازی حفظی
+    function loadGameQuestion() {
+      const gameDiv = document.getElementById('game');
+      const questionDiv = document.getElementById('game-question');
+      const optionsDiv = document.getElementById('game-options');
+      const feedbackDiv = document.getElementById('game-feedback');
+
+      if (currentGameQuestion < gameQuestions.length) {
+        const q = gameQuestions[currentGameQuestion];
+        questionDiv.innerText = q.question;
+        optionsDiv.innerHTML = '';
+        q.options.forEach(option => {
+          const button = document.createElement('button');
+          button.innerText = option;
+          button.className = 'bg-gray-200 px-4 py-2 rounded mr-2 hover:bg-gray-300 w-full text-right';
+          button.onclick = () => checkGameAnswer(option, q.answer);
+          optionsDiv.appendChild(button);
+        });
+        feedbackDiv.innerText = '';
+      } else {
+        gameDiv.innerHTML = `<p class="text-lg">بازی تمام شد! امتیاز شما: ${Math.round(score)}</p>`;
+      }
+    }
+
+    function checkGameAnswer(userAnswer, correctAnswer) {
+      const feedbackDiv = document.getElementById('game-feedback');
+      const options = document.querySelectorAll('#game-options button');
+      options.forEach(btn => {
+        btn.disabled = true;
+        if (btn.innerText === correctAnswer) {
+          btn.classList.add('correct');
+        } else if (btn.innerText === userAnswer && userAnswer !== correctAnswer) {
+          btn.classList.add('incorrect');
+        }
+      });
+      if (userAnswer === correctAnswer) {
+        feedbackDiv.innerText = 'درست!';
+        feedbackDiv.className = 'text-green-600 mt-4 text-lg';
+        score += 5; // هر سوال 5 امتیاز برای 100 در کل
+      } else {
+        feedbackDiv.innerText = `غلط، جواب درست: ${correctAnswer}`;
+        feedbackDiv.className = 'text-red-600 mt-4 text-lg';
+      }
+      updateProgress();
+      setTimeout(() => {
+        currentGameQuestion++;
+        loadGameQuestion();
+      }, 1000);
+    }
+
+    function updateProgress() {
+      const progressPercent = (currentGameQuestion / gameQuestions.length) * 100;
+      document.getElementById('progress').style.width = `${progressPercent}%`;
+    }
+
+    function saveNotes() {
+      const notes = document.getElementById('notes').value;
+      localStorage.setItem('userNotes', notes);
+      alert('یادداشت ذخیره شد!');
+    }
+
+    window.onload = () => {
+      document.getElementById('notes').value = localStorage.getItem('userNotes') || '';
+      loadFlashcards();
+      loadGameQuestion();
+      if (!localStorage.getItem('lastVisit')) {
+        localStorage.setItem('lastVisit', new Date());
+      } else {
+        const lastVisit = new Date(localStorage.getItem('lastVisit'));
+        const now = new Date();
+        if ((now - lastVisit) / (1000 * 60 * 60) > 24) {
+          alert('وقت مرور دوباره است!');
+          localStorage.setItem('lastVisit', now);
+        }
+      }
+    };
+  </script>
+</body>
+</html>

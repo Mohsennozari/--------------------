@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>آزمون نهایی خاک‌شناسی عمومی با راهنمایی</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React and ReactDOM CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <!-- Babel for JSX -->
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <style>
+    body {
+      font-family: 'Vazir', Arial, sans-serif;
+      direction: rtl;
+      background-color: #f0f2f5;
+    }
+    @font-face {
+      font-family: 'Vazir';
+      src: url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff');
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    .fade-out {
+      animation: fadeOut 0.5s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-10px); }
+    }
+    .progress-bar {
+      transition: width 0.3s ease-in-out;
+    }
+    .hint-box {
+      transition: all 0.3s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+  <div id="root" class="container mx-auto p-4 min-h-screen flex items-center justify-center"></div>
+
+  <script type="text/babel">
+    const questions = [
+      {
+        id: 1,
+        text: "فسفر در کدامیک از موارد زیر تاثیر مستقیم ندارد؟",
+        options: [
+          "تثبیت نیتروژن اتمسفری در گیاهان لگومینوز",
+          "وراثت ژنتیکی و انتقال صفات به نسل بعدی",
+          "ساختار غشای سلولی",
+          "هدایت انرژی در فرایندهای بیوشیمیایی"
+        ],
+        correct: 0,
+        hint: "فسفر در متابولیسم گیاه (مثل ساختار غشا و انتقال انرژی) نقش دارد، اما تثبیت نیتروژن توسط باکتری‌ها در گیاهان لگومینوز به نیتروژن وابسته است، نه فسفر."
+      },
+      {
+        id: 2,
+        text: "کدامیک از اشکال نیتروژن برای استفاده در خاک‌های آهکی قلیایی مناسب نیست؟",
+        options: ["نیتروژن آلی", "نیترات", "آمونیم", "اوره"],
+        correct: 2,
+        hint: "در خاک‌های قلیایی (pH بالا)، آمونیم به آمونیاک تبدیل شده و از خاک خارج می‌شود، بنابراین برای این خاک‌ها مناسب نیست."
+      },
+      {
+        id: 3,
+        text: "دو پارامتر مهم اقلیمی که بیشترین تاثیر را در هوازدگی سنگ‌ها و تشکیل خاک دارند کدامند؟",
+        options: [
+          "درصد رطوبت اشباع اتمسفر و میزان انرژی تابشی خورشید",
+          "تغییرات فصلی بادها و میزان تبخیر و تعرق",
+          "موقعیت جغرافیایی منطقه و زاویه آلبدو",
+          "میزان بارندگی موثر و دمای متوسط سالیانه"
+        ],
+        correct: 3,
+        hint: "هوازدگی سنگ‌ها به رطوبت (بارندگی) و دما وابسته است، زیرا این عوامل فرایندهای شیمیایی و فیزیکی تجزیه سنگ را تسریع می‌کنند."
+      },
+      {
+        id: 4,
+        text: "میزان برداشت کدام یک از عناصر خاک توسط گیاهان بالاتر است؟",
+        options: ["گوگرد", "نیتروژن", "کلسیم", "فسفر"],
+        correct: 1,
+        hint: "نیتروژن به دلیل نقش کلیدی در رشد گیاه (ساخت پروتئین‌ها و کلروفیل) بیشتر از سایر عناصر توسط گیاهان جذب می‌شود."
+      },
+      {
+        id: 5,
+        text: "درجه اکسیداسیون گوگرد در ترکیب کدام است؟",
+        options: [
+          "احیایی‌ترین حالت گوگرد",
+          "اکسیداسیون حدواسط گوگرد",
+          "اکسیدی‌ترین حالت گوگرد",
+          "حالت خنثی گوگرد"
+        ],
+        correct: 1,
+        hint: "گوگرد در ترکیبات مختلف (مثل سولفید، سولفات) درجات اکسیداسیون متفاوتی دارد. حالت حدواسط معمولاً در ترکیبات میانی مثل SO2 دیده می‌شود."
+      },
+      {
+        id: 6,
+        text: "در چرخه نیتروژن کدام واکنش‌ها مخالف یکدیگر هستند؟",
+        options: [
+          "Weathering و Immobilization",
+          "Fixation و Immobilization",
+          "Mineralization و Immobilization",
+          "Weathering و Mineralization"
+        ],
+        correct: 2,
+        hint: "Mineralization نیتروژن آلی را به شکل معدنی (آمونیم) تبدیل می‌کند، در حالی که Immobilization نیتروژن معدنی را به آلی تبدیل می‌کند."
+      },
+      {
+        id: 7,
+        text: "کدامیک از دسته موجودات زیر هم جزء تولیدکنندگان و هم مصرف‌کنندگان خاک هستند؟",
+        options: ["نماتدها", "قارچ‌ها", "آرکئاها", "باکتری‌ها"],
+        correct: 3,
+        hint: "باکتری‌ها می‌توانند هم مواد آلی تولید کنند (مثل تثبیت نیتروژن) و هم مواد را تجزیه کنند (مصرف‌کننده)."
+      },
+      {
+        id: 8,
+        text: "در کدامیک از کانی‌های رسی بارهای وابسته به pH بیشتر است؟",
+        options: ["ایلایت", "اسمکتایت", "کائولینایت", "ورمیکولایت"],
+        correct: 2,
+        hint: "کائولینایت به دلیل ساختار ساده‌تر و بارهای وابسته به pH (مرتبط با لبه‌های شکسته) بار بیشتری در pH‌های مختلف دارد."
+      },
+      {
+        id: 9,
+        text: "مفهوم Carbon Sequestration چیست؟",
+        options: [
+          "ذخیره کربن توسط گیاهان و ورود مواد حاصله به خاک",
+          "انتشار کربن سوخت‌های فسیلی به اتمسفر",
+          "آزادسازی کربن طی تنفس موجودات زنده به اتمسفر",
+          "ورود کربن به آب‌های دریا در اثر انحلال CO2"
+        ],
+        correct: 0,
+        hint: "Carbon Sequestration به ذخیره کربن در خاک یا گیاهان برای کاهش CO2 اتمسفر اشاره دارد."
+      },
+      {
+        id: 10,
+        text: "مقدار N, P2O5 و K2O به ترتیب در کود 21 کیلوگرمی با درجه کودی 14-3-22 چقدر است؟",
+        options: ["4.62, 0.63, 2.94", "2.94, 0.63, 4.62", "4.62, 2.94, 0.63", "0.63, 4.62, 2.94"],
+        correct: 0,
+        hint: "درجه کودی 14-3-22 به درصد نیتروژن، فسفر (P2O5) و پتاسیم (K2O) اشاره دارد. برای 21 کیلوگرم، مقادیر را با درصد ضرب کنید: 14% از 21 = 2.94 (N)، 3% از 21 = 0.63 (P2O5)، 22% از 21 = 4.62 (K2O)."
+      },
+      {
+        id: 11,
+        text: "کدامیک از عناصر زیر در فتوسنتز گیاه نقش ندارد؟",
+        options: ["روی", "نیکل", "منگنز", "آهن"],
+        correct: 1,
+        hint: "آهن و منگنز در ساخت کلروفیل و فتوسنتز نقش دارند، روی در آنزیم‌ها فعال است، اما نیکل در فتوسنتز مستقیماً دخیل نیست."
+      },
+      {
+        id: 12,
+        text: "آلودگی ناشی از کدام عنصر در تخریب جنگل نقش مهمی دارد؟",
+        options: ["آهن", "فسفر", "پتاسیم", "گوگرد"],
+        correct: 3,
+        hint: "گوگرد (به‌صورت باران اسیدی ناشی از SO2) به خاک و گیاهان آسیب زده و باعث تخریب جنگل‌ها می‌شود."
+      },
+      {
+        id: 13,
+        text: "عامل انتقال کدام مواد مادری آب است؟",
+        options: ["مواد کولوویال", "تیل", "لس", "مواد آلوویال"],
+        correct: 3,
+        hint: "مواد آلوویال توسط جریان‌های آبی (مثل رودخانه‌ها) منتقل شده و رسوب می‌کنند."
+      },
+      {
+        id: 14,
+        text: "گوگرد در کدام خاک بیشترین نگهداری و تبادل را دارد؟",
+        options: [
+          "خاک‌های اسیدی با بار مثبت متوسط",
+          "خاک‌های اسیدی با بار مثبت بالا",
+          "خاک‌های قلیایی با CEC بالا",
+          "خاک‌های اسیدی با CEC بالا"
+        ],
+        correct: 0,
+        hint: "گوگرد (به‌صورت آنیون سولفات) در خاک‌های اسیدی با بار مثبت متوسط بهتر جذب و نگهداری می‌شود."
+      },
+      {
+        id: 15,
+        text: "بخش فعال یا Active مواد آلی خاک چیست؟",
+        options: [
+          "مواد آلی نیمه تجزیه شده",
+          "لاشبرگ‌ها",
+          "مواد آلی تازه",
+          "مواد آلی هوموسی"
+        ],
+        correct: 0,
+        hint: "بخش فعال مواد آلی خاک شامل موادی است که نیمه‌تجزیه شده‌اند و برای میکروب‌ها و گیاهان قابل دسترس هستند."
+      },
+      {
+        id: 16,
+        text: "بهترین و بدترین وضعیت زهکشی خاک کدام است؟",
+        options: [
+          "خاک‌های قهوه‌ای و قرمز بهترین و خاک‌های خاکستری مایل به سبز بدترین",
+          "خاک‌های قرمز بهترین و خاک‌های قهوه‌ای بدترین",
+          "خاک‌های خاکستری بهترین و خاک‌های قرمز بدترین",
+          "خاک‌های سبز بهترین و خاک‌های قهوه‌ای بدترین"
+        ],
+        correct: 0,
+        hint: "خاک‌های قهوه‌ای و قرمز به دلیل ساختار مناسب زهکشی خوبی دارند، اما خاک‌های خاکستری مایل به سبز (گلی) زهکشی ضعیفی دارند."
+      },
+      {
+        id: 17,
+        text: "کدام موجود موجب بهبود تهویه و ساختمان خاک می‌شود؟",
+        options: ["کرم‌های خاکی", "نماتدها", "قارچ‌ها", "آرکئاها"],
+        correct: 0,
+        hint: "کرم‌های خاکی با حفر تونل‌ها تهویه خاک را بهبود داده و ساختار آن را تقویت می‌کنند."
+      },
+      {
+        id: 18,
+        text: "آناموکس چیست و در چه شرایطی انجام می‌شود؟",
+        options: [
+          "تجزیه آمونیم در شرایط احیا",
+          "اکسیداسیون نیترات در شرایط هوازی",
+          "تثبیت نیتروژن در شرایط بی‌هوازی",
+          "تبدیل نیتریت به نیترات در شرایط هوازی"
+        ],
+        correct: 0,
+        hint: "آناموکس (Anaerobic Ammonium Oxidation) فرایندی است که آمونیم و نیتریت را در شرایط بی‌هوازی به نیتروژن گازی تبدیل می‌کند."
+      },
+      {
+        id: 19,
+        text: "در فرایند نیتریفیکاسیون کدام شکل نیتروژن تجزیه می‌شود؟",
+        options: ["نیتریت", "نیترات", "آمونیم", "نیتروژن آلی"],
+        correct: 0,
+        hint: "نیتریفیکاسیون شامل تبدیل آمونیم به نیتریت و سپس نیتریت به نیترات است. نیتریت در مرحله دوم تجزیه می‌شود."
+      },
+      {
+        id: 20,
+        text: "اکسیدی‌ترین و احیایی‌ترین شکل نیتروژن کدامند؟",
+        options: ["N2 و NO3", "NO3 و NH4", "NH4 و N2", "NO2 و NH3"],
+        correct: 0,
+        hint: "اکسیدی‌ترین شکل نیتروژن NO3 (نیترات) و احیایی‌ترین شکل N2 (نیتروژن گازی) است."
+      },
+      {
+        id: 21,
+        text: "گزینه درست درباره فسفر موجود در خاک کدام است؟",
+        options: [
+          "مقدار فسفر کل در اکثر خاک‌ها کم و غیرقابل دسترس است",
+          "فسفر کل در خاک‌ها زیاد و کاملاً قابل دسترس است",
+          "فسفر در خاک‌های قلیایی کاملاً محلول است",
+          "فسفر در خاک‌های اسیدی غیرقابل دسترس است"
+        ],
+        correct: 0,
+        hint: "فسفر کل در خاک‌ها معمولاً زیاد است، اما به دلیل تثبیت در ترکیبات غیرمحلول، برای گیاهان غیرقابل دسترس است."
+      },
+      {
+        id: 22,
+        text: "درصد NPK در کود مونوفسفات آمونیم چقدر است؟",
+        options: ["12, 62, 0", "10, 50, 0", "15, 60, 0", "12, 60, 10"],
+        correct: 0,
+        hint: "مونوفسفات آمونیم (MAP) معمولاً 12% نیتروژن و 62% P2O5 دارد و پتاسیم ندارد."
+      },
+      {
+        id: 23,
+        text: "آلفیسول‌ها با کدام مشخصه شناخته می‌شوند؟",
+        options: [
+          "اشباع بازی متوسط تا زیاد",
+          "اشباع بازی کم",
+          "فقدان افق Bt",
+          "وجود افق‌های گچی"
+        ],
+        correct: 0,
+        hint: "آلفیسول‌ها خاک‌هایی با افق رسی (Bt) و اشباع بازی متوسط تا زیاد هستند."
+      },
+      {
+        id: 24,
+        text: "برای فراهم کردن پتاسیم به اندازه کافی چه باید کرد؟",
+        options: [
+          "هرچه CEC خاک بیشتر باشد کود پتاسیم بیشتر لازم است",
+          "هرچه CEC خاک کمتر باشد کود پتاسیم بیشتر لازم است",
+          "پتاسیم فقط در خاک‌های اسیدی لازم است",
+          "پتاسیم در خاک‌های قلیایی کافی است"
+        ],
+        correct: 0,
+        hint: "ظرفیت تبادل کاتیونی (CEC) بالا نشان‌دهنده توانایی خاک در نگهداری کاتیون‌ها (مثل پتاسیم) است، بنابراین کود بیشتری نیاز است."
+      },
+      {
+        id: 25,
+        text: "واکنش H2O + KAISI3O8 ↔ HAISi3O8 + K+ + OH نام دارد؟",
+        options: ["هیدرولیز", "اکسیداسیون", "احیا", "نیتریفیکاسیون"],
+        correct: 0,
+        hint: "هیدرولیز فرایندی است که در آن آب با کانی‌ها واکنش داده و یون‌هایی مثل K+ آزاد می‌کند."
+      },
+      {
+        id: 26,
+        text: "کانی رسی با انبساط زیاد و ظرفیت تبادل کاتیونی بالا کدام است؟",
+        options: ["اسمکتایت", "کائولینایت", "ایلایت", "ورمیکولایت"],
+        correct: 0,
+        hint: "اسمکتایت به دلیل ساختار لایه‌ای و انبساط‌پذیری، ظرفیت تبادل کاتیونی بالایی دارد."
+      },
+      {
+        id: 27,
+        text: "کدام ویژگی تنها برای شکل آمونیومی نیتروژن در خاک دیده می‌شود؟",
+        options: [
+          "تثبیت در فضای بین لایه‌ای رس‌ها",
+          "تبدیل به نیترات در شرایط هوازی",
+          "جذب توسط گیاهان در pH بالا",
+          "اکسیداسیون در شرایط بی‌هوازی"
+        ],
+        correct: 0,
+        hint: "آمونیم (NH4+) به دلیل بار مثبت می‌تواند در فضای بین لایه‌ای کانی‌های رسی تثبیت شود."
+      },
+      {
+        id: 28,
+        text: "تفاوت عناصر پرمصرف و کم‌مصرف چیست؟",
+        options: [
+          "عناصر پرمصرف بیش از 0.1 درصد وزن خشک گیاه را تشکیل می‌دهند",
+          "عناصر کم‌مصرف بیش از 1 درصد وزن خشک گیاه را تشکیل می‌دهند",
+          "عناصر پرمصرف فقط در خاک‌های اسیدی یافت می‌شوند",
+          "عناصر کم‌مصرف فقط در خاک‌های قلیایی یافت می‌شوند"
+        ],
+        correct: 0,
+        hint: "عناصر پرمصرف (مثل نیتروژن، فسفر) بیش از 0.1% وزن خشک گیاه را تشکیل می‌دهند، برخلاف عناصر کم‌مصرف."
+      },
+      {
+        id: 29,
+        text: "کدام خاک‌ها تحول بیشتری دارند؟",
+        options: [
+          "خاک با افق‌های A-Bt-Bq-Bqm",
+          "خاک با افق‌های A-E-C",
+          "خاک با افق‌های O-A-C",
+          "خاک با افق‌های A-B-C"
+        ],
+        correct: 0,
+        hint: "خاک‌هایی با افق‌های پیچیده‌تر (مثل Bt و Bqm) نشان‌دهنده تحول پیشرفته‌تر هستند."
+      },
+      {
+        id: 30,
+        text: "کدام عناصر در pH اسیدی و قلیایی بیشتر قابل دسترسند؟",
+        options: [
+          "منگنز (اسیدی) و منیزیم (قلیایی)",
+          "منیزیم (اسیدی) و منگنز (قلیایی)",
+          "آهن (قلیایی) و پتاسیم (اسیدی)",
+          "پتاسیم (اسیدی) و آهن (قلیایی)"
+        ],
+        correct: 0,
+        hint: "منگنز در pH اسیدی و منیزیم در pH قلیایی به دلیل حلالیت بیشتر، قابل دسترس‌تر هستند."
+      },
+      {
+        id: 31,
+        text: "رس‌های فیلوسیلیکات چیست؟",
+        options: [
+          "ورقه‌های چهار و هشت و younger با پیوند مشترک",
+          "ورقه‌های تک لایه‌ای بدون پیوند",
+          "کانی‌های غیرسیلیکاتی",
+          "کانی‌های حاوی گوگرد"
+        ],
+        correct: 0,
+        hint: "فیلوسیلیکات‌ها کانی‌های رسی با ساختار ورقه‌ای (تتراهدرال و اکتاهدرال) و پیوند مشترک هستند."
+      },
+      {
+        id: 32,
+        text: "هوموس چیست؟",
+        options: [
+          "مواد آلی پایدار",
+          "مواد آلی تازه",
+          "لاشبرگ‌های تجزیه نشده",
+          "مواد معدنی خاک"
+        ],
+        correct: 0,
+        hint: "هوموس مواد آلی پایدار و تجزیه‌شده در خاک است که به بهبود ساختار خاک کمک می‌کند."
+      },
+      {
+        id: 33,
+        text: "باکتری‌های دخیل در نیتریفیکاسیون کدامند؟",
+        options: [
+          "نیتروزوموناس و نیتروباکتر اسید زا",
+          "رایزوبیوم و آزوسپیریلوم",
+          "کلستریدیوم و باسیلوس",
+          "اکتینومایست‌ها و قارچ‌ها"
+        ],
+        correct: 0,
+        hint: "نیتروزوموناس آمونیم را به نیتریت و نیتروباکتر نیتریت را به نیترات تبدیل می‌کند."
+      },
+      {
+        id: 34,
+        text: "معادله C6H12O6 + 4NO3 = 6CO2 + 6H2O + 2N2 + NO + NO2 نشان‌دهنده چیست؟",
+        options: ["دنیتریفیکاسیون", "نیتریفیکاسیون", "تثبیت نیتروژن", "هیدرولیز"],
+        correct: 0,
+        hint: "دنیتریفیکاسیون نیترات را به گازهای نیتروژنی (مثل N2) تبدیل می‌کند، معمولاً در شرایط بی‌هوازی."
+      },
+      {
+        id: 35,
+        text: "مقدار P2O5 لازم برای محصول در مزرعه 0.4 هکتاری با نیاز 5 کیلو فسفر چقدر است؟",
+        options: [
+          "28.63 کیلوگرم در هکتار",
+          "14.32 کیلوگرم در هکتار",
+          "7.16 کیلوگرم در هکتار",
+          "56.25 کیلوگرم در هکتار"
+        ],
+        correct: 0,
+        hint: "برای محاسبه P2O5، فسفر (P) را در 2.29 ضرب کنید (نسبت P به P2O5). 5 کیلو فسفر × 2.29 ÷ 0.4 هکتار = 28.63 کیلوگرم در هکتار."
+      },
+      {
+        id: 36,
+        text: "واکنش در سنگ‌های حاوی کانی‌های آهندار در معرض هوا کدام است؟",
+        options: [
+          "FeO + H2O → FeOOH + H+",
+          "Fe2O3 + H2O → Fe(OH)3",
+          "FeS + O2 → FeSO4",
+          "FeO + CO2 → FeCO3"
+        ],
+        correct: 0,
+        hint: "اکسیداسیون آهن در حضور آب و هوا به تشکیل هیدروکسید آهن (FeOOH) و آزادسازی H+ منجر می‌شود."
+      },
+      {
+        id: 37,
+        text: "در خاک اسیدی شدید، فرم غالب فسفر چیست؟",
+        options: [
+          "جذب شده به رس و اکسیدهای آهن و آلومینیوم",
+          "محلول در آب خاک",
+          "تثبیت شده در هوموس",
+          "ترکیب با نیتروژن"
+        ],
+        correct: 0,
+        hint: "در خاک‌های اسیدی، فسفر به اکسیدهای آهن و آلومینیوم یا رس‌ها متصل شده و غیرقابل دسترس می‌شود."
+      },
+      {
+        id: 38,
+        text: "کدام خاک‌ها افق‌های غنی از مواد آلی تا عمق بیشتری دارند؟",
+        options: [
+          "چمنزارهای با ریشه طویل",
+          "خاک‌های بیابانی",
+          "خاک‌های جنگلی",
+          "خاک‌های باتلاقی"
+        ],
+        correct: 0,
+        hint: "چمنزارها به دلیل ریشه‌های عمیق و تجمع مواد آلی، افق‌های غنی‌تری دارند."
+      },
+      {
+        id: 39,
+        text: "تجمع نمک‌ها و لایه شخم خورده در نامگذاری افق‌ها با چه حروفی نشان داده می‌شود؟",
+        options: ["p و z", "q و t", "s و r", "m و n"],
+        correct: 0,
+        hint: "افق p لایه شخم‌خورده و z نشان‌دهنده تجمع نمک‌ها در خاک است."
+      },
+      {
+        id: 40,
+        text: "رنگ پریدگی برگ‌های قدیمی و آب سوختگی حاشیه برگ‌ها نشان دهنده چیست؟",
+        options: [
+          "کمبود پتاسیم و نیتروژن",
+          "کمبود فسفر و منیزیم",
+          "کمبود آهن و روی",
+          "کمبود گوگرد و کلسیم"
+        ],
+        correct: 0,
+        hint: "کمبود نیتروژن باعث رنگ پریدگی برگ‌های قدیمی و کمبود پتاسیم باعث آب‌سوختگی حاشیه برگ‌ها می‌شود."
+      }
+    ];
+
+    function QuizApp() {
+      const [quizStarted, setQuizStarted] = React.useState(false);
+      const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
+      const [selectedOption, setSelectedOption] = React.useState(null);
+      const [feedback, setFeedback] = React.useState(null); // 'correct', 'incorrect', 'timeout'
+      const [showCorrect, setShowCorrect] = React.useState(false);
+      const [score, setScore] = React.useState(0);
+      const [timer, setTimer] = React.useState(30);
+      const [quizCompleted, setQuizCompleted] = React.useState(false);
+      const [showHint, setShowHint] = React.useState(false);
+      const [animation, setAnimation] = React.useState('fade-in');
+      const timerRef = React.useRef(null);
+
+      React.useEffect(() => {
+        if (quizStarted && !quizCompleted) {
+          startTimer();
+          return () => clearInterval(timerRef.current);
+        }
+      }, [currentQuestionIndex, quizStarted, quizCompleted]);
+
+      const startTimer = () => {
+        setTimer(30);
+        clearInterval(timerRef.current);
+        timerRef.current = setInterval(() => {
+          setTimer((prev) => {
+            if (prev <= 1) {
+              clearInterval(timerRef.current);
+              handleTimeout();
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      };
+
+      const handleTimeout = () => {
+        setFeedback('timeout');
+        setShowCorrect(true);
+        setTimeout(() => {
+          setAnimation('fade-out');
+          setTimeout(nextQuestion, 500);
+        }, 3000);
+      };
+
+      const handleOptionSelect = (index) => {
+        if (feedback) return;
+        setSelectedOption(index);
+        const question = questions[currentQuestionIndex];
+        if (index === question.correct) {
+          setFeedback('correct');
+          if (selectedOption === null) {
+            setScore((prev) => prev + 1);
+          }
+          clearInterval(timerRef.current);
+          setTimeout(() => {
+            setAnimation('fade-out');
+            setTimeout(nextQuestion, 500);
+          }, 1500);
+        } else {
+          setFeedback('incorrect');
+          setShowCorrect(true);
+          setSelectedOption(null);
+        }
+      };
+
+      const nextQuestion = () => {
+        setAnimation('fade-in');
+        setSelectedOption(null);
+        setFeedback(null);
+        setShowCorrect(false);
+        setShowHint(false);
+        if (currentQuestionIndex + 1 < questions.length) {
+          setCurrentQuestionIndex((prev) => prev + 1);
+        } else {
+          setQuizCompleted(true);
+          clearInterval(timerRef.current);
+        }
+      };
+
+      const startQuiz = () => {
+        setQuizStarted(true);
+      };
+
+      if (!quizStarted) {
+        return (
+          <div className="max-w-2xl mx-auto bg-white shadow-2xl rounded-lg p-8 text-center">
+            <h1 className="text-3xl font-bold text-gray-800 mb-4">آزمون نهایی خاک‌شناسی عمومی</h1>
+            <p className="text-lg text-gray-600 mb-6">تعداد سوالات: ۴۰ | زمان هر سوال: ۳۰ ثانیه</p>
+            <p className="text-gray-500 mb-8">برای هر سوال یک پاسخ صحیح انتخاب کنید. در صورت اشتباه، می‌توانید دوباره امتحان کنید. از دکمه راهنمایی برای یادگیری بیشتر استفاده کنید.</p>
+            <button
+              onClick={startQuiz}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
+            >
+              شروع آزمون
+            </button>
+          </div>
+        );
+      }
+
+      if (quizCompleted) {
+        const percentage = ((score / questions.length) * 100).toFixed(2);
+        return (
+          <div className="max-w-2xl mx-auto bg-white shadow-2xl rounded-lg p-8 text-center fade-in">
+            <h1 className="text-3xl font-bold text-gray-800 mb-4">آزمون به پایان رسید!</h1>
+            <p className="text-xl text-gray-600 mb-4">نمره شما: {score} از {questions.length}</p>
+            <p className="text-lg text-gray-500 mb-6">درصد موفقیت: {percentage}%</p>
+            <button
+              onClick={() => {
+                setQuizStarted(false);
+                setCurrentQuestionIndex(0);
+                setScore(0);
+                setQuizCompleted(false);
+              }}
+              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition"
+            >
+              شروع مجدد آزمون
+            </button>
+          </div>
+        );
+      }
+
+      const question = questions[currentQuestionIndex];
+      const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+
+      return (
+        <div className={`max-w-2xl mx-auto bg-white shadow-2xl rounded-lg p-8 ${animation}`}>
+          <h1 className="text-2xl font-bold text-gray-800 text-center mb-4">آزمون نهایی خاک‌شناسی عمومی</h1>
+          <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+            <div
+              className="bg-blue-600 h-2.5 rounded-full progress-bar"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+          <p className="text-center text-gray-600 mb-2">سوال {currentQuestionIndex + 1} از {questions.length}</p>
+          <p className="text-center text-gray-500 mb-4">زمان باقی‌مانده: {timer} ثانیه</p>
+          <p className="font-semibold text-lg text-gray-800 mb-6">{question.text}</p>
+          <div className="space-y-4">
+            {question.options.map((option, index) => {
+              let bgColor = 'bg-gray-50';
+              let textColor = 'text-gray-800';
+              if (showCorrect && index === question.correct) {
+                bgColor = 'bg-green-100';
+                textColor = 'text-green-800';
+              } else if (selectedOption === index && feedback === 'incorrect') {
+                bgColor = 'bg-red-100';
+                textColor = 'text-red-800';
+              } else if (feedback === 'correct' && index === question.correct) {
+                bgColor = 'bg-green-100';
+                textColor = 'text-green-800';
+              }
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleOptionSelect(index)}
+                  className={`w-full p-4 rounded-lg border ${bgColor} ${textColor} hover:bg-gray-200 transition text-right ${feedback && index !== question.correct && selectedOption !== index ? 'cursor-not-allowed opacity-50' : ''}`}
+                  disabled={feedback === 'correct'}
+                >
+                  {String.fromCharCode(97 + index)}) {option}
+                </button>
+              );
+            })}
+            <button
+              onClick={() => setShowHint(true)}
+              className="w-full p-4 rounded-lg border bg-yellow-50 text-yellow-800 hover:bg-yellow-100 transition text-right"
+            >
+              راهنمایی
+            </button>
+          </div>
+          {showHint && (
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200 hint-box">
+              <div className="flex justify-between items-center">
+                <p className="text-blue-800">{question.hint}</p>
+                <button
+                  onClick={() => setShowHint(false)}
+                 媒介
+                  className="text-blue-600 hover:text-blue-800"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
+          {feedback === 'incorrect' && (
+            <p className="text-red-600 mt-6 text-center flex items-center justify-center">
+              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              اشتباه! لطفاً دوباره امتحان کنید.
+            </p>
+          )}
+          {feedback === 'correct' && (
+            <p className="text-green-600 mt-6 text-center flex items-center justify-center">
+              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+              </svg>
+              درست! به سوال بعدی می‌رویم.
+            </p>
+          )}
+          {feedback === 'timeout' && (
+            <p className="text-yellow-600 mt-6 text-center flex items-center justify-center">
+              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l1.5 1.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              زمان تمام شد! گزینه درست نمایش داده شد.
+            </p>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.render(<QuizApp />, document.getElementById('root'));
+  </script>
+</body>
+</html>

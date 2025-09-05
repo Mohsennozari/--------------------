@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>آزمون مواد آلی خاک</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <style>
+    body{font-family:'Vazir',sans-serif;direction:rtl;background:linear-gradient(to bottom,#e7f3e9,#f0f2f5)}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff')}
+    .btn{transition:background-color 0.3s}.modal{transition:opacity 0.3s,transform 0.3s}.modal-hidden{opacity:0;transform:scale(0.9)}.modal-visible{opacity:1;transform:scale(1)}
+  </style>
+</head>
+<body>
+  <div id="root" class="container mx-auto p-4 min-h-screen flex items-center justify-center"></div>
+  <script type="text/babel">
+    const questions=[
+      {id:1,text:"مواد آلی خاک (SOM) شامل کدام مورد نیست؟",options:["الف) موجودات زنده","ب) بقایای تازه گیاهان","ج) سنگ‌های معدنی","د) هوموس"],correct:2},
+      {id:2,text:"درصد معمول مواد آلی خاک در خاک‌های زراعی معمولاً چقدر است؟",options:["الف) کمتر از ۶%","ب) ۱۰–۱۵%","ج) ۲۰–۲۵%","د) بیش از ۳۰%"],correct:0},
+      {id:3,text:"کدام بخش از مواد آلی خاک بیشترین مقاومت را در برابر تجزیه دارد؟",options:["الف) بقایای تازه","ب) مواد در حال تجزیه","ج) هوموس","د) میکروارگانیسم‌ها"],correct:2},
+      {id:4,text:"هوموس عمدتاً از چه موادی تشکیل شده است؟",options:["الف) سلولز و همی‌سلولز","ب) لیگنین و پروتئین","ج) اسیدهای هیومیک و فولویک","د) قندها و نشاسته"],correct:2},
+      {id:5,text:"چه عاملی باعث افزایش سرعت تجزیه مواد آلی می‌شود؟",options:["الف) pH پایین","ب) رطوبت کم","ج) دمای پایین","د) وجود مواد آلی تازه"],correct:3},
+      {id:6,text:"کدام عنصر بیشترین درصد را در ترکیب عنصری مواد آلی گیاهی دارد؟",options:["الف) کربن","ب) اکسیژن","ج) هیدروژن","د) ازت"],correct:0},
+      {id:7,text:"برای تبدیل کربن آلی به ماده آلی کل، چه ضریبی استفاده می‌شود؟",options:["الف) ۱.۲","ب) ۱.۷۲","ج) ۲.۵","د) ۳.۰"],correct:1},
+      {id:8,text:"کدام بخش از مواد آلی خاک به عنوان «بخش فعال» شناخته می‌شود؟",options:["الف) هوموس","ب) بقایای تازه","ج) مواد در حال تجزیه","د) خاک‌های معدنی"],correct:2},
+      {id:9,text:"افزودن مواد آلی تازه به خاک باعث افزایش جمعیت کدام موجودات می‌شود؟",options:["الف) باکتری‌ها و قارچ‌ها","ب) کرم‌های خاکی","ج) هر دو مورد","د) هیچکدام"],correct:2},
+      {id:10,text:"هوموس چند برابر وزن خود می‌تواند آب جذب کند؟",options:["الف) ۲ برابر","ب) ۴ برابر","ج) ۶ برابر","د) ۱۰ برابر"],correct:2},
+      {id:11,text:"کدام یک از فواید هوموس در خاک نیست؟",options:["الف) نگهداری آب","ب) بهبود ساختمان خاک","ج) افزایش شوری خاک","د) آزادسازی تدریجی عناصر غذایی"],correct:2},
+      {id:12,text:"چه عاملی در تجزیه مواد آلی خاک نقش کلیدی دارد؟",options:["الف) نور خورشید","ب) فعالیت میکروارگانیسم‌ها","ج) باد","د) بارش اسیدی"],correct:1},
+      {id:13,text:"کدام نوع خاک معمولاً دارای مواد آلی بیشتری است؟",options:["الف) خاک‌های شنی","ب) خاک‌های رسی","ج) خاک‌های لومی","د) خاک‌های آهکی"],correct:1},
+      {id:14,text:"کدام عامل مدیریتی می‌تواند باعث کاهش مواد آلی خاک شود؟",options:["الف) افزودن کود دامی","ب) شخم زیاد","ج) کشت مخلوط","د) استفاده از کود سبز"],correct:1},
+      {id:15,text:"مواد آلی خاک معمولاً چه درصدی از وزن خاک را تشکیل می‌دهد؟",options:["الف) ۱–۵%","ب) ۱۰–۱۵%","ج) ۲۰–۲۵%","د) ۳۰–۴۰%"],correct:0},
+      {id:16,text:"کدام بخش از مواد آلی خاک سریع‌تر تجزیه می‌شود؟",options:["الف) لیگنین","ب) موم‌ها","ج) قندها و پروتئین‌ها","د) هوموس"],correct:2},
+      {id:17,text:"هوموس عمدتاً از چه processus تشکیل می‌شود؟",options:["الف) هوازدگی","ب) هوموسی شدن","ج) آبشویی","د) تبخیر"],correct:1},
+      {id:18,text:"کدام عامل در تشکیل هوموس نقش ندارد؟",options:["الف) فعالیت میکروبی","ب) وجود اکسیژن","ج) دمای پایین","د) نور فرابنفش"],correct:3},
+      {id:19,text:"افزایش مواد آلی خاک باعث بهبود کدام ویژگی فیزیکی خاک می‌شود؟",options:["الف) نفوذپذیری آب","ب) شوری","ج) قلیایی بودن","د) تراکم"],correct:0},
+      {id:20,text:"کدام یک از موارد زیر نشان‌دهنده سلامت خاک است؟",options:["الف) فرسایش شدید","ب) وجود کرم‌های خاکی","ج) pH بسیار پایین","د) شوری زیاد"],correct:1},
+      {id:21,text:"چه درصدی از مواد آلی خاک را موجودات زنده تشکیل می‌دهند؟",options:["الف) کمتر از ۵%","ب) ۱۰–۱۵%","ج) ۲۰–۲۵%","د) ۳۰–۴۰%"],correct:0},
+      {id:22,text:"کدام عامل اقلیمی بیشترین تأثیر را بر میزان مواد آلی خاک دارد؟",options:["الف) سرعت باد","ب) میزان بارندگی","ج) تعداد روزهای آفتابی","د) رطوبت نسبی"],correct:1},
+      {id:23,text:"کدام نوع مدیریت زراعی به حفظ مواد آلی خاک کمک می‌کند؟",options:["الف) کشت تک‌محصولی","ب) شخم عمیق و مکرر","ج) برگرداندن بقایای گیاهی به خاک","د) استفاده زیاد از کودهای شیمیایی"],correct:2},
+      {id:24,text:"هوموس معمولاً چه رنگی دارد؟",options:["الف) سفید","ب) زرد","ج) قهوه‌ای تیره تا سیاه","د) قرمز"],correct:2},
+      {id:25,text:"کدام عنصر غذایی عمدتاً از تجزیه مواد آلی آزاد می‌شود؟",options:["الف) کلسیم","ب) نیتروژن","ج) آهن","د) منگنز"],correct:1},
+      {id:26,text:"چه عواملی باعث کاهش مواد آلی خاک می‌شوند؟",options:["الف) کشت متراکم","ب) شخم زیاد","ج) فرسایش","د) همه موارد"],correct:3},
+      {id:27,text:"مواد آلی خاک در کدام لایه خاک بیشتر یافت می‌شود؟",options:["الف) لایه زیرین","ب) لایه میانی","ج) لایه سطحی","د) در همه لایه‌ها به یک میزان"],correct:2},
+      {id:28,text:"کدام آزمایش ساده می‌تواند سلامت خاک را از نظر پایداری ساختمان نشان دهد؟",options:["الف) آزمایش کلوخه در آب","ب) آزمایش pH","ج) آزمایش هدایت الکتریکی","د) آزمایش بافت خاک"],correct:0},
+      {id:29,text:"کدام یک از موارد زیر از فواید مواد آلی خاک نیست؟",options:["الف) بهبود تهویه خاک","ب) افزایش ظرفیت تبادل کاتیونی","ج) افزایش فرسایش","د) تأمین تدریجی عناصر غذایی"],correct:2},
+      {id:30,text:"کیفیت خاک به کدام عامل وابسته نیست؟",options:["الف) مواد آلی","ب) فعالیت موجودات زنده","ج) شوری خاک","د) رنگ خاک"],correct:3},
+      {id:31,text:"اگر درصد کربن آلی خاک ۳.۵% باشد، درصد مواد آلی خاک چقدر است؟",options:["الف) ۲%","ب) ۴%","ج) ۶%","د) ۸%"],correct:2},
+      {id:32,text:"اگر خاکی ۴% ماده آلی داشته باشد، مقدار کربن آلی آن چند درصد است؟",options:["الف) ۲.۳%","ب) ۳.۵%","ج) ۴.۸%","د) ۵.۲%"],correct:0},
+      {id:33,text:"هوموس موجود در خاک می‌تواند ۱۸۰۰ کیلوگرم آب در هکتار نگهداری کند. اگر وزن هوموس ۳۰۰ کیلوگرم در هکتار باشد، چند برابر وزن خود آب جذب کرده است؟",options:["الف) ۴ برابر","ب) ۶ برابر","ج) ۸ برابر","د) ۱۰ برابر"],correct:1},
+      {id:34,text:"اگر در خاکی ۵% ماده آلی وجود داشته باشد و هر سال ۲.۵% از آن تجزیه شود، پس از ۱۰ سال چند درصد ماده آلی باقی می‌ماند؟",options:["الف) ۳.۹%","ب) ۴.۲%","ج) ۴.۵%","د) ۴.۸%"],correct:0},
+      {id:35,text:"اگر یک تن کود دامی حاوی ۴۰% ماده آلی باشد، چند کیلوگرم ماده آلی به خاک اضافه می‌کند؟",options:["الف) ۲۰۰ کیلوگرم","ب) ۴۰۰ کیلوگرم","ج) ۶۰۰ کیلوگرم","د) ۸۰۰ کیلوگرم"],correct:1},
+      {id:36,text:"اگر درصد کربن آلی خاک ۲.۸% باشد، چند گرم کربن آلی در ۱۰۰ گرم خاک وجود دارد؟",options:["الف) ۰.۲۸ گرم","ب) ۲.۸ گرم","ج) ۲۸ گرم","د) ۲۸۰ گرم"],correct:1},
+      {id:37,text:"اگر ماده آلی خاک ۶% باشد و ضریب تبدیل کربن به ماده آلی ۱.۷۲ باشد، درصد کربن آلی چقدر است؟",options:["الف) ۳.۴۹%","ب) ۴.۲%","ج) ۵.۱%","د) ۶%"],correct:0},
+      {id:38,text:"اگر هر سال ۲ تن در هکتار بقایای گیاهی با ۲۵% ماده آلی به خاک اضافه شود، پس از ۵ سال چند تن ماده آلی اضافه شده است؟",options:["الف) ۰.۵ تن","ب) ۱ تن","ج) ۲.۵ تن","د) ۵ تن"],correct:2},
+      {id:39,text:"اگر هوموس ۶ برابر وزن خود آب جذب کند و مقدار هوموس در خاک ۱۰ تن در هکتار باشد، چند مترمکعب آب می‌تواند نگه دارد؟",options:["الف) ۶۰ مترمکعب","ب) ۶۰۰ مترمکعب","ج) ۶۰۰۰ مترمکعب","د) ۶۰۰۰۰ مترمکعب"],correct:2},
+      {id:40,text:"اگر خاکی دارای ۳% ماده آلی باشد و هر سال ۰.۱% از آن کاهش یابد، پس از چند سال به ۲% می‌رسد؟",options:["الف) ۵ سال","ب) ۱۰ سال","ج) ۱۵ سال","د) ۲۰ سال"],correct:1}
+    ];
+    const stages=[questions.slice(0,10),questions.slice(10,20),questions.slice(20,30),questions.slice(30,40)];
+    function QuizApp(){
+      const [stage,setStage]=React.useState(0);
+      const [questionIndex,setQuestionIndex]=React.useState(0);
+      const [repeatCount,setRepeatCount]=React.useState(0);
+      const [selected,setSelected]=React.useState(null);
+      const [feedback,setFeedback]=React.useState(null);
+      const [showCorrect,setShowCorrect]=React.useState(false);
+      const [scores,setScores]=React.useState([0,0,0,0]);
+      const [answersCorrect,setAnswersCorrect]=React.useState({});
+      const [showModal,setShowModal]=React.useState(false);
+      const currentStage=stages[stage];
+      const handleSelect=(index)=>{
+        if(feedback==='correct')return;
+        setSelected(index);
+        const q=currentStage[questionIndex];
+        const isCorrect=index===q.correct;
+        setAnswersCorrect(prev=>({...prev,[`${stage}-${questionIndex}-${repeatCount}`]:isCorrect}));
+        if(isCorrect){
+          setFeedback('correct');
+          if(selected===null){
+            setScores(prev=>({...prev,[stage]:prev[stage]+1}));
+          }
+          setTimeout(nextQuestion,1000);
+        }else{
+          setFeedback('incorrect');
+          setShowCorrect(true);
+          setTimeout(() => {
+            setFeedback(null);
+            setShowCorrect(false);
+            setSelected(null);
+          }, 2000);
+        }
+      };
+      const nextQuestion=()=>{
+        setSelected(null);
+        setFeedback(null);
+        setShowCorrect(false);
+        if(repeatCount<2){
+          setRepeatCount(prev=>prev+1);
+        }else if(questionIndex+1<currentStage.length){
+          setQuestionIndex(prev=>prev+1);
+          setRepeatCount(0);
+        }else{
+          setShowModal(true);
+        }
+      };
+      const handleNextStage=()=>{
+        const stageAnswers=Object.keys(answersCorrect)
+          .filter(key=>key.startsWith(`${stage}-`))
+          .map(key=>answersCorrect[key]);
+        const hasIncorrect=stageAnswers.includes(false)||stageAnswers.length<currentStage.length*3;
+        if(hasIncorrect){
+          setQuestionIndex(0);
+          setRepeatCount(0);
+          setAnswersCorrect(prev=>Object.fromEntries(Object.keys(prev)
+            .filter(key=>!key.startsWith(`${stage}-`))
+            .map(key=>[key,prev[key]])));
+        }else if(stage<3){
+          setStage(prev=>prev+1);
+          setQuestionIndex(0);
+          setRepeatCount(0);
+        }else{
+          setStage(0);
+          setQuestionIndex(0);
+          setRepeatCount(0);
+          setScores([0,0,0,0]);
+          setAnswersCorrect({});
+        }
+        setShowModal(false);
+      };
+      const progress=((questionIndex*3+repeatCount+1)/(currentStage.length*3))*100;
+      return (
+        <div class="max-w-2xl mx-auto bg-white shadow-2xl rounded-xl p-6">
+          <h1 class="text-2xl font-bold text-gray-800 text-center mb-4">آزمون مواد آلی خاک - مرحله {stage+1}</h1>
+          <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+            <div class="bg-green-600 h-2.5 rounded-full" style={{width:`${progress}%`}}></div>
+          </div>
+          <p class="text-center text-gray-600 mb-4">سوال {questionIndex+1} از 10 (تکرار {repeatCount+1} از 3)</p>
+          <p class="font-semibold text-lg text-gray-800 mb-6">{currentStage[questionIndex].text}</p>
+          <div class="space-y-3">
+            {currentStage[questionIndex].options.map((opt,i)=>(
+              <button
+                key={i}
+                onClick={()=>handleSelect(i)}
+                class={`w-full p-4 text-lg font-medium rounded-lg border btn text-right ${showCorrect&&i===currentStage[questionIndex].correct?'bg-green-200 text-green-800':selected===i&&feedback==='incorrect'?'bg-red-200 text-red-800':feedback==='correct'&&i===currentStage[questionIndex].correct?'bg-green-200 text-green-800':'bg-blue-100 hover:bg-blue-200 text-blue-800'} ${feedback==='correct'?'cursor-not-allowed opacity-50':''}`}
+                disabled={feedback==='correct'}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+          {feedback==='incorrect'&&(
+            <p class="text-red-600 mt-4 text-center flex items-center justify-center">
+              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              اشتباه! دوباره امتحان کنید.
+            </p>
+          )}
+          {feedback==='correct'&&(
+            <p class="text-green-600 mt-4 text-center flex items-center justify-center">
+              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              درست! به تکرار یا سوال بعدی می‌رویم.
+            </p>
+          )}
+          {showModal&&(
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center modal modal-visible">
+              <div class="bg-white rounded-xl p-6 max-w-sm w-full text-center">
+                <h2 class="text-xl font-bold text-green-700 mb-4">نتایج مرحله {stage+1}</h2>
+                <p class="text-lg text-gray-600 mb-4">نمره: {scores[stage]} از 30</p>
+                <p class="text-lg text-gray-600 mb-4">کل نمره: {Object.values(scores).reduce((a,b)=>a+b,0)} از {(stage+1)*30}</p>
+                {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length*3&&(
+                  <p class="text-red-600 mb-4">برخی سوالات اشتباه بودند، مرحله تکرار می‌شود.</p>
+                )}
+                <button
+                  onClick={handleNextStage}
+                  class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 btn"
+                >
+                  {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length*3?'تکرار مرحله':stage<3?'مرحله بعدی':'شروع مجدد'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    ReactDOM.render(<QuizApp/>,document.getElementById('root'));
+  </script>
+</body>
+</html>

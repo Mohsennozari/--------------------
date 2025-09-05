@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>یادگیری شیمی خاک</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+  <style>
+    body{font-family:'Vazir',sans-serif;direction:rtl;background:linear-gradient(to bottom right,#fef3c7,#a7f3d0)}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff');font-weight:normal}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Bold.woff') format('woff');font-weight:bold}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Light.woff') format('woff');font-weight:300}
+    .btn{transition:all 0.3s ease}.btn:hover{transform:scale(1.05);filter:brightness(1.1)}
+    .card{transition:transform 0.5s ease;transform-style:preserve-3d}.card-flipped{transform:rotateY(180deg)}
+    .card-front,.card-back{position:absolute;backface-visibility:hidden;width:100%;height:100%}.card-back{transform:rotateY(180deg)}
+    .progress-bar{transition:width 0.6s ease-in-out}
+    .table-container,.card-container{animation:slideIn 0.5s ease-in}
+    .toast{transition:opacity 0.3s ease-in-out}
+    .table-row{transition:background 0.3s ease}
+    @keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .mathjax{font-size:1.2em}
+  </style>
+</head>
+<body>
+  <div id="root" class="container mx-auto p-6 min-h-screen flex items-center justify-center"></div>
+  <script type="text/babel">
+    const atomsTable=[
+      {name:"کربن",symbol:"C",atomicNumber:6,massNumber:12,role:"پایه مواد آلی، چرخه کربن"},
+      {name:"نیتروژن",symbol:"N",atomicNumber:7,massNumber:14,role:"عنصر کلیدی در حاصلخیزی (نیترات، آمونیوم)"},
+      {name:"فسفر",symbol:"P",atomicNumber:15,massNumber:31,role:"عنصر غذایی اصلی (فسفات)"},
+      {name:"پتاسیم",symbol:"K",atomicNumber:19,massNumber:39,role:"عنصر غذایی اصلی (یون K⁺)"},
+      {name:"کلسیم",symbol:"Ca",atomicNumber:20,massNumber:40,role:"تنظیم pH، یون Ca²⁺ در CEC"},
+      {name:"منیزیم",symbol:"Mg",atomicNumber:12,massNumber:24,role:"جزء کلروفیل، یون Mg²⁺ در CEC"},
+      {name:"گوگرد",symbol:"S",atomicNumber:16,massNumber:32,role:"تشکیل پروتئین‌ها (سولفات)"},
+      {name:"آهن",symbol:"Fe",atomicNumber:26,massNumber:56,role:"رنگدانه (قرمز/زرد)، اکسید و هیدروکسید"},
+      {name:"آلومینیوم",symbol:"Al",atomicNumber:13,massNumber:27,role:"سمیت در pH پایین، کانی‌های رسی"},
+      {name:"سیلیسیم",symbol:"Si",atomicNumber:14,massNumber:28,role:"اسکلت خاک، کانی‌های سیلیکاته"},
+      {name:"سدیم",symbol:"Na",atomicNumber:11,massNumber:23,role:"شوری خاک، پراکندگی ذرات"},
+      {name:"هیدروژن",symbol:"H",atomicNumber:1,massNumber:1,role:"اسیدیته (H⁺)، آب"},
+      {name:"اکسیژن",symbol:"O",atomicNumber:8,massNumber:16,role:"اکسیدها، آب، هوا"}
+    ];
+    const compoundsTable=[
+      {compound:"نیترات",formula:"NO₃⁻",role:"شکل متحرک و قابل جذب نیتروژن"},
+      {compound:"آمونیوم",formula:"NH₄⁺",role:"شکل قابل جذب، تثبیت شده روی رس‌ها"},
+      {compound:"اوره",formula:"CO(NH₂)₂",role:"کود نیتروژنی، در خاک به NH₄⁺ تبدیل می‌شود"},
+      {compound:"اورتوفسفات",formula:"H₂PO₄⁻/HPO₄²⁻",role:"شکل قابل جذب فسفر"},
+      {compound:"پتاسیم",formula:"K⁺",role:"عنصر غذایی، در CEC"},
+      {compound:"کلسیم",formula:"Ca²⁺",role:"عنصر غذایی، اصلاح کننده pH اسیدی"},
+      {compound:"هماتیت",formula:"Fe₂O₃",role:"اکسید آهن، رنگ‌دهنده قرمز به خاک"},
+      {compound:"گوتیت",formula:"FeO(OH)",role:"اکسید آهن، رنگ‌دهنده زرد به خاک"},
+      {compound:"کلسیت",formula:"CaCO₃",role:"منبع آهک، بافر pH"},
+      {compound:"ژیپس",formula:"CaSO₄·2H₂O",role:"اصلاح کننده خاک‌های سدیمی"},
+      {compound:"هالیت",formula:"NaCl",role:"نشان‌دهنده شوری خاک"}
+    ];
+    const flashcards=[
+      {id:1,question:"اتم کربن",answer:"نماد: C, عدد اتمی: 6, جرمی: 12, نقش: پایه مواد آلی، چرخه کربن"},
+      {id:2,question:"اتم نیتروژن",answer:"نماد: N, عدد اتمی: 7, جرمی: 14, نقش: عنصر کلیدی در حاصلخیزی (نیترات، آمونیوم)"},
+      {id:3,question:"اتم فسفر",answer:"نماد: P, عدد اتمی: 15, جرمی: 31, نقش: عنصر غذایی اصلی (فسفات)"},
+      {id:4,question:"اتم پتاسیم",answer:"نماد: K, عدد اتمی: 19, جرمی: 39, نقش: عنصر غذایی اصلی (یون K⁺)"},
+      {id:5,question:"اتم کلسیم",answer:"نماد: Ca, عدد اتمی: 20, جرمی: 40, نقش: تنظیم pH، یون Ca²⁺ در CEC"},
+      {id:6,question:"اتم منیزیم",answer:"نماد: Mg, عدد اتمی: 12, جرمی: 24, نقش: جزء کلروفیل، یون Mg²⁺ در CEC"},
+      {id:7,question:"اتم گوگرد",answer:"نماد: S, عدد اتمی: 16, جرمی: 32, نقش: تشکیل پروتئین‌ها (سولفات)"},
+      {id:8,question:"اتم آهن",answer:"نماد: Fe, عدد اتمی: 26, جرمی: 56, نقش: رنگدانه (قرمز/زرد)، اکسید و هیدروکسید"},
+      {id:9,question:"اتم آلومینیوم",answer:"نماد: Al, عدد اتمی: 13, جرمی: 27, نقش: سمیت در pH پایین، کانی‌های رسی"},
+      {id:10,question:"اتم سیلیسیم",answer:"نماد: Si, عدد اتمی: 14, جرمی: 28, نقش: اسکلت خاک، کانی‌های سیلیکاته"},
+      {id:11,question:"اتم سدیم",answer:"نماد: Na, عدد اتمی: 11, جرمی: 23, نقش: شوری خاک، پراکندگی ذرات"},
+      {id:12,question:"اتم هیدروژن",answer:"نماد: H, عدد اتمی: 1, جرمی: 1, نقش: اسیدیته (H⁺)، آب"},
+      {id:13,question:"اتم اکسیژن",answer:"نماد: O, عدد اتمی: 8, جرمی: 16, نقش: اکسیدها، آب، هوا"},
+      {id:14,question:"یون هیدروژن",answer:"H⁺"},
+      {id:15,question:"یون هیدروکسید",answer:"OH⁻"},
+      {id:16,question:"اسید کربنیک",answer:"H₂CO₃ (حاصل حل CO₂ در آب)"},
+      {id:17,question:"بی‌کربنات",answer:"HCO₃⁻"},
+      {id:18,question:"کربنات",answer:"CO₃²⁻"},
+      {id:19,question:"آمونیوم",answer:"NH₄⁺ (شکل جذب شده توسط گیاه و رسوب‌ها)"},
+      {id:20,question:"آمونیاک",answer:"NH₃ (فرم گازی)"},
+      {id:21,question:"نیتریت",answer:"NO₂⁻ (میانجی)"},
+      {id:22,question:"نیترات",answer:"NO₃⁻ (شکل متحرک و قابل جذب توسط گیاه)"},
+      {id:23,question:"اوره",answer:"CO(NH₂)₂ (کود نیتروژنی رایج)"},
+      {id:24,question:"اورتوفسفات",answer:"H₂PO₄⁻, HPO₄²⁻, PO₄³⁻ (شکل‌های قابل جذب، وابسته به pH)"},
+      {id:25,question:"آپاتیت",answer:"Ca₅(PO₄)₃(OH,F,Cl) (کانی اولیه فسفر)"},
+      {id:26,question:"ورقه چهاروجهی سیلیکا",answer:"[SiO₄]⁴⁻ (واحد پایه)"},
+      {id:27,question:"ورقه هشت‌وجهی آلومینا",answer:"[AlO₆]⁹⁻ یا [MgO₆]⁹⁻ (واحد پایه)"},
+      {id:28,question:"هماتیت",answer:"Fe₂O₃ (رنگ قرمز در خاک)"},
+      {id:29,question:"گوتیت",answer:"FeO(OH) (رنگ زرد در خاک)"},
+      {id:30,question:"جیبسیت",answer:"Al(OH)₃ (کانی ثانویه آلومینیوم)"},
+      {id:31,question:"سیلیکا",answer:"SiO₂ (کوارتز)"},
+      {id:32,question:"کلسیت",answer:"CaCO₃"},
+      {id:33,question:"دولومیت",answer:"CaMg(CO₃)₂"},
+      {id:34,question:"ژیپس",answer:"CaSO₄ · 2H₂O (سولفات کلسیم)"},
+      {id:35,question:"هالیت",answer:"NaCl"},
+      {id:36,question:"سودا",answer:"Na₂CO₃ (قلیایی‌کننده قوی)"},
+      {id:37,question:"فرمول pH",answer:"pH = -\\log[H^+]"},
+      {id:38,question:"ظرفیت تبادل کاتیونی (CEC)",answer:"CEC کل ≈ مجموع کاتیون‌های قابل تبادل (Ca²⁺, Mg²⁺, K⁺, Na⁺, H⁺, Al³⁺)"},
+      {id:39,question:"درصد سدیم قابل تبادل (ESP)",answer:"ESP = \\frac{\\text{Exchangeable Na}^+}{\\text{CEC}} \\times 100"},
+      {id:40,question:"هدایت الکتریکی (EC)",answer:"واحد: dS/m یا mmho/cm, معیار اندازه‌گیری شوری خاک"},
+      {id:41,question:"حل شدن کربنات کلسیم",answer:"CaCO₃ + CO₂ + H₂O ⇌ Ca²⁺ + 2HCO₃⁻"},
+      {id:42,question:"نیتریفیکاسیون (مرحله ۱)",answer:"2NH₄⁺ + 3O₂ → 2NO₂⁻ + 4H⁺ + 2H₂O (توسط باکتری‌ها)"},
+      {id:43,question:"نیتریفیکاسیون (مرحله ۲)",answer:"2NO₂⁻ + O₂ → 2NO₃⁻ (توسط باکتری‌ها)"},
+      {id:44,question:"یون‌های قابل جذب گیاه",answer:"NH₄⁺, NO₃⁻, H₂PO₄⁻/HPO₄²⁻, K⁺, Ca²⁺, Mg²⁺, SO₄²⁻"},
+      {id:45,question:"کاتیون‌های اصلی در CEC",answer:"Ca²⁺, Mg²⁺, K⁺, Na⁺, H⁺, Al³⁺"},
+      {id:46,question:"شکل فسفر قابل جذب",answer:"در pH اسیدی H₂PO₄⁻, در pH قلیایی HPO₄²⁻"},
+      {id:47,question:"علت قرمزی خاک",answer:"هماتیت (Fe₂O₃)"},
+      {id:48,question:"علت زردی خاک",answer:"گوتیت (FeO(OH))"},
+      {id:49,question:"منبع اصلی اسیدیته در خاک",answer:"یون H⁺ و Al³⁺ (هیدرولیز شده به Al(OH)₃ + 3H⁺)"},
+      {id:50,question:"کود شیمیایی رایج",answer:"اوره CO(NH₂)₂, سوپر فسفات Ca(H₂PO₄)₂, پتاسیم کلرید KCl"}
+    ];
+    const tips=[
+      "یون‌های قابل جذب گیاه: NH₄⁺, NO₃⁻, H₂PO₄⁻/HPO₄²⁻, K⁺, Ca²⁺, Mg²⁺, SO₄²⁻",
+      "کاتیون‌های اصلی در CEC: Ca²⁺, Mg²⁺, K⁺, Na⁺, H⁺, Al³⁺",
+      "شکل فسفر قابل جذب: در pH اسیدی H₂PO₄⁻ و در pH قلیایی HPO₄²⁻ غالب است",
+      "علت قرمزی خاک: وجود هماتیت (Fe₂O₃)",
+      "علت زردی خاک: وجود گوتیت (FeO(OH))",
+      "منبع اصلی اسیدیته در خاک: یون H⁺ و Al³⁺ (هیدرولیز شده به Al(OH)₃ + 3H⁺)",
+      "واکنش جانشینی همشکل: منشأ بار منفی دائمی در رس‌ها (Si⁴⁺ با Al³⁺)",
+      "کود شیمیایی رایج: اوره CO(NH₂)₂, سوپر فسفات Ca(H₂PO₄)₂, پتاسیم کلرید KCl",
+      "pH بهینه برای گیاهان: ۶ تا ۷.۵ (کمی اسیدی تا خنثی)",
+      "عناصر غذایی: ماکرو (N, P, K, Ca, Mg, S), میکرو (Fe, Mn, Zn, Cu, B, Mo, Cl, Ni)"
+    ];
+    const equations=[
+      {name:"محاسبه pH",formula:"pH = -\\log[H^+]"},
+      {name:"درصد سدیم قابل تبادل (ESP)",formula:"ESP = \\frac{\\text{Exchangeable Na}^+}{\\text{CEC}} \\times 100"},
+      {name:"حل شدن کربنات کلسیم",formula:"CaCO₃ + CO₂ + H₂O \\rightleftharpoons Ca^{2+} + 2HCO₃^-"},
+      {name:"نیتریفیکاسیون (مرحله ۱)",formula:"2NH₄^+ + 3O₂ \\rightarrow 2NO₂^- + 4H^+ + 2H₂O"},
+      {name:"نیتریفیکاسیون (مرحله ۲)",formula:"2NO₂^- + O₂ \\rightarrow 2NO₃^-"}
+    ];
+    function App(){
+      const [mode,setMode]=React.useState('atomsTable'); // 'atomsTable', 'compoundsTable', 'flashcards', 'tips', 'equations'
+      const [filter,setFilter]=React.useState('');
+      const [currentFlashcardIndex,setCurrentFlashcardIndex]=React.useState(0);
+      const [isFlipped,setIsFlipped]=React.useState(false);
+      const [usedFlashcardIndices,setUsedFlashcardIndices]=React.useState([]);
+      const [showToast,setShowToast]=React.useState(false);
+      React.useEffect(()=>{
+        if(window.MathJax)window.MathJax.typeset();
+      },[mode]);
+      const handleFlip=()=>{
+        setIsFlipped(!isFlipped);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 1000);
+      };
+      const handleNextFlashcard=()=>{
+        let nextIndex;
+        if(usedFlashcardIndices.length===flashcards.length){
+          setUsedFlashcardIndices([]);
+        }
+        do{
+          nextIndex=Math.floor(Math.random()*flashcards.length);
+        }while(usedFlashcardIndices.includes(nextIndex));
+        setUsedFlashcardIndices([...usedFlashcardIndices,nextIndex]);
+        setCurrentFlashcardIndex(nextIndex);
+        setIsFlipped(false);
+      };
+      const filteredAtomsTable=atomsTable.filter(row=>
+        row.name.toLowerCase().includes(filter.toLowerCase())||
+        row.symbol.toLowerCase().includes(filter.toLowerCase())||
+        row.atomicNumber.toString().includes(filter)||
+        row.massNumber.toString().includes(filter)||
+        row.role.toLowerCase().includes(filter.toLowerCase())
+      );
+      const filteredCompoundsTable=compoundsTable.filter(row=>
+        row.compound.toLowerCase().includes(filter.toLowerCase())||
+        row.formula.toLowerCase().includes(filter.toLowerCase())||
+        row.role.toLowerCase().includes(filter.toLowerCase())
+      );
+      const flashcardProgress=(usedFlashcardIndices.length/flashcards.length)*100;
+      return (
+        <div class="max-w-4xl mx-auto bg-white shadow-2xl rounded-2xl p-8">
+          <h1 class="text-3xl font-bold text-emerald-600 text-center mb-6">یادگیری شیمی خاک</h1>
+          <div class="flex flex-wrap justify-center gap-4 mb-6">
+            {['atomsTable','compoundsTable','flashcards','tips','equations'].map(m=>(
+              <button
+                key={m}
+                onClick={()=>setMode(m)}
+                class={`px-6 py-3 rounded-xl shadow-lg btn ${mode===m?'bg-emerald-600 text-white':'bg-gray-200 text-gray-800'}`}
+              >
+                {m==='atomsTable'?'جدول اتم‌ها':m==='compoundsTable'?'جدول ترکیبات':m==='flashcards'?'فلش‌کارت‌ها':m==='tips'?'نکات کلیدی':m==='equations'?'معادلات':''}
+              </button>
+            ))}
+          </div>
+          {mode==='atomsTable'&&(
+            <div class="table-container">
+              <h2 class="text-2xl font-bold text-blue-600 mb-4">اتم‌های مهم و عدد اتمی/جرمی</h2>
+              <input
+                type="text"
+                value={filter}
+                onChange={e=>setFilter(e.target.value)}
+                placeholder="فیلتر بر اساس نام، نماد، عدد اتمی، جرمی یا نقش..."
+                class="w-full p-3 mb-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse">
+                  <thead>
+                    <tr class="bg-blue-600 text-white">
+                      <th class="p-3">نام عنصر</th>
+                      <th class="p-3">نماد</th>
+                      <th class="p-3">عدد اتمی (Z)</th>
+                      <th class="p-3">عدد جرمی (A)</th>
+                      <th class="p-3">نقش در خاک</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredAtomsTable.map(row=>(
+                      <tr key={row.name} class="table-row border-b hover:bg-blue-50">
+                        <td class="p-3">{row.name}</td>
+                        <td class="p-3">{row.symbol}</td>
+                        <td class="p-3">{row.atomicNumber}</td>
+                        <td class="p-3">{row.massNumber}</td>
+                        <td class="p-3">{row.role}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+          {mode==='compoundsTable'&&(
+            <div class="table-container">
+              <h2 class="text-2xl font-bold text-blue-600 mb-4">خلاصه ترکیبات و نقش آن‌ها</h2>
+              <input
+                type="text"
+                value={filter}
+                onChange={e=>setFilter(e.target.value)}
+                placeholder="فیلتر بر اساس ترکیب، فرمول یا نقش..."
+                class="w-full p-3 mb-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse">
+                  <thead>
+                    <tr class="bg-blue-600 text-white">
+                      <th class="p-3">ترکیب/یون</th>
+                      <th class="p-3">فرمول شیمیایی</th>
+                      <th class="p-3">نقش و اهمیت در خاک</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredCompoundsTable.map(row=>(
+                      <tr key={row.compound} class="table-row border-b hover:bg-blue-50">
+                        <td class="p-3">{row.compound}</td>
+                        <td class="p-3">{row.formula}</td>
+                        <td class="p-3">{row.role}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+          {mode==='flashcards'&&(
+            <div class="card-container">
+              <h2 class="text-2xl font-bold text-blue-600 mb-4">فلش‌کارت‌های شیمی خاک</h2>
+              <div class="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden">
+                <div class="bg-gradient-to-r from-emerald-600 to-yellow-400 h-4 rounded-full progress-bar" style={{width:`${flashcardProgress}%`}}></div>
+              </div>
+              <p class="text-center text-gray-600 mb-4 font-medium">کارت {usedFlashcardIndices.length+1} از {flashcards.length}</p>
+              <div class={`relative w-full h-64 bg-white rounded-xl shadow-lg card ${isFlipped?'card-flipped':''}`}>
+                <div class="card-front bg-white rounded-xl flex items-center justify-center p-6 text-center">
+                  <p class="text-xl font-medium text-gray-800">{flashcards[currentFlashcardIndex].question}</p>
+                </div>
+                <div class="card-back bg-emerald-100 rounded-xl flex items-center justify-center p-6 text-center">
+                  <p class="text-xl font-medium text-emerald-800">{flashcards[currentFlashcardIndex].answer}</p>
+                </div>
+              </div>
+              {showToast&&(
+                <div class="toast fixed top-4 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-4 py-2 rounded-xl shadow-lg">
+                  {isFlipped?'پاسخ نمایش داده شد!':'سوال نمایش داده شد!'}
+                </div>
+              )}
+              <div class="flex justify-center mt-6 gap-4">
+                <button
+                  onClick={handleFlip}
+                  class="bg-rose-600 text-white px-6 py-3 rounded-xl hover:bg-rose-700 btn shadow-lg"
+                >
+                  نمایش پاسخ
+                </button>
+                <button
+                  onClick={handleNextFlashcard}
+                  class="bg-gradient-to-r from-emerald-600 to-yellow-400 text-white px-6 py-3 rounded-xl hover:from-emerald-700 hover:to-yellow-500 btn shadow-lg"
+                >
+                  کارت بعدی
+                </button>
+              </div>
+            </div>
+          )}
+          {mode==='tips'&&(
+            <div class="table-container">
+              <h2 class="text-2xl font-bold text-blue-600 mb-4">نکات طلایی برای امتحان</h2>
+              <ul class="list-disc pr-6 text-gray-600">
+                {tips.map((tip,i)=>(
+                  <li key={i} class="p-2 hover:bg-emerald-50 rounded transition-colors">{tip}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {mode==='equations'&&(
+            <div class="table-container">
+              <h2 class="text-2xl font-bold text-blue-600 mb-4">فرمول‌ها و معادلات کلیدی</h2>
+              <div class="space-y-4">
+                {equations.map(eq=>(
+                  <div key={eq.name} class="p-4 bg-gray-50 rounded-xl shadow-md">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">{eq.name}</h3>
+                    <p class="mathjax" dangerouslySetInnerHTML={{__html:`\\(${eq.formula}\\)`}}></p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    ReactDOM.render(<App/>,document.getElementById('root'));
+  </script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>آزمون و فلش‌کارت‌های سیستم طبقه‌بندی خاک USDA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <style>
+    body{font-family:'Vazir',sans-serif;direction:rtl;background:linear-gradient(to bottom right,#e0f2fe,#d1fae5)}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff');font-weight:normal}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Bold.woff') format('woff');font-weight:bold}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Light.woff') format('woff');font-weight:300}
+    .btn{transition:all 0.3s ease}.btn:hover{transform:scale(1.05);filter:brightness(1.1)}
+    .card{transition:transform 0.5s ease;transform-style:preserve-3d}.card-flipped{transform:rotateY(180deg)}
+    .card-front,.card-back{position:absolute;backface-visibility:hidden;width:100%;height:100%}.card-back{transform:rotateY(180deg)}
+    .progress-bar{transition:width 0.6s ease-in-out}
+    .modal{transition:all 0.4s ease}.modal-hidden{opacity:0;transform:scale(0.9)}.modal-visible{opacity:1;transform:scale(1)}
+    .question-card,.card-container{animation:slideIn 0.5s ease-in}
+    .toast{transition:opacity 0.3s ease-in-out}
+    @keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <div id="root" class="container mx-auto p-6 min-h-screen flex items-center justify-center"></div>
+  <script type="text/babel">
+    const questions=[
+      {id:1,text:"کدام رده (Order) از خاک‌ها به دلیل داشتن افق Mollic Epipedon معروف است؟",options:["الف) Alfisols","ب) Mollisols","ج) Ultisols","د) Aridisols"],correct:1},
+      {id:2,text:"خاک‌های جوانی که هیچ افق توسعه‌یافته‌ای ندارند، در کدام رده قرار می‌گیرند؟",options:["الف) Inceptisols","ب) Entisols","ج) Vertisols","د) Andisols"],correct:1},
+      {id:3,text:"کدام رده در مناطق دارای permafrost (خاک همیشه یخ‌زده) تشکیل می‌شود؟",options:["الف) Gelisols","ب) Histosols","ج) Spodosols","د) Oxisols"],correct:0},
+      {id:4,text:"وجود افق Spodic (تجمع مواد آلی و اکسیدهای آهن) مشخصه اصلی کدام رده است؟",options:["الف) Alfisols","ب) Spodosols","ج) Ultisols","د) Inceptisols"],correct:1},
+      {id:5,text:"کدام رده معمولاً در زیر جنگل‌های برگ‌ریز تشکیل شده و دارای افق Argillic است؟",options:["الف) Mollisols","ب) Alfisols","ج) Aridisols","د) Entisols"],correct:1},
+      {id:6,text:"خاک‌های بسیار قدیمی و هوادیده مناطق گرمسیری که افق Oxic دارند، در کدام رده جای می‌گیرند؟",options:["الف) Ultisols","ب) Oxisols","ج) Aridisols","د) Andisols"],correct:1},
+      {id:7,text:"کدام رده از خاک‌های آلی (با بیش از ۲۰-۳۰% ماده آلی) تشکیل شده است؟",options:["الف) Histosols","ب) Entisols","ج) Inceptisols","د) Vertisols"],correct:0},
+      {id:8,text:"کدام رده به دلیل داشتن رس‌های فعال (مانند مونت‌موریلونیت) ترک‌خورده و دارای رفتار 'چرخشی' است؟",options:["الف) Vertisols","ب) Aridisols","ج) Gelisols","د) Andisols"],correct:0},
+      {id:9,text:"وجود افق Argillic در کنار هوادیدگی شدید و اسیدیته بالا، مشخصه کدام رده است؟",options:["الف) Alfisols","ب) Ultisols","ج) Spodosols","د) Mollisols"],correct:1},
+      {id:10,text:"کدام رده از خاکسترهای آتشفشانی تشکیل شده و معمولاً تخلخل بالایی دارد؟",options:["الف) Andisols","ب) Entisols","ج) Inceptisols","د) Aridisols"],correct:0},
+      {id:11,text:"خاک‌های مناطق خشک و نیمه‌خشک که اغلب افق‌های نمکی یا گچی دارند، جزء کدام رده هستند؟",options:["الف) Aridisols","ب) Mollisols","ج) Alfisols","د) Ultisols"],correct:0},
+      {id:12,text:"کدام رده دارای افق Ochric (سطحی روشن و نازک) است و توسعه کمی دارد؟",options:["الف) Entisols","ب) Inceptisols","ج) Histosols","د) Gelisols"],correct:1},
+      {id:13,text:"کدام رده برای کشاورزی بسیار حاصلخیز محسوب می‌شود و در زیر علفزارها تشکیل می‌شود؟",options:["الف) Mollisols","ب) Ultisols","ج) Spodosols","د) Oxisols"],correct:0},
+      {id:14,text:"تفاوت اصلی بین Inceptisols و Entisols چیست؟",options:["الف) Inceptisols دارای افق B آغازین (cambic) هستند.","ب) Entisols دارای افق Argillic هستند.","ج) Inceptisols فقط در مناطق خشک یافت می‌شوند.","د) Entisols از مواد آتشفشانی تشکیل شده‌اند."],correct:0},
+      {id:15,text:"کدام گزینه در مورد Oxisols نادرست است؟",options:["الف) بسیار هوادیده و قدیمی هستند.","ب) حاصلخیزی بالایی دارند.","ج) در مناطق استوایی یافت می‌شوند.","د) دارای افق Oxic هستند."],correct:1},
+      {id:16,text:"کدام رده ممکن است در اثر شستشوی مواد آلی و آهن در زیر جنگل‌های کاج تشکیل شود؟",options:["الف) Spodosols","ب) Alfisols","ج) Mollisols","د) Aridisols"],correct:0},
+      {id:17,text:"کدام رده معمولاً در مناطق با آب و هوای مرطوب و گرم تشکیل شده و حاصلخیزی کمی دارد؟",options:["الف) Ultisols","ب) Mollisols","ج) Gelisols","د) Andisols"],correct:0},
+      {id:18,text:"وجود لایه‌های نمکی مانند هالیت و ژیپس در کدام رده رایج است؟",options:["الف) Aridisols","ب) Histosols","ج) Entisols","د) Inceptisols"],correct:0},
+      {id:19,text:"کدام رده به دلیل داشتن افق Mollic، برای کشاورزی ایده‌آل است؟",options:["الف) Mollisols","ب) Ultisols","ج) Spodosols","د) Oxisols"],correct:0},
+      {id:20,text:"خاک‌های با بافت اسفنجی و مقدار بسیار بالای ماده آلی در کدام رده قرار می‌گیرند؟",options:["الف) Histosols","ب) Gelisols","ج) Vertisols","د) Andisols"],correct:0},
+      {id:21,text:"کدام رده در مناطقی با زمین‌شناسی اخیر (مانند floodplains) یافت می‌شود؟",options:["الف) Entisols","ب) Ultisols","ج) Oxisols","د) Spodosols"],correct:0},
+      {id:22,text:"کدام گزینه جزء ۱۲ رده اصلی سیستم طبقه‌بندی USDA نیست؟",options:["الف) Laterisols","ب) Gelisols","ج) Andisols","د) Vertisols"],correct:0},
+      {id:23,text:"افق Histic Epipedon در کدام رده می‌تواند یافت شود؟",options:["الف) Histosols","ب) Inceptisols","ج) Entisols","د) همه گزینه‌ها"],correct:3},
+      {id:24,text:"کدام رده ممکن است در اثر فرسایش مداوم تشکیل شود؟",options:["الف) Entisols","ب) Mollisols","ج) Alfisols","د) Ultisols"],correct:0},
+      {id:25,text:"کدام رده معمولاً در کوهستان‌ها یافت می‌شود و توسعه متوسطی دارد؟",options:["الف) Inceptisols","ب) Oxisols","ج) Aridisols","د) Vertisols"],correct:0},
+      {id:26,text:"علت ترک‌خوردگی و چرخش خاک در Vertisols چیست؟",options:["الف) حضور رس‌های active","ب) وجود permafrost","ج) شوری بالا","د) اسیدیته بالا"],correct:0},
+      {id:27,text:"کدام رده می‌تواند هم در مناطق سرد و هم در مناطق گرم وجود داشته باشد؟",options:["الف) Entisols","ب) Gelisols","ج) Oxisols","د) Aridisols"],correct:0},
+      {id:28,text:"افق Calcic (تجمع کربنات کلسیم) در کدام رده معمول است؟",options:["الف) Aridisols","ب) Spodosols","ج) Ultisols","د) Andisols"],correct:0},
+      {id:29,text:"کدام رده برای تولید محصولات کشاورزی به دلیل اسیدیته بالا معمولاً نیاز به آهک دارد؟",options:["الف) Ultisols","ب) Mollisols","ج) Aridisols","د) Gelisols"],correct:0},
+      {id:30,text:"کدام رده از خاک‌ها معمولاً رنگ قرمز یا زرد دارند؟",options:["الف) Oxisols","ب) Histosols","ج) Gelisols","د) Andisols"],correct:0},
+      {id:31,text:"وجود افق Sombric در کدام رده ممکن است دیده شود؟",options:["الف) Inceptisols","ب) Entisols","ج) Aridisols","د) Mollisols"],correct:0},
+      {id:32,text:"کدام رده در اثر رسوب‌گذاری جدید در رودخانه‌ها تشکیل می‌شود؟",options:["الف) Entisols","ب) Vertisols","ج) Ultisols","د) Spodosols"],correct:0},
+      {id:33,text:"کدام رده دارای بیشترین تخلخل و ظرفیت نگهداری آب است؟",options:["الف) Andisols","ب) Oxisols","ج) Ultisols","د) Aridisols"],correct:0},
+      {id:34,text:"علت تشکیل Spodosols چیست؟",options:["الف) شستشوی مواد آلی و آهن","ب) تجمع رس","ج) هوادیدگی شدید","د) فعالیت‌های آتشفشانی"],correct:0},
+      {id:35,text:"کدام رده معمولاً در پای کوه‌ها و دشت‌های سیلابی تشکیل می‌شود؟",options:["الف) Inceptisols","ب) Entisols","ج) Mollisols","د) همه گزینه‌ها"],correct:3},
+      {id:36,text:"تفاوت اصلی بین Mollisols و Alfisols در چیست؟",options:["الف) Mollisols دارای افق Mollic هستند.","ب) Alfisols در زیر جنگل‌ها تشکیل می‌شوند.","ج) هر دو گزینه صحیح است.","د) هیچکدام."],correct:2},
+      {id:37,text:"کدام رده می‌تواند در اثر تخریب و فرسایش Oxisols تشکیل شود؟",options:["الف) Entisols","ب) Ultisols","ج) Alfisols","د) Inceptisols"],correct:0},
+      {id:38,text:"وجود افق Duripan در کدام رده محتمل است؟",options:["الف) Aridisols","ب) Spodosols","ج) Histosols","د) Andisols"],correct:0},
+      {id:39,text:"کدام رده برای ساخت راه‌ها و ساختمان‌ها به دلیل پایداری کم، مشکل‌ساز است؟",options:["الف) Vertisols","ب) Gelisols","ج) Histosols","د) همه گزینه‌ها"],correct:3},
+      {id:40,text:"سیستم طبقه‌بندی USDA بر چه اساسی عمل می‌کند؟",options:["الف) وجود افق‌های تشخیصی","ب) شرایط آب و هوایی","ج) نوع سنگ مادر","د) همه گزینه‌ها"],correct:3}
+    ];
+    const flashcards=[
+      {id:1,question:"رده‌ای با افق Mollic.",answer:"Mollisols"},
+      {id:2,question:"خاک‌های جوان بدون افق توسعه‌یافته.",answer:"Entisols"},
+      {id:3,question:"خاک‌های مناطق منجمد شمالی.",answer:"Gelisols"},
+      {id:4,question:"دارای افق Spodic.",answer:"Spodosols"},
+      {id:5,question:"خاک‌های حاصلخیز زیر جنگل‌های برگ‌ریز.",answer:"Alfisols"},
+      {id:6,question:"خاک‌های بسیار قدیمی و هوادیده گرمسیری.",answer:"Oxisols"},
+      {id:7,question:"خاک‌های آلی (پیت و ماس).",answer:"Histosols"},
+      {id:8,question:"خاک‌های با رس‌های فعال و ترک‌خورنده.",answer:"Vertisols"},
+      {id:9,question:"خاک‌های با هوادیدگی شدید و اسیدی.",answer:"Ultisols"},
+      {id:10,question:"خاک‌های حاصل از خاکستر آتشفشانی.",answer:"Andisols"},
+      {id:11,question:"خاک‌های خشک با افق‌های نمکی.",answer:"Aridisols"},
+      {id:12,question:"خاک‌های با توسعه آغازین (افق Cambic).",answer:"Inceptisols"},
+      {id:13,question:"افق تشخیصی Mollic Epipedon.",answer:"سطحی تیره، ضخیم و حاصلخیز"},
+      {id:14,question:"افق تشخیصی Argillic.",answer:"تجمع رس در افق زیرین"},
+      {id:15,question:"افق تشخیصی Oxic.",answer:"تجمع اکسیدهای آهن و آلومینیوم"},
+      {id:16,question:"افق تشخیصی Spodic.",answer:"تجمع مواد آلی، آهن و آلومینیوم"},
+      {id:17,question:"افق تشخیصی Histic.",answer:"سطحی آلی و ضخیم"},
+      {id:18,question:"افق تشخیصی Calcic.",answer:"تجمع کربنات کلسیم"},
+      {id:19,question:"تعداد رده‌های اصلی در سیستم USDA.",answer:"۱۲"},
+      {id:20,question:"کدام رده در اثر رسوب‌گذاری جدید در رودخانه‌ها تشکیل می‌شود؟",answer:"Entisols"}
+    ];
+    function App(){
+      const [mode,setMode]=React.useState('quiz'); // 'quiz' or 'flashcards'
+      const [questionIndex,setQuestionIndex]=React.useState(0);
+      const [selected,setSelected]=React.useState(null);
+      const [feedback,setFeedback]=React.useState(null);
+      const [score,setScore]=React.useState(0);
+      const [showModal,setShowModal]=React.useState(false);
+      const [currentFlashcardIndex,setCurrentFlashcardIndex]=React.useState(0);
+      const [isFlipped,setIsFlipped]=React.useState(false);
+      const [usedFlashcardIndices,setUsedFlashcardIndices]=React.useState([]);
+      const [showToast,setShowToast]=React.useState(false);
+      const handleSelect=(index)=>{
+        if(feedback==='correct')return;
+        setSelected(index);
+        const q=questions[questionIndex];
+        const isCorrect=index===q.correct;
+        if(isCorrect){
+          setFeedback('correct');
+          if(selected===null){
+            setScore(prev=>prev+1);
+          }
+          setTimeout(nextQuestion,1000);
+        }else{
+          setFeedback('incorrect');
+          setTimeout(() => {
+            setFeedback(null);
+            setSelected(null);
+          }, 2000);
+        }
+      };
+      const nextQuestion=()=>{
+        setSelected(null);
+        setFeedback(null);
+        if(questionIndex+1<questions.length){
+          setQuestionIndex(prev=>prev+1);
+        }else{
+          setShowModal(true);
+        }
+      };
+      const resetQuiz=()=>{
+        setQuestionIndex(0);
+        setSelected(null);
+        setFeedback(null);
+        setScore(0);
+        setShowModal(false);
+      };
+      const handleFlip=()=>{
+        setIsFlipped(!isFlipped);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 1000);
+      };
+      const handleNextFlashcard=()=>{
+        let nextIndex;
+        if(usedFlashcardIndices.length===flashcards.length){
+          setUsedFlashcardIndices([]);
+        }
+        do{
+          nextIndex=Math.floor(Math.random()*flashcards.length);
+        }while(usedFlashcardIndices.includes(nextIndex));
+        setUsedFlashcardIndices([...usedFlashcardIndices,nextIndex]);
+        setCurrentFlashcardIndex(nextIndex);
+        setIsFlipped(false);
+      };
+      const switchMode=(newMode)=>{
+        setMode(newMode);
+        setQuestionIndex(0);
+        setSelected(null);
+        setFeedback(null);
+        setScore(0);
+        setShowModal(false);
+        setCurrentFlashcardIndex(0);
+        setIsFlipped(false);
+        setUsedFlashcardIndices([]);
+        setShowToast(false);
+      };
+      const quizProgress=(questionIndex/questions.length)*100;
+      const flashcardProgress=(usedFlashcardIndices.length/flashcards.length)*100;
+      return (
+        <div class="max-w-3xl mx-auto bg-white shadow-2xl rounded-2xl p-8">
+          <div class="flex justify-center gap-4 mb-6">
+            <button
+              onClick={()=>switchMode('quiz')}
+              class={`px-6 py-3 rounded-xl shadow-lg btn ${mode==='quiz'?'bg-emerald-600 text-white':'bg-gray-200 text-gray-800'}`}
+            >
+              آزمون
+            </button>
+            <button
+              onClick={()=>switchMode('flashcards')}
+              class={`px-6 py-3 rounded-xl shadow-lg btn ${mode==='flashcards'?'bg-emerald-600 text-white':'bg-gray-200 text-gray-800'}`}
+            >
+              فلش‌کارت‌ها
+            </button>
+          </div>
+          {mode==='quiz'&&(
+            <div class="question-card">
+              <h1 class="text-3xl font-bold text-emerald-600 text-center mb-6">آزمون سیستم طبقه‌بندی خاک USDA</h1>
+              <div class="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden">
+                <div class="bg-gradient-to-r from-emerald-600 to-yellow-400 h-4 rounded-full progress-bar" style={{width:`${quizProgress}%`}}></div>
+              </div>
+              <p class="text-center text-gray-600 mb-4 font-medium">سوال {questionIndex+1} از {questions.length}</p>
+              <p class="font-semibold text-xl text-gray-800 mb-8">{questions[questionIndex].text}</p>
+              <div class="grid grid-cols-2 gap-4">
+                {questions[questionIndex].options.map((opt,i)=>(
+                  <button
+                    key={i}
+                    onClick={()=>handleSelect(i)}
+                    class={`w-full p-4 text-lg font-medium rounded-xl shadow-lg btn text-center ${
+                      i===0?'bg-rose-600 hover:bg-rose-700 text-white':
+                      i===1?'bg-emerald-600 hover:bg-emerald-700 text-white':
+                      i===2?'bg-yellow-400 hover:bg-yellow-500 text-gray-800':
+                      'bg-blue-600 hover:bg-blue-700 text-white'
+                    } ${selected===i&&feedback==='incorrect'?'bg-rose-200 text-rose-800':feedback==='correct'&&i===questions[questionIndex].correct?'bg-emerald-200 text-emerald-800':''} ${feedback==='correct'?'cursor-not-allowed opacity-60':''}`}
+                    disabled={feedback==='correct'}
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+              {feedback==='incorrect'&&(
+                <p class="text-rose-600 mt-6 text-center flex items-center justify-center font-medium">
+                  <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                  اشتباه! پاسخ صحیح: {questions[questionIndex].options[questions[questionIndex].correct]}
+                </p>
+              )}
+              {feedback==='correct'&&(
+                <p class="text-emerald-600 mt-6 text-center flex items-center justify-center font-medium">
+                  <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  درست!
+                </p>
+              )}
+              {showModal&&(
+                <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center modal modal-visible">
+                  <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
+                    <h2 class="text-2xl font-bold text-emerald-600 mb-6">نتایج آزمون</h2>
+                    <p class="text-lg text-gray-600 mb-4">نمره: {score} از {questions.length}</p>
+                    <button
+                      onClick={resetQuiz}
+                      class="bg-gradient-to-r from-emerald-600 to-yellow-400 text-white px-6 py-3 rounded-xl hover:from-emerald-700 hover:to-yellow-500 btn shadow-lg"
+                    >
+                      شروع مجدد
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          {mode==='flashcards'&&(
+            <div class="card-container">
+              <h1 class="text-3xl font-bold text-emerald-600 text-center mb-6">فلش‌کارت‌های سیستم طبقه‌بندی خاک USDA</h1>
+              <div class="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden">
+                <div class="bg-gradient-to-r from-emerald-600 to-yellow-400 h-4 rounded-full progress-bar" style={{width:`${flashcardProgress}%`}}></div>
+              </div>
+              <p class="text-center text-gray-600 mb-4 font-medium">کارت {usedFlashcardIndices.length+1} از {flashcards.length}</p>
+              <div class={`relative w-full h-64 bg-white rounded-xl shadow-lg card ${isFlipped?'card-flipped':''}`}>
+                <div class="card-front bg-white rounded-xl flex items-center justify-center p-6 text-center">
+                  <p class="text-xl font-medium text-gray-800">{flashcards[currentFlashcardIndex].question}</p>
+                </div>
+                <div class="card-back bg-emerald-100 rounded-xl flex items-center justify-center p-6 text-center">
+                  <p class="text-xl font-medium text-emerald-800">{flashcards[currentFlashcardIndex].answer}</p>
+                </div>
+              </div>
+              {showToast&&(
+                <div class="toast fixed top-4 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-4 py-2 rounded-xl shadow-lg">
+                  {isFlipped?'پاسخ نمایش داده شد!':'سوال نمایش داده شد!'}
+                </div>
+              )}
+              <div class="flex justify-center mt-6 gap-4">
+                <button
+                  onClick={handleFlip}
+                  class="bg-rose-600 text-white px-6 py-3 rounded-xl hover:bg-rose-700 btn shadow-lg"
+                >
+                  نمایش پاسخ
+                </button>
+                <button
+                  onClick={handleNextFlashcard}
+                  class="bg-gradient-to-r from-emerald-600 to-yellow-400 text-white px-6 py-3 rounded-xl hover:from-emerald-700 hover:to-yellow-500 btn shadow-lg"
+                >
+                  کارت بعدی
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    ReactDOM.render(<App/>,document.getElementById('root'));
+  </script>
+</body>
+</html>

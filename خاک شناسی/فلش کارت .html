@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>فلش‌کارت‌های نیتروژن، اقتصاد نیتروژن و گوگرد، خاک‌شناسی</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <style>
+    body{font-family:'Vazir',sans-serif;direction:rtl;background:linear-gradient(to bottom right,#e0f2fe,#d1fae5)}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff');font-weight:normal}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Bold.woff') format('woff');font-weight:bold}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Light.woff') format('woff');font-weight:300}
+    .btn{transition:all 0.3s ease}.btn:hover{transform:scale(1.05);filter:brightness(1.1)}
+    .card{transition:transform 0.5s ease;transform-style:preserve-3d}.card-flipped{transform:rotateY(180deg)}
+    .card-front,.card-back{position:absolute;backface-visibility:hidden;width:100%;height:100%}.card-back{transform:rotateY(180deg)}
+    .progress-bar{transition:width 0.6s ease-in-out}
+    .card-container{animation:slideIn 0.5s ease-in}
+    .toast{transition:opacity 0.3s ease-in-out}
+    @keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <div id="root" class="container mx-auto p-6 min-h-screen flex items-center justify-center"></div>
+  <script type="text/babel">
+    const flashcards=[
+      {id:1,question:"کدام فرآیند نیتروژن را به گازهای N₂ و N₂O تبدیل می‌کند؟",answer:"دنیتریفیکاسیون"},
+      {id:2,question:"کدام گاز در اثر دنیتریفیکاسیون به لایه اوزون آسیب می‌زند؟",answer:"N₂O"},
+      {id:3,question:"کدام باکتری در تثبیت همزیستی نیتروژن با گیاهان لگوم نقش دارد؟",answer:"Rhizobium"},
+      {id:4,question:"آنزیم کلیدی در تثبیت بیولوژیکی نیتروژن چیست؟",answer:"نیتروژناز"},
+      {id:5,question:"شرایط مطلوب برای دنیتریفیکاسیون چیست؟",answer:"دمای ۲۵-۳۵ درجه و اکسیژن کمتر از ۱۰٪"},
+      {id:6,question:"فرآیند Anammox چیست؟",answer:"اکسیداسیون بی‌هوازی آمونیوم با استفاده از نیتریت"},
+      {id:7,question:"کدام عنصر برای عملکرد نیتروژناز ضروری است؟",answer:"آهن"},
+      {id:8,question:"چه عاملی تثبیت بیولوژیکی نیتروژن در لگوم‌ها را کاهش می‌دهد؟",answer:"مقدار بالای نیتروژن معدنی در خاک"},
+      {id:9,question:"کدام گاز در تشکیل باران اسیدی نقش دارد؟",answer:"NO"},
+      {id:10,question:"در کودنیتریفیکاسیون از چه ترکیبی علاوه بر نیتریت استفاده می‌شود؟",answer:"آمونیوم"},
+      {id:11,question:"کدام باکتری در فرآیند Anammox نقش دارد؟",answer:"Planctomycetes"},
+      {id:12,question:"لگه‌موگلوبین در گره‌های ریشه چه نقشی دارد؟",answer:"محافظت از نیتروژناز در برابر اکسیژن"},
+      {id:13,question:"کدام گیاه توانایی تثبیت نیتروژن با Frankia را دارد؟",answer:"توسکا"},
+      {id:14,question:"در خاک‌های غرقاب، کدام فرم نیتروژن در برابر دنیتریفیکاسیون مقاوم است؟",answer:"آمونیوم"},
+      {id:15,question:"کدام عامل باعث کاهش دنیتریفیکاسیون در خاک می‌شود؟",answer:"pH کمتر از ۵"},
+      {id:16,question:"اگر ۵۰ کیلوگرم نیتروژن در یک هکتار اضافه شود و ۲۰٪ آن از طریق دنیتریفیکاسیون از دست برود، مقدار نیتروژن از دست رفته چقدر است؟",answer:"۱۰ کیلوگرم"},
+      {id:17,question:"اگر pH خاک از ۶ به ۴ کاهش یابد، غلظت یون H⁺ چند برابر می‌شود؟",answer:"۱۰۰ برابر"},
+      {id:18,question:"اگر یک لگوم ۱۵۰ کیلوگرم نیتروژن در هکتار تثبیت کند و ۳۰٪ آن استفاده شود، نیتروژن قابل استفاده چقدر است؟",answer:"۴۵ کیلوگرم"},
+      {id:19,question:"اگر ۸۰ کیلوگرم اوره (۴۶.۷٪ نیتروژن) استفاده شود و ۲۵٪ آن به NH₃ تبخیر شود، نیتروژن از دست رفته چقدر است؟",answer:"۹.۳۳ کیلوگرم"},
+      {id:20,question:"اگر ۱۰۰ کیلوگرم نیترات در هکتار باشد و ۴۰٪ آن شسته شود، نیترات شسته‌شده چقدر است؟",answer:"۴۰ کیلوگرم"},
+      {id:21,question:"کدام فرآیند نیتروژن گازی را به آمونیوم تبدیل می‌کند؟",answer:"تثبیت نیتروژن"},
+      {id:22,question:"کدام شرایط محیطی برای تثبیت نیتروژن بهینه است؟",answer:"رطوبت بالا و دمای معتدل"},
+      {id:23,question:"نیترات ردوکتاز چه نقشی در چرخه نیتروژن دارد؟",answer:"تبدیل نیترات به نیتریت"},
+      {id:24,question:"کدام نوع خاک برای تثبیت نیتروژن مناسب‌تر است؟",answer:"خاک‌های لومی"},
+      {id:25,question:"چه عاملی باعث کاهش فعالیت نیتروژناز می‌شود؟",answer:"اکسیژن زیاد"},
+      {id:26,question:"کدام گاز در فرآیند نیتریفیکاسیون تولید می‌شود؟",answer:"نیترات (NO₃⁻)"},
+      {id:27,question:"کدام باکتری نیترات را به گاز نیتروژن تبدیل می‌کند؟",answer:"Pseudomonas"},
+      {id:28,question:"چه نوع نیتروژنی در خاک‌های اسیدی غالب است؟",answer:"آمونیوم"},
+      {id:29,question:"چرا نیترات در خاک‌های غرقابی کاهش می‌یابد؟",answer:"به دلیل دنیتریفیکاسیون"},
+      {id:30,question:"کدام فرآیند نیتروژن آلی را به آمونیوم تبدیل می‌کند؟",answer:"آمونیفیکاسیون"},
+      {id:31,question:"کدام گیاه غیرلگوم توانایی تثبیت نیتروژن دارد؟",answer:"آزولا"},
+      {id:32,question:"نیتروژناز چه نوع آنزیمی است؟",answer:"آنزیم حساس به اکسیژن"},
+      {id:33,question:"چگونه نیتروژن معدنی در خاک کاهش می‌یابد؟",answer:"از طریق شستشو و تبخیر"},
+      {id:34,question:"کدام فرم نیتروژن توسط گیاهان مستقیماً جذب می‌شود؟",answer:"نیترات (NO₃⁻)"},
+      {id:35,question:"کمبود نیتروژن ابتدا در کدام بخش گیاه دیده می‌شود؟",answer:"برگ‌های پیر"},
+      {id:36,question:"کدام فرآیند نیتروژن آلی را به معدنی تبدیل می‌کند؟",answer:"معدنی‌شدن"},
+      {id:37,question:"کدام گاز در اثر دنیتریفیکاسیون به اوزون آسیب می‌رساند؟",answer:"N₂O"},
+      {id:38,question:"جذب کدام یون pH خاک را در ریزوسفر کاهش می‌دهد؟",answer:"آمونیوم (NH₄⁺)"},
+      {id:39,question:"کدام کانی رسی بیشترین ظرفیت تثبیت آمونیوم را دارد؟",answer:"ورمیکولیت"},
+      {id:40,question:"در چه شرایطی نیتریفیکاسیون متوقف می‌شود؟",answer:"pH پایین"},
+      {id:41,question:"کدام ترکیب مستقیماً توسط گیاهان جذب می‌شود؟",answer:"اسیدهای آمینه"},
+      {id:42,question:"فرآیند آناموکس چیست؟",answer:"اکسیداسیون بی‌هوازی آمونیوم با نیتریت"},
+      {id:43,question:"چه عاملی باعث افزایش تصعید آمونیاک می‌شود؟",answer:"pH بالا"},
+      {id:44,question:"در خاک‌های اسیدی، کدام فرم نیتروژن منبع اصلی جذب گیاه است؟",answer:"نیتروژن آلی محلول (DON)"},
+      {id:45,question:"کدام باکتری در مرحله اول نیتریفیکاسیون نقش دارد؟",answer:"Nitrosomonas"},
+      {id:46,question:"در جنگل‌های دست‌نخورده، نیتروژن از دست‌رفته از طریق آبشویی به چه صورتی است؟",answer:"DON"},
+      {id:47,question:"کدام عامل تثبیت بیولوژیکی نیتروژن را در لگوم‌ها کاهش می‌دهد؟",answer:"نیتروژن معدنی زیاد در خاک"},
+      {id:48,question:"در کودنیتریفیکاسیون از چه ترکیبی علاوه بر نیتریت استفاده می‌شود؟",answer:"آمونیوم"},
+      {id:49,question:"کدام عنصر غذایی به صورت عمده در مواد آلی خاک یافت می‌شود؟",answer:"گوگرد"},
+      {id:50,question:"اکسیداسیون گوگرد در خاک چه اسیدی تولید می‌کند؟",answer:"اسید سولفوریک"},
+      {id:51,question:"کدام اسید آمینه حاوی گوگرد نیست؟",answer:"والین"},
+      {id:52,question:"کدام گاز گوگردی پیش‌ساز باران اسیدی است؟",answer:"دی‌اکسید گوگرد (SO₂)"},
+      {id:53,question:"در کدام نوع خاک احتمال وجود سولفیدها بیشتر است؟",answer:"خاک‌های باتلاقی"},
+      {id:54,question:"اکسیداسیون گوگرد تا چه حد pH خاک را کاهش می‌دهد؟",answer:"تا حدود ۱.۵"},
+      {id:55,question:"کدام ترکیب گوگرد آلی بالاترین درجه اکسیداسیون را دارد؟",answer:"استرهای سولفات"},
+      {id:56,question:"در شرایط بی‌هوازی، گوگرد با آهن چه ترکیبی تشکیل می‌دهد؟",answer:"سولفید آهن"},
+      {id:57,question:"نسبت تقریبی C:N:S در ماده آلی خاک چیست؟",answer:"۸۵:۷:۱"},
+      {id:58,question:"اگر ۱۰۰ کیلوگرم نیتروژن به صورت اوره اضافه شود و ۲۰٪ آن به NH₃ تصعید شود، نیتروژن از دست رفته چقدر است؟",answer:"۲۰ کیلوگرم"},
+      {id:59,question:"اگر pH خاک از ۵ به ۷ افزایش یابد، غلظت یون H⁺ چند برابر کاهش می‌یابد؟",answer:"۱۰۰ برابر"},
+      {id:60,question:"اگر خاک ۰.۲٪ نیتروژن داشته باشد و وزن خاک در هکتار ۲,۰۰۰,۰۰۰ کیلوگرم باشد، نیتروژن کل چقدر است؟",answer:"۴,۰۰۰ کیلوگرم"},
+      {id:61,question:"اگر ۱۰۰ کیلوگرم اوره (۴۶.۷٪ نیتروژن) استفاده شود و ۲۵٪ آن به NH₃ تبخیر شود، نیتروژن از دست رفته چقدر است؟",answer:"۱۱.۶۷۵ کیلوگرم"},
+      {id:62,question:"اگر ۵۰ کیلوگرم نیترات در هکتار باشد و ۳۰٪ آن شسته شود، نیترات شسته‌شده چقدر است؟",answer:"۱۵ کیلوگرم"},
+      {id:63,question:"کمبود گوگرد در گیاهان چه تغییری ایجاد می‌کند؟",answer:"زردی یا کلروز"},
+      {id:64,question:"کدام باکتری گوگرد را اکسید می‌کند؟",answer:"Thiobacillus"},
+      {id:65,question:"چرا گوگرد در خاک‌های باتلاقی به سولفید احیا می‌شود؟",answer:"به دلیل شرایط بی‌هوازی"},
+      {id:66,question:"کدام کود گوگردی برای اصلاح خاک‌های قلیایی استفاده می‌شود؟",answer:"گوگرد عنصری"},
+      {id:67,question:"کدام عامل جزء عوامل اصلی تشکیل خاک نیست؟",answer:"آلودگی هوا"},
+      {id:68,question:"افق O در خاک شامل چه موادی است؟",answer:"مواد آلی تجزیه‌نشده"},
+      {id:69,question:"کدام افق محل تجمع مواد شسته‌شده از افق A است؟",answer:"افق B"},
+      {id:70,question:"هوادیدگی فیزیکی چه تغییراتی در سنگ ایجاد می‌کند؟",answer:"خرد شدن بدون تغییر شیمیایی"},
+      {id:71,question:"کدام جزء اصلی خاک است؟",answer:"مواد آلی"},
+      {id:72,question:"عمق معمول خاک در مناطق معتدله چقدر است؟",answer:"۱.۵ متر"},
+      {id:73,question:"کدام عامل در هوادیدگی شیمیایی نقش دارد؟",answer:"واکنش‌های شیمیایی"},
+      {id:74,question:"خاک‌های آلی حداقل چند درصد ماده آلی دارند؟",answer:"۲۰٪"},
+      {id:75,question:"کدام عامل مواد را در افق A افزایش می‌دهد؟",answer:"افزودن مواد آلی"},
+      {id:76,question:"کدام نوع خاک برای کشاورزی حاصلخیز است و لایه سطحی تیره دارد؟",answer:"مالیسول"},
+      {id:77,question:"کدام عامل در تشکیل خاک‌های تکامل‌یافته در مناطق گرم و مرطوب کلیدی است؟",answer:"وجود چهار عامل با شدت زیاد"},
+      {id:78,question:"کدام افق خاک فاقد خصوصیات افق‌های A و B است؟",answer:"افق C"},
+      {id:79,question:"کدام فرآیند در هوادیدگی شیمیایی رخ می‌دهد؟",answer:"هیدرولیز"},
+      {id:80,question:"کدام عامل کاهنده در افق A محسوب می‌شود؟",answer:"تبخیر آب"},
+      {id:81,question:"کدام نوع خاک در مناطق خشک با افق B تشکیل می‌شود؟",answer:"آریدیسول"},
+      {id:82,question:"در فرمول S = F(Cl, O, R, P, T)، عامل R چیست؟",answer:"توپوگرافی"},
+      {id:83,question:"کدام افق تشخیصی سطحی با رنگ تیره و مواد آلی غنی است؟",answer:"مالیک"},
+      {id:84,question:"کدام نوع خاک از مواد آتشفشانی تشکیل می‌شود؟",answer:"اندیسول"},
+      {id:85,question:"فرسایش خاک با کدام عامل انسانی تشدید می‌شود؟",answer:"کشاورزی نامناسب"},
+      {id:86,question:"کدام فرآیند انتقال مواد در خاک است؟",answer:"آبشویی"},
+      {id:87,question:"کدام فرآیند در تشکیل افق B نقش دارد؟",answer:"تجمع رس و مواد معدنی"},
+      {id:88,question:"کدام نوع خاک قابلیت انقباض و انبساط زیاد دارد؟",answer:"ورتیسول"},
+      {id:89,question:"کدام عامل مانع تشکیل افق‌های A و B می‌شود؟",answer:"سفره آب زیرزمینی نزدیک سطح"},
+      {id:90,question:"کدام افق در خاک‌های جوان ممکن است وجود نداشته باشد؟",answer:"افق B"},
+      {id:91,question:"کدام نوع خاک در مناطق سرد با لایه منجمد دائمی تشکیل می‌شود؟",answer:"جلیسول"},
+      {id:92,question:"کدام عامل در تشکیل خاک‌های اسپودوسول نقش دارد؟",answer:"تجمع اکسید آهن و آلومینیوم"},
+      {id:93,question:"کدام عامل فعالیت بیولوژیکی خاک را افزایش می‌دهد؟",answer:"افزودن مواد آلی"},
+      {id:94,question:"کدام نوع خاک در مناطق گرمسیری قدیمی و هوادیده تشکیل می‌شود؟",answer:"اکسیسول"},
+      {id:95,question:"کدام عامل در تشکیل هیستوسول مانع تجزیه مواد آلی می‌شود؟",answer:"اشباع دائمی آب"},
+      {id:96,question:"اگر خاک ۴۰٪ شن، ۴۰٪ سیلت و ۲۰٪ رس داشته باشد، بافت آن چیست؟",answer:"لوم"},
+      {id:97,question:"اگر عمق افق A ۲۰ سانتیمتر و افق B ۴۰ سانتیمتر باشد، عمق سولوم چقدر است؟",answer:"۶۰ سانتیمتر"},
+      {id:98,question:"اگر خاک ۵٪ ماده آلی داشته باشد و وزن نمونه ۲۰۰ گرم باشد، وزن ماده آلی چقدر است؟",answer:"۱۰ گرم"},
+      {id:99,question:"اگر افق A با ۶٪ ماده آلی و عمق ۳۰ سانتیمتر باشد، مقدار هوموس در یک مترمربع چقدر است؟ (چگالی ۱.۵ گرم/سانتیمتر مکعب)",answer:"۸۱۰ گرم"},
+      {id:100,question:"اگر خاک دارای افق‌های O, A, E, B, C, R باشد، چند افق اصلی دارد؟",answer:"۶ افق"}
+    ];
+    function FlashcardApp(){
+      const [currentIndex,setCurrentIndex]=React.useState(0);
+      const [isFlipped,setIsFlipped]=React.useState(false);
+      const [usedIndices,setUsedIndices]=React.useState([]);
+      const [showToast,setShowToast]=React.useState(false);
+      const handleFlip=()=>{
+        setIsFlipped(!isFlipped);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 1000);
+      };
+      const handleNext=()=>{
+        let nextIndex;
+        if(usedIndices.length===flashcards.length){
+          setUsedIndices([]);
+        }
+        do{
+          nextIndex=Math.floor(Math.random()*flashcards.length);
+        }while(usedIndices.includes(nextIndex));
+        setUsedIndices([...usedIndices,nextIndex]);
+        setCurrentIndex(nextIndex);
+        setIsFlipped(false);
+      };
+      const progress=(usedIndices.length/flashcards.length)*100;
+      return (
+        <div class="max-w-3xl mx-auto bg-white shadow-2xl rounded-2xl p-8 card-container">
+          <h1 class="text-3xl font-bold text-emerald-600 text-center mb-6">فلش‌کارت‌های نیتروژن، گوگرد و خاک‌شناسی</h1>
+          <div class="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-600 to-yellow-400 h-4 rounded-full progress-bar" style={{width:`${progress}%`}}></div>
+          </div>
+          <p class="text-center text-gray-600 mb-4 font-medium">کارت {usedIndices.length+1} از {flashcards.length}</p>
+          <div class={`relative w-full h-64 bg-white rounded-xl shadow-lg card ${isFlipped?'card-flipped':''}`}>
+            <div class="card-front bg-white rounded-xl flex items-center justify-center p-6 text-center">
+              <p class="text-xl font-medium text-gray-800">{flashcards[currentIndex].question}</p>
+            </div>
+            <div class="card-back bg-emerald-100 rounded-xl flex items-center justify-center p-6 text-center">
+              <p class="text-xl font-medium text-emerald-800">{flashcards[currentIndex].answer}</p>
+            </div>
+          </div>
+          {showToast&&(
+            <div class="toast fixed top-4 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-4 py-2 rounded-xl shadow-lg">
+              {isFlipped?'پاسخ نمایش داده شد!':'سوال نمایش داده شد!'}
+            </div>
+          )}
+          <div class="flex justify-center mt-6 gap-4">
+            <button
+              onClick={handleFlip}
+              class="bg-rose-600 text-white px-6 py-3 rounded-xl hover:bg-rose-700 btn shadow-lg"
+            >
+              نمایش پاسخ
+            </button>
+            <button
+              onClick={handleNext}
+              class="bg-gradient-to-r from-emerald-600 to-yellow-400 text-white px-6 py-3 rounded-xl hover:from-emerald-700 hover:to-yellow-500 btn shadow-lg"
+            >
+              کارت بعدی
+            </button>
+          </div>
+        </div>
+      );
+    }
+    ReactDOM.render(<FlashcardApp/>,document.getElementById('root'));
+  </script>
+</body>
+</html>

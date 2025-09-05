@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فلش‌کارت‌های شیمی آلی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @font-face {
+            font-family: 'IRANSans';
+            src: url('https://cdn.fontcdn.ir/Font/Persian/IRANSans/IRANSansWeb.woff') format('woff');
+        }
+        body {
+            font-family: 'IRANSans', sans-serif;
+        }
+        .card {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .card.active {
+            display: flex;
+            opacity: 1;
+        }
+        .progress-bar {
+            height: 10px;
+            background-color: #e5e7eb;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background-color: #3b82f6;
+            transition: width 0.3s ease-in-out;
+        }
+        .bg-gradient-
+ { background: linear-gradient(135deg, #fef3c7, #f59e0b); }
+        .bg-gradient-2 { background: linear-gradient(135deg, #bfdbfe, #3b82f6); }
+        .bg-gradient-3 { background: linear-gradient(135deg, #fce7f3, #ec4899); }
+        .bg-gradient-4 { background: linear-gradient(135deg, #d1fae5, #10b981); }
+    </style>
+</head>
+<body class="bg-gray-100 font-iransans min-h-screen flex items-center justify-center p-4">
+    <div class="container mx-auto max-w-2xl">
+        <h1 class="text-4xl font-bold text-center text-blue-800 mb-8">فلش‌کارت‌های آمادگی آزمون شیمی آلی</h1>
+        <div class="mb-6">
+            <div class="flex justify-between text-gray-700 mb-2">
+                <span id="card-counter">کارت 1 از 30</span>
+                <span id="cards-remaining">29 کارت باقی‌مانده</span>
+            </div>
+            <div class="progress-bar">
+                <div id="progress" class="progress" style="width: 0%"></div>
+            </div>
+        </div>
+        <div id="flashcard-container" class="space-y-6">
+            <!-- کارت 1 -->
+            <div class="card bg-gradient-1 active border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">نقطه جوش چیست؟</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">دمایی که در آن فشار بخار مایع برابر با فشار جو (معمولاً 1 اتمسفر) می‌شود. برای آب، این دما 100 درجه سانتی‌گراد است.</p>
+            </div>
+            <!-- کارت 2 -->
+            <div class="card bg-gradient-2 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">فشار بخار چیست؟</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">فشاری که بخار مایع در تعادل با مایع خود در یک دمای خاص ایجاد می‌کند.</p>
+            </div>
+            <!-- کارت 3 -->
+            <div class="card bg-gradient-3 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">تأثیر دما بر فشار بخار</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">با افزایش دما، فشار بخار بالا می‌رود زیرا سرعت تبخیر بیشتر می‌شود.</p>
+            </div>
+            <!-- کارت 4 -->
+            <div class="card bg-gradient-4 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">تعادل تبخیر و میعان</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">تعادل زمانی برقرار می‌شود که سرعت تبخیر و میعان بخار برابر شود.</p>
+            </div>
+            <!-- کارت 5 -->
+            <div class="card bg-gradient-1 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">نقطه جوش نرمال</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">دمایی که فشار بخار مایع برابر 1 اتمسفر باشد، مثل 100 درجه برای آب.</p>
+            </div>
+            <!-- کارت 6 -->
+            <div class="card bg-gradient-2 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">تأثیر فشار جو</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">فشار جو بالاتر، دمای جوش را افزایش و فشار جو پایین‌تر آن را کاهش می‌دهد.</p>
+            </div>
+            <!-- کارت 7 -->
+            <div class="card bg-gradient-3 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">ثبات دما در جوشیدن</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">در مایع خالص، دما هنگام جوشیدن ثابت می‌ماند.</p>
+            </div>
+            <!-- کارت 8 -->
+            <div class="card bg-gradient-4 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">تأثیر ناخالصی</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">ناخالصی فشار بخار را کاهش داده و دمای جوش را بالا می‌برد.</p>
+            </div>
+            <!-- کارت 9 -->
+            <div class="card bg-gradient-1 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">تعریف تقطیر</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">فرآیندی برای جوشاندن مایع و میعان بخارات آن به منظور خالص‌سازی.</p>
+            </div>
+            <!-- کارت 10 -->
+            <div class="card bg-gradient-2 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">کاربرد تقطیر</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">استفاده از تقطیر برای جداسازی و خالص‌سازی مایعات.</p>
+            </div>
+            <!-- کارت 11 -->
+            <div class="card bg-gradient-3 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">وسایل تقطیر ساده</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">شامل بالن تقطیر، دماسنج، سردکننده، ارلن، و سنگ جوش.</p>
+            </div>
+            <!-- کارت 12 -->
+            <div class="card bg-gradient-4 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">نقش سنگ جوش</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">جلوگیری از جوشیدن ناگهانی و بیرون‌ریختن مایع.</p>
+            </div>
+            <!-- کارت 13 -->
+            <div class="card bg-gradient-1 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">تنظیم حرارت</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">حرارت باید طوری باشد که هر ثانیه 1-2 قطره تقطیر شود.</p>
+            </div>
+            <!-- کارت 14 -->
+            <div class="card bg-gradient-2 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">نقطه جوش مایع مجهول</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">در آزمایش، دمای 95 درجه نشان‌دهنده آب بود.</p>
+            </div>
+            <!-- کارت 15 -->
+            <div class="card bg-gradient-3 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">اختلاف دما با 100 درجه</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">به دلیل فشار جو کمتر یا وجود ناخالصی.</p>
+            </div>
+            <!-- کارت 16 -->
+            <div class="card bg-gradient-4 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">نقش دماسنج</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">اندازه‌گیری دمای مایع در نقطه تعادل.</p>
+            </div>
+            <!-- کارت 17 -->
+            <div class="card bg-gradient-1 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">نقش سردکننده</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">میعان بخارات و جمع‌آوری مایع در ارلن.</p>
+            </div>
+            <!-- کارت 18 -->
+            <div class="card bg-gradient-2 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">پر کردن بالن</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">نصف بالن با مایع مجهول پر می‌شود.</p>
+            </div>
+            <!-- کارت 19 -->
+            <div class="card bg-gradient-3 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">ایمنی در آزمایش</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">توجه به تهویه و احتیاط با حرارت و بخارات.</p>
+            </div>
+            <!-- کارت 20 -->
+            <div class="card bg-gradient-4 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">مفهوم خلوص</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">مایع خالص دمای جوش ثابتی دارد.</p>
+            </div>
+            <!-- کارت 21 -->
+            <div class="card bg-gradient-1 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">تأثیر ارتفاع</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">فشار جو در ارتفاعات کمتر است و دمای جوش پایین می‌آید.</p>
+            </div>
+            <!-- کارت 22 -->
+            <div class="card bg-gradient-2 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">محاسبات دمای جوش</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">ΔT = K_b × m برای تأثیر ناخالصی.</p>
+            </div>
+            <!-- کارت 23 -->
+            <div class="card bg-gradient-3 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">نقش ارلن</
+
+h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">جمع‌آوری مایع میعان‌شده پس از تقطیر.</p>
+            </div>
+            <!-- کارت 24 -->
+            <div class="card bg-gradient-4 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">نقطه تعادل</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">وضعیتی که دما ثابت و تقطیر پایدار است.</p>
+            </div>
+            <!-- کارت 25 -->
+            <div class="card bg-gradient-1 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">ناخالصی و فشار بخار</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">ناخالصی فشار بخار را کاهش می‌دهد.</p>
+            </div>
+            <!-- کارت 26 -->
+            <div class="card bg-gradient-2 border-2 border-blue-300 rounded-lg shadow-lg tight p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">سرعت تقطیر</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">تنظیم حرارت برای 1-2 قطره در ثانیه.</p>
+            </div>
+            <!-- کارت 27 -->
+            <div class="card bg-gradient-3 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">شناسایی مایع</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">با مقایسه دمای جوش با جداول مرجع.</p>
+            </div>
+            <!-- کارت 28 -->
+            <div class="card bg-gradient-4 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">مزایای تقطیر</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">جداسازی مؤثر اجزای مایعات.</p>
+            </div>
+            <!-- کارت 29 -->
+            <div class="card bg-gradient-1 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">خطای آزمایش</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">اختلاف دما ممکن است به خطای فشار یا ناخالصی باشد.</p>
+            </div>
+            <!-- کارت 30 -->
+            <div class="card bg-gradient-2 border-2 border-blue-300 rounded-lg shadow-lg p-8 flex flex-col items-center justify-center min-h-[400px]">
+                <h2 class="text-3xl font-bold text-blue-800 text-center">مطالعه پیشنهادی</h2>
+                <p class="text-xl text-gray-800 mt-4 text-center">مرور تقطیر و خواص مایعات در کتاب شیمی آلی.</p>
+            </div>
+        </div>
+        <p id="timer" class="text-center text-gray-700 mt-4 text-lg"></p>
+    </div>
+
+    <script>
+        const cards = document.querySelectorAll('.card');
+        const totalCards = cards.length;
+        let currentCard = 0;
+        const totalTime = 20; // 20 ثانیه برای هر کارت
+        let timeLeft = totalTime;
+
+        function updateProgress() {
+            const progressElement = document.getElementById('progress');
+            const cardCounter = document.getElementById('card-counter');
+            const cardsRemaining = document.getElementById('cards-remaining');
+            const progressPercentage = ((currentCard + 1) / totalCards) * 100;
+            progressElement.style.width = `${progressPercentage}%`;
+            cardCounter.textContent = `کارت ${currentCard + 1} از ${totalCards}`;
+            cardsRemaining.textContent = `${totalCards - currentCard - 1} کارت باقی‌مانده`;
+        }
+
+        function showCard(index) {
+            cards.forEach(card => {
+                card.classList.remove('active');
+                card.style.opacity = '0';
+            });
+            cards[index].classList.add('active');
+            setTimeout(() => {
+                cards[index].style.opacity = '1';
+            }, 50);
+            timeLeft = totalTime;
+            updateTimer();
+            updateProgress();
+        }
+
+        function updateTimer() {
+            const timerElement = document.getElementById('timer');
+            timerElement.textContent = `زمان باقی‌مانده: ${timeLeft} ثانیه`;
+        }
+
+        function nextCard() {
+            currentCard = (currentCard + 1) % cards.length;
+            showCard(currentCard);
+        }
+
+        let timer = setInterval(() => {
+            if (timeLeft > 0) {
+                timeLeft--;
+                updateTimer();
+            } else {
+                nextCard();
+            }
+        }, 1000);
+
+        // شروع خودکار
+        showCard(currentCard);
+    </script>
+</body>
+</html>

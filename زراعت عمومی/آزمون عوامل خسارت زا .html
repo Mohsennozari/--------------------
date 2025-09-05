@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سوالات تستی عوامل خسارت‌زا در گیاهان کشاورزی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        .option:hover {
+            background-color: #e5e7eb;
+        }
+        .correct {
+            background-color: #10b981 !important;
+            color: white;
+            transform: scale(1.05);
+            transition: all 0.3s;
+        }
+        .incorrect {
+            background-color: #ef4444 !important;
+            color: white;
+            transform: scale(1.05);
+            transition: all 0.3s;
+        }
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="max-w-3xl w-full bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">سوالات تستی عوامل خسارت‌زا در گیاهان کشاورزی</h1>
+        <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+            <div id="progress-bar" class="progress-bar bg-blue-500 h-2.5 rounded-full" style="width: 0%"></div>
+        </div>
+        <div id="question-container" class="card bg-white border border-gray-300 rounded-lg p-6 mb-4">
+            <p id="question-text" class="text-lg font-semibold text-gray-800 mb-4"></p>
+            <div id="options" class="space-y-2"></div>
+        </div>
+        <div class="flex justify-between">
+            <button id="prev-btn" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 disabled:opacity-50" disabled>قبلی</button>
+            <span id="question-counter" class="text-gray-600 font-semibold"></span>
+            <button id="next-btn" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">بعدی</button>
+        </div>
+        <div id="result" class="hidden mt-4 text-center"></div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "چند درصد از گونه‌های آفات شناخته شده به عنوان آفات مهم مطرح‌اند؟", options: ["الف) کمتر از 10%", "ب) حدود 30%", "ج) بیش از 50%", "د) بیش از 80%"], answer: "الف) کمتر از 10%" },
+            { question: "تنش‌های زیستی به طور متوسط چه درصد عملکرد محصولات زراعی را کاهش می‌دهند؟", options: ["الف) 10%", "ب) 20%", "ج) 32%", "د) 50%"], answer: "ج) 32%" },
+            { question: "کدام گروه بیشترین نقش را در خسارت به محصولات کشاورزی دارند؟", options: ["الف) ویروس‌ها", "ب) علف‌های هرز", "ج) باکتری‌ها", "د) نماتدها"], answer: "ب) علف‌های هرز" },
+            { question: "آستانه خسارت به چه معناست؟", options: ["الف) حداقل جمعیت آفت بدون وارد کردن خسارت", "ب) حداقل تراکم آفت که موجب خسارت قابل‌تشخیص شود", "ج) حداقل سطح آلودگی گیاه", "د) همه موارد"], answer: "الف) حداقل جمعیت آفت بدون وارد کردن خسارت" },
+            { question: "آستانه آسیب اقتصادی (Economic Injury Level) چیست؟", options: ["الف) تراکمی از جمعیت آفت که توجیه اقتصادی برای مبارزه با آن وجود دارد", "ب) حداقل جمعیت آفت بدون خسارت", "ج) حداکثر رشد آفت", "د) میزان خسارت بیش از 50%"], answer: "الف) تراکمی از جمعیت آفت که توجیه اقتصادی برای مبارزه با آن وجود دارد" },
+            { question: "آستانه عمل (Economic Threshold) چه معنایی دارد؟", options: ["الف) زمانی که آفت باید کنترل شود تا به آستانه آسیب نرسد", "ب) مقداری که آفت هیچ خسارتی وارد نمی‌کند", "ج) زمانی که محصول برداشت می‌شود", "د) حداکثر میزان استفاده از آفت‌کش"], answer: "الف) زمانی که آفت باید کنترل شود تا به آستانه آسیب نرسد" },
+            { question: "آفات کلیدی در کدام دسته قرار می‌گیرند؟", options: ["الف) آفت‌های دائمی و کنترل‌شان سخت", "ب) آفت‌های غیرضروری", "ج) آفت‌های فرعی", "د) آفت‌هایی بدون خسارت"], answer: "الف) آفت‌های دائمی و کنترل‌شان سخت" },
+            { question: "روش کنترل قانونی آفات چیست؟", options: ["الف) استفاده از آفت‌کش‌ها", "ب) جلوگیری از واردات آفات با قرنطینه", "ج) استفاده از دشمنان طبیعی", "د) وجین مکانیکی"], answer: "ب) جلوگیری از واردات آفات با قرنطینه" },
+            { question: "مهم‌ترین ویژگی مبارزه بیولوژیک چیست؟", options: ["الف) استفاده از سموم شیمیایی", "ب) کاهش جمعیت آفات با استفاده از عوامل طبیعی زنده", "ج) کشت گیاهان مقاوم", "د) شخم عمیق خاک"], answer: "ب) کاهش جمعیت آفات با استفاده از عوامل طبیعی زنده" },
+            { question: "پارازیتوئید چیست؟", options: ["الف) حشره‌ای که در داخل یا روی میزبان زندگی می‌کند و آن را می‌کشد", "ب) موجودی که هر گیاهی را می‌خورد", "ج) نوعی علف هرز", "د) قارچ بیماری‌زا"], answer: "الف) حشره‌ای که در داخل یا روی میزبان زندگی می‌کند و آن را می‌کشد" },
+            { question: "مثلث بیماری‌زایی شامل کدام عوامل است؟", options: ["الف) میزبان، پاتوژن، عامل غیرزنده", "ب) میزبان، پاتوژن، شرایط محیطی مساعد", "ج) پاتوژن، علف هرز، انسان", "د) گیاه، خاک، آب"], answer: "ب) میزبان، پاتوژن، شرایط محیطی مساعد" },
+            { question: "دوره کمون در بیماری‌های گیاهی چیست؟", options: ["الف) فاصله زمانی بین کاشت تا برداشت", "ب) اختلاف زمانی بین عفونت و پیدایش علائم بیماری", "ج) مدت زمان خشک شدن گیاه", "د) فاصله بین سمپاشی‌ها"], answer: "ب) اختلاف زمانی بین عفونت و پیدایش علائم بیماری" },
+            { question: "بیماری فیزیولوژیک چیست؟", options: ["الف) بیماری ناشی از عوامل زنده", "ب) بیماری ناشی از عوامل محیطی غیرزنده", "ج) بیماری قارچی", "د) بیماری ویروسی"], answer: "ب) بیماری ناشی از عوامل محیطی غیرزنده" },
+            { question: "وظیفه اصلی قارچ‌کش‌های سیستمی چیست؟", options: ["الف) نابود کردن آفت‌ها", "ب) حرکت در گیاه و محافظت از نقاط مختلف", "ج) تغذیه گیاه", "د) مقاومت به آفت‌کش‌ها"], answer: "ب) حرکت در گیاه و محافظت از نقاط مختلف" },
+            { question: "مهم‌ترین راه انتقال بیماری‌های ویروسی گیاهان چیست؟", options: ["الف) باد و باران", "ب) حیوانات، حشرات ناقل", "ج) خاک", "د) بذر تنها"], answer: "ب) حیوانات، حشرات ناقل" },
+            { question: "مزیت کشت مخلوط نسبت به کشت یکنواخت چیست؟", options: ["الف) افزایش مصرف آفت‌کش", "ب) کاهش تراکم آفت و علف هرز", "ج) افزایش رشد آفات", "د) افزایش هزینه‌های تولید"], answer: "ب) کاهش تراکم آفت و علف هرز" },
+            { question: "چه زمانی بهترین زمان برای کنترل علف‌های هرز است؟", options: ["الف) اوایل فصل رشد که گیاهان کوچک‌اند", "ب) وقتی گیاهان بزرگ شده‌اند", "ج) پس از برداشت محصول", "د) در زمان گل‌دهی گیاه"], answer: "الف) اوایل فصل رشد که گیاهان کوچک‌اند" },
+            { question: "علف‌کش‌های سیستمیک چه ویژگی دارند؟", options: ["الف) فقط روی سطح خاک اثر دارند", "ب) در داخل گیاه حرکت و اثر می‌کنند", "ج) اثر کوتاه مدت دارند", "د) فقط روی برگ‌ها اثر دارند"], answer: "ب) در داخل گیاه حرکت و اثر می‌کنند" },
+            { question: "کدام علامت بیماری گیاهی به معنی زردی بافت‌های سبز است؟", options: ["الف) نکروز", "ب) کلروز", "ج) زنگ", "د) پوسیدگی"], answer: "ب) کلروز" },
+            { question: "دستگاه‌های کشنده آفات در مدیریت فیزیکی شامل چه مواردی است؟", options: ["الف) تله‌ها و جمع‌آوری دستی", "ب) مبارزه شیمیایی", "ج) استفاده از گیاهان مقاوم", "د) سمپاشی"], answer: "الف) تله‌ها و جمع‌آوری دستی" },
+            { question: "اسپور کدام گروه از عوامل بیماری‌زا است؟", options: ["الف) ویروس‌ها", "ب) باکتری‌ها", "ج) قارچ‌ها", "د) نماتدها"], answer: "ج) قارچ‌ها" },
+            { question: "حشرات با چه خاصیتی موفق‌ترند؟", options: ["الف) بزرگ بودن جثه", "ب) داشتن دیاپوز و قابلیت پرواز", "ج) بدون دیاپوز و پرواز", "د) فقط تغذیه اولیه"], answer: "ب) داشتن دیاپوز و قابلیت پرواز" },
+            { question: "هدف اصلی مبارزه تلفیقی در مدیریت آفات چیست؟", options: ["الف) استفاده صرف از سموم شیمیایی", "ب) ترکیب روش‌های مختلف برای پایین آوردن جمعیت آفت تا زیر آستانه اقتصادی", "ج) افزایش آفت‌ها", "د) برداشت محصول زودهنگام"], answer: "ب) ترکیب روش‌های مختلف برای پایین آوردن جمعیت آفت تا زیر آستانه اقتصادی" },
+            { question: "کدام روش کنترل آفات باعث نابودی کامل جمعیت آفات می‌شود؟", options: ["الف) کنترل قانونی", "ب) کنترل فیزیکی", "ج) تخریب زیستگاه‌ها و آیش گذاشتن", "د) کنترل بیولوژیک"], answer: "ج) تخریب زیستگاه‌ها و آیش گذاشتن" },
+            { question: "تاثیر آلودگی به ویروس‌ها بر فتوسنتز چگونه است؟", options: ["الف) افزایش کلروفیل", "ب) کاهش کلروفیل و ایجاد کلروز", "ج) بدون تاثیر", "د) افزایش تنفس گیاه"], answer: "ب) کاهش کلروفیل و ایجاد کلروز" },
+            { question: "آلودگی به نماتدها چگونه بر گیاه تاثیر می‌گذارد؟", options: ["الف) افزایش جذب آب", "ب) تخریب سیستم ریشه و کاهش جذب مواد غذایی", "ج) افزایش رشد گیاه", "د) تأثیر ندارد"], answer: "ب) تخریب سیستم ریشه و کاهش جذب مواد غذایی" },
+            { question: "کدام بیماری گیاهی، بیماری‌های غیرعفونی را شامل می‌شود؟", options: ["الف) ناشی از قارچ‌ها", "ب) ناشی از کمبود مواد غذایی، دما و آلودگی‌ها", "ج) ناشی از ویروس‌ها", "د) ناشی از باکتری‌ها"], answer: "ب) ناشی از کمبود مواد غذایی، دما و آلودگی‌ها" },
+            { question: "مؤثرترین روش کنترل بیماری‌های خاکزی چیست؟", options: ["الف) آب دادن زیاد", "ب) تناوب زراعی و آیش توأم با ضدعفونی", "ج) سمپاشی روی برگ", "د) کوددهی شیمیایی"], answer: "ب) تناوب زراعی و آیش توأم با ضدعفونی" },
+            { question: "نقش عوامل بیولوژیک در کنترل آفات چیست؟", options: ["الف) افزایش جمعیت آفت", "ب) کاهش جمعیت آفت با استفاده از دشمنان طبیعی", "ج) تولید سموم شیمیایی", "د) افزایش حساسیت گیاه به آفت"], answer: "ب) کاهش جمعیت آفت با استفاده از دشمنان طبیعی" },
+            { question: "کاربرد آفتاب‌دهی خاک چیست؟", options: ["الف) افزایش رطوبت", "ب) کاهش دما", "ج) افزایش دمای خاک برای از بین بردن پاتوژن‌ها", "د) ضدعفونی شیمیایی"], answer: "ج) افزایش دمای خاک برای از بین بردن پاتوژن‌ها" },
+            { question: "پارازیتوئیدها به کدام گروه تعلق دارند؟", options: ["الف) حشرات شکارگر", "ب) حشرات پارازیت", "ج) نماتدها", "د) قارچ‌ها"], answer: "ب) حشرات پارازیت" },
+            { question: "منظور از «ریشه کنی» در مدیریت آفات چیست؟", options: ["الف) استفاده از سموم سیستمیک", "ب) حذف کامل زیستگاه آفت", "ج) افزایش برداشت محصول", "د) استفاده از گیاهان تله"], answer: "ب) حذف کامل زیستگاه آفت" },
+            { question: "در کدام مرحله چرخه بیماری، بیمارگر شروع به تولید مثل می‌کند؟", options: ["الف) تلقیح", "ب) عفونت", "ج) تکثیر و تولید مثل", "د) انتشار"], answer: "ج) تکثیر و تولید مثل" },
+            { question: "نقش تنظیم تاریخ کشت در مدیریت آفات چیست؟", options: ["الف) همزمانی چرخه زندگی آفت و گیاه", "ب) تغییر الزامی در نوع محصول", "ج) کاهش همزمانی چرخه زندگی آفت و گیاه", "د) افزایش جمعیت آفت"], answer: "ج) کاهش همزمانی چرخه زندگی آفت و گیاه" },
+            { question: "بیماری زاهای گیاهی به چند دسته اصلی تقسیم می‌شوند؟", options: ["الف) 2 دسته", "ب) 5 دسته", "ج) 6 دسته", "د) 10 دسته"], answer: "ج) 6 دسته" },
+            { question: "قارچ‌کش‌های ریخته‌مند چگونه عمل می‌کنند؟", options: ["الف) کنترل مکانیکی آفات", "ب) ضدعفونی سطحی بذر و پوشش گیاهان", "ج) تغذیه گیاه", "د) افزایش مقاومت گیاه"], answer: "ب) ضدعفونی سطحی بذر و پوشش گیاهان" },
+            { question: "بیماری‌های گیاهی بر اساس اندام گیاه به چند دسته تقسیم می‌شوند؟", options: ["الف) ساقه، ریشه، شاخ و برگ، محصول", "ب) ریشه و برگ فقط", "ج) ساقه و ریشه فقط", "د) درختان و گیاهان تنها"], answer: "الف) ساقه، ریشه، شاخ و برگ، محصول" },
+            { question: "علف‌های هرز چگونه موجب کاهش کیفیت محصول می‌شوند؟", options: ["الف) مسمومیت، کاهش ارزش غذایی و حضور دانه‌های آلوده", "ب) افزایش دریافت نور", "ج) جذب آب بیشتر", "د) بهبود خاک"], answer: "الف) مسمومیت، کاهش ارزش غذایی و حضور دانه‌های آلوده" },
+            { question: "نقش مالچ گیاهی در کنترل علف هرز چیست؟", options: ["الف) افزایش رشد علف هرز", "ب) کاهش رشد علف هرز از طریق سایه اندازی و خواص آللوپاتیک", "ج) افزایش آفات", "د) محافظت از آفات"], answer: "ب) کاهش رشد علف هرز از طریق سایه اندازی و خواص آللوپاتیک" },
+            { question: "چرا مبارزه تلفیقی آفات ترجیح داده می‌شود؟", options: ["الف) کاهش هزینه‌ها و اثرات محیطی منفی، افزایش پایداری کنترل", "ب) استفاده تنها از سموم شیمیایی", "ج) نابودی کامل تمامی آفات", "د) کاهش تولید محصول"], answer: "الف) کاهش هزینه‌ها و اثرات محیطی منفی، افزایش پایداری کنترل" }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        const questionContainer = document.getElementById('question-container');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const questionCounter = document.getElementById('question-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const resultContainer = document.getElementById('result');
+
+        function updateQuestion() {
+            const q = questions[currentQuestion];
+            questionText.textContent = q.question;
+            optionsContainer.innerHTML = '';
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option w-full text-right p-3 border border-gray-200 rounded-lg hover:bg-gray-100';
+                btn.textContent = option;
+                btn.addEventListener('click', () => checkAnswer(option));
+                optionsContainer.appendChild(btn);
+            });
+            questionCounter.textContent = `سوال ${currentQuestion + 1} از ${questions.length}`;
+            progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.disabled = currentQuestion === questions.length - 1 && !resultContainer.classList.contains('hidden');
+            questionContainer.classList.remove('correct', 'incorrect');
+            optionsContainer.querySelectorAll('.option').forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('correct', 'incorrect');
+            });
+        }
+
+        function checkAnswer(selected) {
+            const correctAnswer = questions[currentQuestion].answer;
+            const buttons = optionsContainer.querySelectorAll('.option');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correctAnswer) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selected && selected !== correctAnswer) {
+                    btn.classList.add('incorrect');
+                }
+            });
+            if (selected === correctAnswer) {
+                score++;
+                questionContainer.classList.add('correct');
+            } else {
+                questionContainer.classList.add('incorrect');
+            }
+            if (currentQuestion === questions.length - 1) {
+                setTimeout(showResult, 1000);
+            }
+        }
+
+        function showResult() {
+            questionContainer.classList.add('hidden');
+            prevBtn.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+            questionCounter.classList.add('hidden');
+            resultContainer.classList.remove('hidden');
+            resultContainer.innerHTML = `
+                <p class="text-xl font-bold text-gray-800">امتیاز شما: ${score} از ${questions.length}</p>
+                <p class="text-gray-600 mt-2">${score >= 30 ? 'عالی! بسیار خوب عمل کردید!' : score >= 20 ? 'خوب بود، اما می‌توانید بهتر کنید!' : 'نیاز به مطالعه بیشتر دارید!'}</p>
+                <button id="restart-btn" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">شروع مجدد</button>
+            `;
+            document.getElementById('restart-btn').addEventListener('click', () => {
+                currentQuestion = 0;
+                score = 0;
+                questionContainer.classList.remove('hidden');
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+                questionCounter.classList.remove('hidden');
+                resultContainer.classList.add('hidden');
+                updateQuestion();
+            });
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                updateQuestion();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                updateQuestion();
+            }
+        });
+
+        updateQuestion();
+    </script>
+</body>
+</html>

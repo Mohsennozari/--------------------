@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نکات کلیدی حفظی عوامل خسارت‌زا در گیاهان کشاورزی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        .memory-box {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .memory-box:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        .content {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .content.open {
+            max-height: 1000px; /* Adjust based on content */
+            opacity: 1;
+        }
+        .highlight {
+            transform: scale(1.05);
+            background-color: #e0f2fe;
+            transition: all 0.3s;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="max-w-4xl w-full bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">نکات کلیدی حفظی عوامل خسارت‌زا در گیاهان کشاورزی</h1>
+        <div id="memory-boxes" class="space-y-4">
+            <!-- Memory boxes will be dynamically inserted here -->
+        </div>
+        <div class="flex justify-between mt-6">
+            <span id="progress-counter" class="text-gray-600 font-semibold"></span>
+        </div>
+    </div>
+
+    <script>
+        const memoryData = [
+            {
+                title: "اهمیت آفات، بیماری‌ها و علف‌های هرز",
+                content: `
+                    <ul class="list-disc pr-6 space-y-2">
+                        <li>محصولات کشاورزی در معرض آسیب بیش از 10000 گونه حشرات، 30000 گونه علف هرز، 100000 گونه بیماری (قارچ، ویروس، باکتری و ...) و 1000 گونه نماتد هستند.</li>
+                        <li>کمتر از 10% این آفات مهم محسوب می‌شوند، ولی تاثیر بسیار زیادی بر کاهش عملکرد محصول دارند.</li>
+                        <li>تنش‌های زیستی به طور متوسط باعث کاهش 32 درصدی عملکرد محصول می‌شوند.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "خسارت‌های ناشی از آفات و بیماری‌ها",
+                content: `
+                    <ul class="list-disc pr-6 space-y-2">
+                        <li>کاهش کمی و کیفی تولیدات و درآمد کشاورزان.</li>
+                        <li>افزایش قیمت مواد غذایی به دلیل هزینه‌های مبارزه و کاهش تولید.</li>
+                        <li>محدودیت کشت برخی محصولات در مناطق خاص به دلیل بیماری‌ها و آفات.</li>
+                        <li>خسارت به منابع طبیعی و پیامدهای سیاسی-اجتماعی (مانند قحطی و مهاجرت).</li>
+                    </ul>
+                `
+            },
+            {
+                title: "تعاریف مهم مدیریت آفات",
+                content: `
+                    <ul class="list-disc pr-6 space-y-2">
+                        <li><strong>آستانه خسارت:</strong> تراکم آفتی که در پایین آن هیچ خسارتی ایجاد نمی‌شود.</li>
+                        <li><strong>آستانه آسیب اقتصادی (EIL):</strong> حداقل تراکم جمعیت آفت که خسارت اقتصادی ایجاد می‌کند و کنترل آن مقرون به صرفه است.</li>
+                        <li><strong>آستانه عمل (ET):</strong> میزان تراکمی که باید در آن کنترل انجام شود تا از رسیدن به EIL جلوگیری شود.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "طبقه‌بندی آفات از نظر اهمیت",
+                content: `
+                    <ul class="list-disc pr-6 space-y-2">
+                        <li><strong>آفات اقتصادی:</strong> آنهایی که موجب کاهش 5 تا 10 درصدی عملکرد می‌شوند.</li>
+                        <li><strong>آفات کلیدی:</strong> آفات مهم، دائمی و کنترل دشوار.</li>
+                        <li><strong>آفات اصلی:</strong> آفات خطرناک برای محصولات در محدوده جغرافیایی وسیع.</li>
+                        <li><strong>آفات فرعی:</strong> معمولاً خسارت اقتصادی ایجاد نمی‌کنند.</li>
+                        <li><strong>آفات بالقوه:</strong> آفات فرعی که می‌توانند در شرایط خاص به آفات اصلی تبدیل شوند.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "استراتژی‌های مدیریت آفات",
+                content: `
+                    <ul class="list-disc pr-6 space-y-2">
+                        <li>عدم اقدام اگر جمعیت آفت زیر آستانه باشد.</li>
+                        <li>کاهش جمعیت آفت هنگامی که به آستانه اقتصادی برسد.</li>
+                        <li>کاهش حساسیت گیاه به آفت با استفاده از ارقام مقاوم یا متحمل.</li>
+                        <li>تلفیق روش‌ها برای پایداری و اثربخشی بهتر.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "روش‌های کنترل آفات",
+                content: `
+                    <ul class="list-disc pr-6 space-y-2">
+                        <li><strong>کنترل قانونی:</strong> قرنطینه و جلوگیری از انتقال آفات.</li>
+                        <li><strong>کنترل فیزیکی:</strong> جمع‌آوری، شخم، تغییر محیط، استفاده از دما و رنگ‌های جذب کننده.</li>
+                        <li><strong>کنترل زراعی (اکولوژیک):</strong> بهبود شرایط رشد گیاه، حذف میزبان‌های ثانویه، تناوب زراعی، انتخاب تاریخ کاشت و برداشت مناسب، آیش و کشت مخلوط.</li>
+                        <li><strong>کنترل شیمیایی:</strong> استفاده از آفت‌کش‌ها با خاصیت انتخابی و کم‌خطر.</li>
+                        <li><strong>کنترل بیولوژیک:</strong> استفاده از دشمنان طبیعی مانند پارازیتوئیدها، شکارگرها و بیماری‌زاها.</li>
+                        <li>استفاده از گیاهان مقاوم و مدیریت تلفیقی.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "بیماری‌های گیاهی",
+                content: `
+                    <ul class="list-disc pr-6 space-y-2">
+                        <li>بیماری وقتی رخ می‌دهد که گیاه میزبان حساس، عامل بیماری‌زا (پاتوژن) و شرایط محیطی مساعد همزمان باشند (مثلث بیماری‌زایی).</li>
+                        <li>بیماری‌ها به دو گروه کلی: عفونی (قارچ، ویروس، باکتری، نماتد) و غیرعفونی (کمبود یا بیش از حد عوامل محیطی) تقسیم می‌شوند.</li>
+                        <li>علائم رایج بیماری‌ها شامل کلروز (زردی)، نکروز (مرگ بافت‌ها)، موزاییک، پوسیدگی، زنگ و سفیدک است.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "چرخه بیماری‌های گیاهی",
+                content: `
+                    <ul class="list-disc pr-6 space-y-2">
+                        <li>شامل مراحل تماس، نفوذ، عفونت، دوره کمون، گسترش، تکثیر، انتشار و زمستان‌گذرانی است.</li>
+                        <li>انتقال می‌تواند با باد، آب، حشرات، بذر و انسان صورت گیرد.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "مبارزه و پیشگیری در بیماری‌های گیاهی",
+                content: `
+                    <p class="font-semibold">اصول 5گانه پیشگیری:</p>
+                    <ul class="list-disc pr-6 space-y-2">
+                        <li>قرنطینه و جلوگیری از ورود عامل بیماری زا</li>
+                        <li>حذف بیماری‌زا قبل از آلودگی گیاهان</li>
+                        <li>محافظت گیاه میزبان با سموم حفاظتی و سایر روش‌ها</li>
+                        <li>افزایش مقاومت گیاه از طریق نژادهای مقاوم و بهبود شرایط محیطی</li>
+                        <li>تغییر شرایط محیطی نامساعد برای بیماری (آبیاری، زهکشی، دما)</li>
+                    </ul>
+                    <p class="font-semibold mt-4">روش‌های مبارزه شامل:</p>
+                    <ul class="list-disc pr-6 space-y-2">
+                        <li>مبارزه زراعی، فیزیکی، بیولوژیکی، شیمیایی و تلفیقی.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "علف‌های هرز",
+                content: `
+                    <ul class="list-disc pr-6 space-y-2">
+                        <li>علف‌های هرز به دو صورت کمی (کاهش مقدار محصول) و کیفی (کاهش کیفیت، مسمومیت) خسارت وارد می‌کنند.</li>
+                        <li>مشخصات و طبقه‌بندی علف‌های هرز بر اساس: ظاهری، دوره زندگی، محیط زیست و روش تکثیر.</li>
+                        <li>آثار سوء: رقابت شدید با گیاه زراعی، افزایش هزینه مبارزه، کاهش بهره‌وری و تهدید سلامت.</li>
+                        <li>روش‌های کنترل: تناوب زراعی، کشت مخلوط، استفاده از گیاهان پوششی، عوامل بیماری‌زا و حشرات کنترل‌کننده، شخم و سایر روش‌های مکانیکی، و مصرف علف‌کش‌ها با رعایت شرایط و دوره بحرانی.</li>
+                    </ul>
+                `
+            },
+            {
+                title: "نکات ایمنی و انتخاب آفت‌کش‌ها",
+                content: `
+                    <ul class="list-disc pr-6 space-y-2">
+                        <li>آفت‌کش‌ها باید اثر کافی روی آفت هدف داشته، کم خطر برای انسان و محیط زده، به سرعت تجزیه شوند، طعم و بوی ناخواسته ایجاد نکنند، و مقرون به صرفه باشند.</li>
+                        <li>سموم از نظر نحوه ورود به بدن آفت (گوارشی، تماسی، تدخینی)، حرکت در گیاه (سیستمیک، نیمه سیستمیک)، و میزان دوام و نوع اثر (فیزیکی، عصبی و غیره) دسته‌بندی می‌شوند.</li>
+                    </ul>
+                `
+            }
+        ];
+
+        const memoryBoxesContainer = document.getElementById('memory-boxes');
+        const progressCounter = document.getElementById('progress-counter');
+        let openBoxes = 0;
+
+        function updateProgress() {
+            progressCounter.textContent = `بخش‌های باز شده: ${openBoxes} از ${memoryData.length}`;
+        }
+
+        memoryData.forEach((box, index) => {
+            const boxElement = document.createElement('div');
+            boxElement.className = 'memory-box bg-white border border-gray-300 rounded-lg';
+            boxElement.innerHTML = `
+                <div class="flex justify-between items-center p-4 cursor-pointer bg-blue-50 hover:bg-blue-100">
+                    <h2 class="text-lg font-semibold text-gray-800">${box.title}</h2>
+                    <span class="text-gray-500">▼</span>
+                </div>
+                <div class="content p-4">${box.content}</div>
+            `;
+            memoryBoxesContainer.appendChild(boxElement);
+
+            const header = boxElement.querySelector('.flex');
+            const content = boxElement.querySelector('.content');
+            header.addEventListener('click', () => {
+                const isOpen = content.classList.contains('open');
+                content.classList.toggle('open', !isOpen);
+                header.querySelector('span').textContent = isOpen ? '▼' : '▲';
+                openBoxes = isOpen ? openBoxes - 1 : openBoxes + 1;
+                updateProgress();
+                if (!isOpen) {
+                    boxElement.classList.add('highlight');
+                    setTimeout(() => boxElement.classList.remove('highlight'), 1000);
+                }
+            });
+        });
+
+        updateProgress();
+    </script>
+</body>
+</html>

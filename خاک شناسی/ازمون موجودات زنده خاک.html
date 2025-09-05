@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>آزمون موجودات زنده خاک</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <style>
+    body{font-family:'Vazir',sans-serif;direction:rtl;background:linear-gradient(to bottom,#e7f3e9,#f0f2f5)}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff')}
+    .btn{transition:background-color 0.3s}.modal{transition:opacity 0.3s,transform 0.3s}.modal-hidden{opacity:0;transform:scale(0.9)}.modal-visible{opacity:1;transform:scale(1)}
+  </style>
+</head>
+<body>
+  <div id="root" class="container mx-auto p-4 min-h-screen flex items-center justify-center"></div>
+  <script type="text/babel">
+    const questions=[
+      {id:1,text:"کدام یک از موارد زیر جزء موجودات زنده خاک محسوب نمی‌شود؟",options:["الف) کرم‌های خاکی","ب) قارچ‌ها","ج) سنگ‌های معدنی","د) باکتری‌ها"],correct:2},
+      {id:2,text:"کدام گروه از موجودات زنده خاک در دسته‌بندی بر اساس اندازه، در گروه ماکروارگانیسم‌ها قرار می‌گیرند؟",options:["الف) نماتدها","ب) کنه‌ها","ج) کرم‌های خاکی","د) جلبک‌ها"],correct:2},
+      {id:3,text:"کدام یک از موارد زیر یک اتوتروف محسوب می‌شود؟",options:["الف) قارچ‌ها","ب) گیاهان","ج) کرم‌های خاکی","د) نماتدها"],correct:1},
+      {id:4,text:"کدام فرآیند توسط موجودات زنده خاک انجام نمی‌شود؟",options:["الف) تجزیه مواد آلی","ب) تشکیل خاکدانه‌ها","ج) هوازدگی سنگ‌ها","د) فتوسنتز"],correct:3},
+      {id:5,text:"کدام عامل از جمله عوامل اصلی کاهش تنوع زیستی خاک است؟",options:["الف) افزایش مواد آلی","ب) تغییر کاربری اراضی","ج) کاهش آلودگی","د) افزایش بارندگی"],correct:1},
+      {id:6,text:"کدام یک از موارد زیر نشان‌دهنده سلامت خاک است؟",options:["الف) فرسایش شدید","ب) وجود کرم‌های خاکی","ج) شوری بالا","د) pH بسیار پایین"],correct:1},
+      {id:7,text:"کدام گروه از موجودات زنده خاک مسئول تجزیه لیگنین هستند؟",options:["الف) باکتری‌ها","ب) قارچ‌های پوسیدگی سفید","ج) جلبک‌ها","د) نماتدها"],correct:1},
+      {id:8,text:"کدام عنصر به عنوان مبنای کل حیات شناخته می‌شود؟",options:["الف) نیتروژن","ب) کربن","ج) فسفر","د) گوگرد"],correct:1},
+      {id:9,text:"چه درصدی از ماده خشک گیاهان را کربن تشکیل می‌دهد؟",options:["الف) حدود ۲۵٪","ب) حدود ۴۲٪","ج) حدود ۶۰٪","د) حدود ۷۵٪"],correct:1},
+      {id:10,text:"کدام یک از ترکیبات گیاهی دیرتر تجزیه می‌شود؟",options:["الف) قندها","ب) پروتئین‌ها","ج) لیگنین","د) نشاسته"],correct:2},
+      {id:11,text:"کدام فرآیند در تجزیه مواد آلی خاک نقش اصلی را ایفا می‌کند؟",options:["الف) تبخیر","ب) اکسیداسیون آنزیمی","ج) انجماد","د) رسوب‌گذاری"],correct:1},
+      {id:12,text:"کدام یک از موارد زیر جزء منابع کربن خاک محسوب نمی‌شود؟",options:["الف) بقایای گیاهی","ب) سوخت‌های فسیلی","ج) موجودات زنده","د) دی‌اکسید کربن جو"],correct:3},
+      {id:13,text:"کدام نوع خاک بیشترین مقدار کربن آلی را در خود ذخیره می‌کند؟",options:["الف) آریدیسول","ب) هیستوسول","ج) اکسیسول","د) انتیسول"],correct:1},
+      {id:14,text:"کدام یک از موارد زیر یک هتروتروف است؟",options:["الف) جلبک","ب) گیاه","ج) قارچ","د) سیانوباکتری"],correct:2},
+      {id:15,text:"کدام فرآیند در چرخه کربن نقش کلیدی دارد؟",options:["الف) تبخیر","ب) فتوسنتز","ج) انجماد","د) رسوب‌گذاری"],correct:1},
+      {id:16,text:"کدام یک از موارد زیر در شبکه غذایی خاک، مصرف‌کننده ثانویه محسوب می‌شود؟",options:["الف) گیاه","ب) کرم خاکی","ج) قارچ","د) باکتری"],correct:1},
+      {id:17,text:"کدام عامل در تشکیل هوموس نقش دارد؟",options:["الف) تبخیر شدید","ب) فعالیت میکروارگانیسم‌ها","ج) شوری بالا","د) pH بسیار پایین"],correct:1},
+      {id:18,text:"کدام یک از موارد زیر یک شاخص کیفیت خاک است؟",options:["الف) رنگ خاک","ب) تنوع زیستی","ج) بافت خاک","د) همه موارد"],correct:3},
+      {id:19,text:"کدام گروه از موجودات زنده خاک در دسته‌بندی بر اساس منبع کربن، به عنوان فتواتوتروف شناخته می‌شوند؟",options:["الف) قارچ‌ها","ب) گیاهان","ج) کرم‌های خاکی","د) نماتدها"],correct:1},
+      {id:20,text:"کدام یک از موارد زیر در تجزیه سلولز نقش دارد؟",options:["الف) آنزیم سلولاز","ب) آنزیم پروتئاز","ج) آنزیم لیپاز","د) آنزیم آمیلاز"],correct:0},
+      {id:21,text:"کدام عنصر در پروتئین‌ها وجود دارد و در طی تجزیه آزاد می‌شود؟",options:["الف) کلسیم","ب) نیتروژن","ج) آهن","د) منگنز"],correct:1},
+      {id:22,text:"کدام یک از موارد زیر یک عامل تخریب کننده تنوع زیستی خاک است؟",options:["الف) افزایش مواد آلی","ب) کاهش آلودگی","ج) تغییر اقلیم","د) کشاورزی ارگانیک"],correct:2},
+      {id:23,text:"کدام فرآیند منجر به آزادسازی دی‌اکسید کربن از خاک می‌شود؟",options:["الف) تجزیه مواد آلی","ب) تبخیر آب","ج) انجماد خاک","د) رسوب‌گذاری"],correct:0},
+      {id:24,text:"کدام یک از موارد زیر در دسته‌بندی موجودات زنده خاک بر اساس اندازه، در گروه میانی (مزوارگانیسم‌ها) قرار می‌گیرد؟",options:["الف) کرم‌های خاکی","ب) کنه‌ها","ج) جلبک‌ها","د) نماتدها"],correct:1},
+      {id:25,text:"کدام یک از ترکیبات گیاهی سریع‌تر تجزیه می‌شود؟",options:["الف) لیگنین","ب) موم‌ها","ج) قندها","د) چربی‌ها"],correct:2},
+      {id:26,text:"کدام یک از موارد زیر یک نقش مواد آلی خاک نیست؟",options:["الف) بهبود ساختمان خاک","ب) افزایش شوری خاک","ج) تامین عناصر غذایی","د) افزایش ظرفیت تبادل کاتیونی"],correct:1},
+      {id:27,text:"کدام نوع خاک معمولاً دارای کمترین مقدار کربن آلی است؟",options:["الف) هیستوسول","ب) آریدیسول","ج) مولیسول","د) آلفیسول"],correct:1},
+      {id:28,text:"کدام یک از موارد زیر در دسته‌بندی موجودات زنده خاک بر اساس منبع انرژی، به عنوان شیم‌واتوتروف شناخته می‌شوند؟",options:["الف) گیاهان","ب) باکتری‌های اکسیدکننده آمونیاک","ج) قارچ‌ها","د) کرم‌های خاکی"],correct:1},
+      {id:29,text:"کدام فرآیند در تشکیل خاکدانه‌ها نقش دارد؟",options:["الف) تبخیر","ب) فعالیت موجودات زنده","ج) انجماد","د) رسوب‌گذاری"],correct:1},
+      {id:30,text:"کدام یک از موارد زیر نشان‌دهنده تنوع زیستی بالا در خاک است؟",options:["الف) وجود تنها یک گونه غالب","ب) توزیع یکنواخت گونه‌ها","ج) فقدان گونه‌های مختلف","د) وجود گونه‌های مهاجم"],correct:1},
+      {id:31,text:"اگر خاکی دارای ۴٪ ماده آلی باشد، مقدار کربن آلی آن تقریباً چقدر است؟",options:["الف) ۱.۲٪","ب) ۲.۳٪","ج) ۳.۴٪","د) ۴.۵٪"],correct:1},
+      {id:32,text:"اگر یک تن بقایای گیاهی با ۴۰٪ ماده خشک به خاک اضافه شود، چند کیلوگرم ماده خشک اضافه شده است؟",options:["الف) ۲۰۰ کیلوگرم","ب) ۴۰۰ کیلوگرم","ج) ۶۰۰ کیلوگرم","د) ۸۰۰ کیلوگرم"],correct:1},
+      {id:33,text:"اگر کربن آلی خاک ۲.۵٪ باشد، مقدار ماده آلی خاک تقریباً چقدر است؟",options:["الف) ۴.۳٪","ب) ۳.۸٪","ج) ۲.۵٪","د) ۱.۷٪"],correct:0},
+      {id:34,text:"اگر هر سال ۲٪ از ماده آلی خاک تجزیه شود، پس از ۵ سال چند درصد از ماده آلی اولیه باقی می‌ماند؟",options:["الف) ۹۰٪","ب) ۸۸٪","ج) ۸۵٪","د) ۸۰٪"],correct:1},
+      {id:35,text:"اگر خاکی دارای ۵٪ ماده آلی باشد و هر سال ۱.۵٪ از آن تجزیه شود، پس از ۱۰ سال چند درصد ماده آلی باقی می‌ماند؟",options:["الف) ۳.۵٪","ب) ۴.۰٪","ج) ۴.۵٪","د) ۵.۰٪"],correct:0},
+      {id:36,text:"اگر یک هکتار خاک دارای ۱۰۰ تن ماده آلی باشد و هر سال ۳٪ از آن تجزیه شود، پس از ۲۰ سال چند تن ماده آلی باقی می‌ماند؟",options:["الف) ۵۴ تن","ب) ۶۰ تن","ج) ۶۶ تن","د) ۷۲ تن"],correct:0},
+      {id:37,text:"اگر کربن آلی خاک ۳٪ باشد، چند گرم کربن آلی در ۲۰۰ گرم خاک وجود دارد؟",options:["الف) ۳ گرم","ب) ۶ گرم","ج) ۹ گرم","د) ۱۲ گرم"],correct:1},
+      {id:38,text:"اگر ماده آلی خاک ۶٪ باشد و ضریب تبدیل کربن به ماده آلی ۱.۷۲ باشد، درصد کربن آلی چقدر است؟",options:["الف) ۳.۴۹٪","ب) ۴.۲٪","ج) ۵.۱٪","د) ۶٪"],correct:0},
+      {id:39,text:"اگر هر سال ۳ تن در هکتار بقایای گیاهی با ۳۰٪ ماده آلی به خاک اضافه شود، پس از ۴ سال چند تن ماده آلی اضافه شده است؟",options:["الف) ۱.۲ تن","ب) ۲.۴ تن","ج) ۳.۶ تن","د) ۴.۸ تن"],correct:2},
+      {id:40,text:"اگر هوموس ۶ برابر وزن خود آب جذب کند و مقدار هوموس در خاک ۵ تن در هکتار باشد، چند مترمکعب آب می‌تواند نگه دارد؟",options:["الف) ۳۰ مترمکعب","ب) ۳۰۰ مترمکعب","ج) ۳۰۰۰ مترمکعب","د) ۳۰۰۰۰ مترمکعب"],correct:2}
+    ];
+    const stages=[questions.slice(0,10),questions.slice(10,20),questions.slice(20,30),questions.slice(30,40)];
+    function QuizApp(){
+      const [stage,setStage]=React.useState(0);
+      const [questionIndex,setQuestionIndex]=React.useState(0);
+      const [repeatCount,setRepeatCount]=React.useState(0);
+      const [selected,setSelected]=React.useState(null);
+      const [feedback,setFeedback]=React.useState(null);
+      const [showCorrect,setShowCorrect]=React.useState(false);
+      const [scores,setScores]=React.useState([0,0,0,0]);
+      const [answersCorrect,setAnswersCorrect]=React.useState({});
+      const [showModal,setShowModal]=React.useState(false);
+      const currentStage=stages[stage];
+      const handleSelect=(index)=>{
+        if(feedback==='correct')return;
+        setSelected(index);
+        const q=currentStage[questionIndex];
+        const isCorrect=index===q.correct;
+        setAnswersCorrect(prev=>({...prev,[`${stage}-${questionIndex}-${repeatCount}`]:isCorrect}));
+        if(isCorrect){
+          setFeedback('correct');
+          if(selected===null){
+            setScores(prev=>({...prev,[stage]:prev[stage]+1}));
+          }
+          setTimeout(nextQuestion,1000);
+        }else{
+          setFeedback('incorrect');
+          setShowCorrect(true);
+          setTimeout(() => {
+            setFeedback(null);
+            setShowCorrect(false);
+            setSelected(null);
+          }, 2000);
+        }
+      };
+      const nextQuestion=()=>{
+        setSelected(null);
+        setFeedback(null);
+        setShowCorrect(false);
+        if(repeatCount<2){
+          setRepeatCount(prev=>prev+1);
+        }else if(questionIndex+1<currentStage.length){
+          setQuestionIndex(prev=>prev+1);
+          setRepeatCount(0);
+        }else{
+          setShowModal(true);
+        }
+      };
+      const handleNextStage=()=>{
+        const stageAnswers=Object.keys(answersCorrect)
+          .filter(key=>key.startsWith(`${stage}-`))
+          .map(key=>answersCorrect[key]);
+        const hasIncorrect=stageAnswers.includes(false)||stageAnswers.length<currentStage.length*3;
+        if(hasIncorrect){
+          setQuestionIndex(0);
+          setRepeatCount(0);
+          setAnswersCorrect(prev=>Object.fromEntries(Object.keys(prev)
+            .filter(key=>!key.startsWith(`${stage}-`))
+            .map(key=>[key,prev[key]])));
+        }else if(stage<3){
+          setStage(prev=>prev+1);
+          setQuestionIndex(0);
+          setRepeatCount(0);
+        }else{
+          setStage(0);
+          setQuestionIndex(0);
+          setRepeatCount(0);
+          setScores([0,0,0,0]);
+          setAnswersCorrect({});
+        }
+        setShowModal(false);
+      };
+      const progress=((questionIndex*3+repeatCount+1)/(currentStage.length*3))*100;
+      return (
+        <div class="max-w-2xl mx-auto bg-white shadow-2xl rounded-xl p-6">
+          <h1 class="text-2xl font-bold text-gray-800 text-center mb-4">آزمون موجودات زنده خاک - مرحله {stage+1}</h1>
+          <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+            <div class="bg-green-600 h-2.5 rounded-full" style={{width:`${progress}%`}}></div>
+          </div>
+          <p class="text-center text-gray-600 mb-4">سوال {questionIndex+1} از 10 (تکرار {repeatCount+1} از 3)</p>
+          <p class="font-semibold text-lg text-gray-800 mb-6">{currentStage[questionIndex].text}</p>
+          <div class="space-y-3">
+            {currentStage[questionIndex].options.map((opt,i)=>(
+              <button
+                key={i}
+                onClick={()=>handleSelect(i)}
+                class={`w-full p-4 text-lg font-medium rounded-lg border btn text-right ${showCorrect&&i===currentStage[questionIndex].correct?'bg-green-200 text-green-800':selected===i&&feedback==='incorrect'?'bg-red-200 text-red-800':feedback==='correct'&&i===currentStage[questionIndex].correct?'bg-green-200 text-green-800':'bg-blue-100 hover:bg-blue-200 text-blue-800'} ${feedback==='correct'?'cursor-not-allowed opacity-50':''}`}
+                disabled={feedback==='correct'}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+          {feedback==='incorrect'&&(
+            <p class="text-red-600 mt-4 text-center flex items-center justify-center">
+              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              اشتباه! دوباره امتحان کنید.
+            </p>
+          )}
+          {feedback==='correct'&&(
+            <p class="text-green-600 mt-4 text-center flex items-center justify-center">
+              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              درست! به تکرار یا سوال بعدی می‌رویم.
+            </p>
+          )}
+          {showModal&&(
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center modal modal-visible">
+              <div class="bg-white rounded-xl p-6 max-w-sm w-full text-center">
+                <h2 class="text-xl font-bold text-green-700 mb-4">نتایج مرحله {stage+1}</h2>
+                <p class="text-lg text-gray-600 mb-4">نمره: {scores[stage]} از 30</p>
+                <p class="text-lg text-gray-600 mb-4">کل نمره: {Object.values(scores).reduce((a,b)=>a+b,0)} از {(stage+1)*30}</p>
+                {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length*3&&(
+                  <p class="text-red-600 mb-4">برخی سوالات اشتباه بودند، مرحله تکرار می‌شود.</p>
+                )}
+                <button
+                  onClick={handleNextStage}
+                  class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 btn"
+                >
+                  {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length*3?'تکرار مرحله':stage<3?'مرحله بعدی':'شروع مجدد'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    ReactDOM.render(<QuizApp/>,document.getElementById('root'));
+  </script>
+</body>
+</html>

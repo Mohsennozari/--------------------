@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>آزمون فسفر در خاک</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <style>
+    body{font-family:'Vazir',sans-serif;direction:rtl;background:linear-gradient(to bottom right,#d1fae5,#fef3c7)}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff');font-weight:normal}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Bold.woff') format('woff');font-weight:bold}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Light.woff') format('woff');font-weight:300}
+    .btn{transition:all 0.3s ease}.btn:hover{transform:translateY(-2px)}.modal{transition:all 0.4s ease}.modal-hidden{opacity:0;transform:scale(0.95)}.modal-visible{opacity:1;transform:scale(1)}.progress-bar{transition:width 0.5s ease-in-out}
+    .question-card{animation:fadeIn 0.5s ease-in}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <div id="root" class="container mx-auto p-6 min-h-screen flex items-center justify-center"></div>
+  <script type="text/babel">
+    const questions=[
+      {id:1,text:"پس از نیتروژن، فسفر از نظر تأثیر بر باروری و سلامت اکوسیستم‌ها در چه رتبه‌ای قرار دارد؟",options:["الف) اول","ب) دوم","ج) سوم","د) چهارم"],correct:1},
+      {id:2,text:"مقدار فسفر کل در بیشتر خاک‌های طبیعی چگونه است؟",options:["الف) زیاد","ب) متوسط","ج) کم","د) بسیار زیاد"],correct:2},
+      {id:3,text:"کدام یک از منابع زیر باعث افزایش فسفر در خاک‌های سطحی حوضه‌های کشاورزی شده است؟",options:["الف) کاهش مصرف کود","ب) استفاده بیش از حد از کودهای فسفره","ج) کاهش دامداری","د) کاهش رواناب"],correct:1},
+      {id:4,text:"فسفر در کدام یک از ترکیبات زیر نقش اساسی دارد؟",options:["الف) کلروفیل","ب) ATP","ج) گلوکز","د) سلولز"],correct:1},
+      {id:5,text:"علائم کمبود فسفر در گیاهان معمولاً چگونه است؟",options:["الف) رشد سریع و برگ‌های سبز روشن","ب) کوتاهی قد، ساقه باریک و رنگ سبز تیره مایل به آبی","ج) زردی برگ‌های جوان","د) پژمردگی سریع برگ‌ها"],correct:1},
+      {id:6,text:"در خاک‌های قلیایی، فسفر عمدتاً با کدام عنصر ترکیب می‌شود؟",options:["الف) آهن","ب) آلومینیوم","ج) کلسیم","د) منیزیم"],correct:2},
+      {id:7,text:"کدام میکروارگانیسم به جذب فسفر توسط ریشه کمک می‌کند؟",options:["الف) باکتری‌های نیتروژن‌ساز","ب) قارچ‌های میکوریزا","ج) جلبک‌ها","د) نماتدها"],correct:1},
+      {id:8,text:"فسفر آلی در خاک عمدتاً به چه شکل یافت می‌شود؟",options:["الف) گاز فسفین","ب) استرهای فسفات","ج) یون‌های آزاد","د) ترکیبات نیتراته"],correct:1},
+      {id:9,text:"چه نسبتی از C/P در بقایای گیاهی باعث توقف فسفر محلول می‌شود؟",options:["الف) کمتر از ۱۰۰:۱","ب) بیشتر از ۳۰۰:۱","ج) دقیقاً ۲۰۰:۱","د) کمتر از ۵۰:۱"],correct:1},
+      {id:10,text:"فسفر در خاک‌های اسیدی عمدتاً با کدام عناصر ترکیب می‌شود؟",options:["الف) کلسیم و منیزیم","ب) آهن و آلومینیوم","ج) سدیم و پتاسیم","د) مس و روی"],correct:1},
+      {id:11,text:"کدام یک از موارد زیر از راه‌های اصلی خروج فسفر از خاک نیست؟",options:["الف) فرسایش","ب) برداشت توسط گیاه","ج) تبخیر","د) رواناب"],correct:2},
+      {id:12,text:"غلظت فسفر در محلول خاک معمولاً چقدر است؟",options:["الف) ۱۰۰-۵۰ میلی‌گرم در لیتر","ب) ۰/۰۰۱ تا ۱ میلی‌گرم در لیتر","ج) ۵۰-۱۰ میلی‌گرم در لیتر","د) بیش از ۱۰۰ میلی‌گرم در لیتر"],correct:1},
+      {id:13,text:"کدام گروه از گیاهان به کمبود فسفر حساس‌تر هستند؟",options:["الف) غلات","ب) حبوبات","ج) گیاهان روغنی","د) سبزیجات"],correct:1},
+      {id:14,text:"فسفر در کدام بخش از گیاه متحرک است؟",options:["الف) فقط در ریشه","ب) فقط در برگ‌های جوان","ج) در کل گیاه و قابل انتقال از برگ پیر به جوان","د) فقط در ساقه"],correct:2},
+      {id:15,text:"کدام یک از ترکیبات زیر حاوی فسفر نیست؟",options:["الف) DNA","ب) RNA","ج) کلروفیل","د) فسفولیپید"],correct:2},
+      {id:16,text:"افزایش فسفر در آب‌های شیرین منجر به چه پدیده‌ای می‌شود؟",options:["الف) اسیدی شدن آب","ب) کاهش رشد جلبک‌ها","ج) اوتریفیکاسیون (غنی‌شدن آب از مواد مغذی)","د) افزایش اکسیژن محلول"],correct:2},
+      {id:17,text:"اصطلاح 'نگهداشت فسفر' به چه معناست؟",options:["الف) خروج فسفر از خاک","ب) تثبیت فسفر در خاک","ج) تبخیر فسفر","د) تجزیه فسفر آلی"],correct:1},
+      {id:18,text:"در خاک‌های با pH بالا، فسفر عمدتاً به صورت چه ترکیبی تثبیت می‌شود؟",options:["الف) فسفات آهن","ب) فسفات آلومینیوم","ج) فسفات کلسیم","د) فسفات منیزیم"],correct:2},
+      {id:19,text:"کدام فرآیند مسئول آزادسازی فسفر از بقایای گیاهی است؟",options:["الف) تبخیر","ب) معدنی شدن","ج) تثبیت","د) آبشویی"],correct:1},
+      {id:20,text:"فسفر در گیاهان عمدتاً در کدام بخش ذخیره می‌شود؟",options:["الف) فقط در ریشه","ب) فقط در دانه","ج) در برگ‌ها و بافت‌های مریستمی","د) فقط در گل"],correct:2},
+      {id:21,text:"غلظت فسفر در محلول خاک یک مزرعه ۰.۲ میلی‌گرم در لیتر است. اگر حجم خاک قابل دسترس برای ریشه در هر هکتار معادل ۲ میلیون لیتر باشد، کل فسفر قابل دسترس بر حسب کیلوگرم در هکتار چقدر است؟",options:["الف) ۰.۲","ب) ۰.۴","ج) ۴","د) ۴۰"],correct:1},
+      {id:22,text:"کل فسفر یک خاک ۱۰۰۰ کیلوگرم در هکتار است. اگر ۳۰٪ از آن به شکل آلی باشد، مقدار فسفر آلی چقدر است؟",options:["الف) ۳۰۰ کیلوگرم در هکتار","ب) ۳۰ کیلوگرم در هکتار","ج) ۱۰۰ کیلوگرم در هکتار","د) ۷۰۰ کیلوگرم در هکتار"],correct:0},
+      {id:23,text:"بقایای گیاهی با نسبت C/P برابر ۲۰۰:۱ به خاک اضافه شده است. اگر مقدار کربن اضافه شده ۴۰۰۰ کیلوگرم در هکتار باشد، مقدار فسفر اضافه شده چقدر است؟",options:["الف) ۱۰ کیلوگرم در هکتار","ب) ۲۰ کیلوگرم در هکتار","ج) ۴۰ کیلوگرم در هکتار","د) ۸۰ کیلوگرم در هکتار"],correct:1},
+      {id:24,text:"میزان فسفر خروجی از طریق فرسایش در یک زمین ۰.۸ کیلوگرم در هکتار در سال است. اگر مساحت زمین ۲۵ هکتار باشد، کل فسفر از دست رفته در سال چقدر است؟",options:["الف) ۱۰ کیلوگرم","ب) ۲۰ کیلوگرم","ج) ۳۰ کیلوگرم","د) ۴۰ کیلوگرم"],correct:1},
+      {id:25,text:"یک گیاه در هر هکتار ۲۰ کیلوگرم فسفر جذب می‌کند. اگر بازده کود فسفره ۲۵٪ باشد، چه مقدار کود فسفره (بر حسب کیلوگرم) باید مصرف شود تا این نیاز برطرف شود؟",options:["الف) ۵","ب) ۲۰","ج) ۸۰","د) ۱۰۰"],correct:2},
+      {id:26,text:"غلظت فسفر در بافت برگ یک گیاه سالم ۰.۴٪ وزن خشک است. اگر وزن خشک برگ‌ها در هکتار ۱۵۰۰ کیلوگرم باشد، مقدار فسفر موجود در برگ‌ها چقدر است؟",options:["الف) ۶ کیلوگرم در هکتار","ب) ۱۲ کیلوگرم در هکتار","ج) ۱۸ کیلوگرم در هکتار","د) ۲۴ کیلوگرم در هکتار"],correct:0},
+      {id:27,text:"مقدار فسفر قابل دسترس در خاک ۱۵ کیلوگرم در هکتار است. اگر گیاه به ۴۵ کیلوگرم در هکتار نیاز داشته باشد، کمبود فسفر چقدر است؟",options:["الف) ۱۵ کیلوگرم در هکتار","ب) ۳۰ کیلوگرم در هکتار","ج) ۴۵ کیلوگرم در هکتار","د) ۶۰ کیلوگرم در هکتار"],correct:1},
+      {id:28,text:"سالانه ۱.۲ کیلوگرم فسفر در هکتار از طریق رواناب از دست می‌رود که معادل ۱۵٪ کل فسفر قابل دسترس است. کل فسفر قابل دسترس چقدر است؟",options:["الف) ۶ کیلوگرم در هکتار","ب) ۸ کیلوگرم در هکتار","ج) ۱۰ کیلوگرم در هکتار","د) ۱۲ کیلوگرم در هکتار"],correct:1},
+      {id:29,text:"یک کود فسفره حاوی ۱۸٪ فسفر است. برای اضافه کردن ۳۶ کیلوگرم فسفر خالص به خاک، چه مقدار از این کود مورد نیاز است؟",options:["الف) ۱۵۰ کیلوگرم","ب) ۲۰۰ کیلوگرم","ج) ۲۵۰ کیلوگرم","د) ۳۰۰ کیلوگرم"],correct:1},
+      {id:30,text:"فسفر معدنی شده از بقایای گیاهی در یک فصل رشد ۱۲ کیلوگرم در هکتار است. اگر این مقدار ۴۰٪ کل فسفر آلی آزاد شده باشد، کل فسفر آلی آزاد شده چقدر است؟",options:["الف) ۲۰ کیلوگرم در هکتار","ب) ۳۰ کیلوگرم در هکتار","ج) ۴۰ کیلوگرم در هکتار","د) ۵۰ کیلوگرم در هکتار"],correct:1}
+    ];
+    const stages=[questions.slice(0,10),questions.slice(10,20),questions.slice(20,30)];
+    function QuizApp(){
+      const [stage,setStage]=React.useState(0);
+      const [questionIndex,setQuestionIndex]=React.useState(0);
+      const [repeatCount,setRepeatCount]=React.useState(0);
+      const [selected,setSelected]=React.useState(null);
+      const [feedback,setFeedback]=React.useState(null);
+      const [showCorrect,setShowCorrect]=React.useState(false);
+      const [scores,setScores]=React.useState([0,0,0]);
+      const [answersCorrect,setAnswersCorrect]=React.useState({});
+      const [showModal,setShowModal]=React.useState(false);
+      const currentStage=stages[stage];
+      const handleSelect=(index)=>{
+        if(feedback==='correct')return;
+        setSelected(index);
+        const q=currentStage[questionIndex];
+        const isCorrect=index===q.correct;
+        setAnswersCorrect(prev=>({...prev,[`${stage}-${questionIndex}-${repeatCount}`]:isCorrect}));
+        if(isCorrect){
+          setFeedback('correct');
+          if(selected===null){
+            setScores(prev=>({...prev,[stage]:prev[stage]+1}));
+          }
+          setTimeout(nextQuestion,1000);
+        }else{
+          setFeedback('incorrect');
+          setShowCorrect(true);
+          setTimeout(() => {
+            setFeedback(null);
+            setShowCorrect(false);
+            setSelected(null);
+          }, 2000);
+        }
+      };
+      const nextQuestion=()=>{
+        setSelected(null);
+        setFeedback(null);
+        setShowCorrect(false);
+        if(repeatCount<2){
+          setRepeatCount(prev=>prev+1);
+        }else if(questionIndex+1<currentStage.length){
+          setQuestionIndex(prev=>prev+1);
+          setRepeatCount(0);
+        }else{
+          setShowModal(true);
+        }
+      };
+      const handleNextStage=()=>{
+        const stageAnswers=Object.keys(answersCorrect)
+          .filter(key=>key.startsWith(`${stage}-`))
+          .map(key=>answersCorrect[key]);
+        const hasIncorrect=stageAnswers.includes(false)||stageAnswers.length<currentStage.length*3;
+        if(hasIncorrect){
+          setQuestionIndex(0);
+          setRepeatCount(0);
+          setAnswersCorrect(prev=>Object.fromEntries(Object.keys(prev)
+            .filter(key=>!key.startsWith(`${stage}-`))
+            .map(key=>[key,prev[key]])));
+        }else if(stage<2){
+          setStage(prev=>prev+1);
+          setQuestionIndex(0);
+          setRepeatCount(0);
+        }else{
+          setStage(0);
+          setQuestionIndex(0);
+          setRepeatCount(0);
+          setScores([0,0,0]);
+          setAnswersCorrect({});
+        }
+        setShowModal(false);
+      };
+      const progress=((questionIndex*3+repeatCount+1)/(currentStage.length*3))*100;
+      return (
+        <div class="max-w-2xl mx-auto bg-white shadow-2xl rounded-xl p-8 question-card">
+          <h1 class="text-3xl font-bold text-emerald-800 text-center mb-6">آزمون فسفر در خاک - مرحله {stage+1}</h1>
+          <div class="w-full bg-gray-200 rounded-full h-3 mb-6 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-500 to-amber-500 h-3 rounded-full progress-bar" style={{width:`${progress}%`}}></div>
+          </div>
+          <p class="text-center text-gray-600 mb-4 font-medium">سوال {questionIndex+1} از {currentStage.length} (تکرار {repeatCount+1} از 3)</p>
+          <p class="font-semibold text-xl text-gray-800 mb-8">{currentStage[questionIndex].text}</p>
+          <div class="space-y-4">
+            {currentStage[questionIndex].options.map((opt,i)=>(
+              <button
+                key={i}
+                onClick={()=>handleSelect(i)}
+                class={`w-full p-4 text-lg font-medium rounded-xl border shadow-md btn text-right ${showCorrect&&i===currentStage[questionIndex].correct?'bg-emerald-200 text-emerald-800':selected===i&&feedback==='incorrect'?'bg-rose-200 text-rose-800':feedback==='correct'&&i===currentStage[questionIndex].correct?'bg-emerald-200 text-emerald-800':'bg-blue-200 hover:bg-blue-300 text-blue-800'} ${feedback==='correct'?'cursor-not-allowed opacity-60':''}`}
+                disabled={feedback==='correct'}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+          {feedback==='incorrect'&&(
+            <p class="text-rose-600 mt-6 text-center flex items-center justify-center font-medium">
+              <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              اشتباه! دوباره امتحان کنید.
+            </p>
+          )}
+          {feedback==='correct'&&(
+            <p class="text-emerald-600 mt-6 text-center flex items-center justify-center font-medium">
+              <svg class="w-6 h-6 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              درست! به تکرار یا سوال بعدی می‌رویم.
+            </p>
+          )}
+          {showModal&&(
+            <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center modal modal-visible">
+              <div class="bg-white rounded-xl p-8 max-w-sm w-full text-center shadow-2xl">
+                <h2 class="text-2xl font-bold text-emerald-700 mb-6">نتایج مرحله {stage+1}</h2>
+                <p class="text-lg text-gray-600 mb-4">نمره: {scores[stage]} از {currentStage.length*3}</p>
+                <p class="text-lg text-gray-600 mb-4">کل نمره: {Object.values(scores).reduce((a,b)=>a+b,0)} از {(stage+1)*10+(stage===2?5:0)}</p>
+                {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length*3&&(
+                  <p class="text-rose-600 mb-6 font-medium">برخی سوالات اشتباه بودند، مرحله تکرار می‌شود.</p>
+                )}
+                <button
+                  onClick={handleNextStage}
+                  class="bg-gradient-to-r from-emerald-600 to-amber-600 text-white px-6 py-3 rounded-xl hover:from-emerald-700 hover:to-amber-700 btn shadow-md"
+                >
+                  {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length*3?'تکرار مرحله':stage<2?'مرحله بعدی':'شروع مجدد'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    ReactDOM.render(<QuizApp/>,document.getElementById('root'));
+  </script>
+</body>
+</html>

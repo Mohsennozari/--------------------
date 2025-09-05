@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>باکس‌های حفظی تشخیص فسفر و آرسنیک</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card { transition: transform 0.3s, box-shadow 0.3s; }
+    .card:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); }
+    .fade-in { opacity: 0; animation: fadeIn 1s forwards; }
+    .water-container {
+      position: relative;
+      height: 150px;
+      border: 2px solid #000;
+      border-radius: 0 0 10px 10px;
+      overflow: hidden;
+    }
+    .water {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      transition: height 30s linear;
+    }
+    .water.depleting { height: 0 !important; }
+    .hidden { display: none; }
+    @keyframes fadeIn { to { opacity: 1; } }
+  </style>
+</head>
+<body dir="rtl" class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center text-blue-800 mb-8">باکس‌های حفظی تشخیص فسفر و آرسنیک در شیمی آلی</h1>
+
+    <!-- باکس‌های حفظی -->
+    <div id="boxes" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8"></div>
+
+    <!-- یادداشت‌برداری -->
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">یادداشت‌های شخصی</h2>
+      <textarea id="notes" class="w-full h-24 p-2 border rounded" placeholder="نکات مهم خودت رو اینجا بنویس..."></textarea>
+      <button onclick="saveNotes()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">ذخیره یادداشت</button>
+    </div>
+  </div>
+
+  <script>
+    const boxes = [
+      {
+        title: "نکته ۱: هدف آزمایش",
+        color: "bg-blue-300",
+        content: "هدف آزمایش Lassaigne’s test تشخیص فسفر (P) و آرسنیک (As) در ترکیبات آلی است.",
+        waterColor: "bg-blue-500"
+      },
+      {
+        title: "نکته ۲: اهمیت فسفر",
+        color: "bg-green-300",
+        content: "فسفر در DNA، ATP و فسفولیپیدها نقش کلیدی دارد.",
+        waterColor: "bg-green-500"
+      },
+      {
+        title: "نکته ۳: اهمیت آرسنیک",
+        color: "bg-blue-300",
+        content: "آرسنیک سمی است و می‌تواند جایگزین فسفر در واکنش‌های بیوشیمیایی شود.",
+        waterColor: "bg-blue-500"
+      },
+      {
+        title: "نکته ۴: نقش سدیم فلزی",
+        color: "bg-purple-300",
+        content: "سدیم فلزی برای تبدیل P و As به نمک‌های یونی (Na₃PO₄ و Na₃AsO₃) استفاده می‌شود.",
+        waterColor: "bg-purple-500"
+      },
+      {
+        title: "نکته ۵: تست فسفر",
+        color: "bg-green-300",
+        content: "تست فسفر: رسوب زرد با آمونیوم مولیبدات در محیط قلیایی تشکیل می‌شود.",
+        waterColor: "bg-green-500"
+      },
+      {
+        title: "نکته ۶: تست آرسنیک",
+        color: "bg-blue-300",
+        content: "تست آرسنیک: لکه قهوه‌ای-سیاه با AgNO₃ در Gutzeit test تشکیل می‌شود.",
+        waterColor: "bg-blue-500"
+      },
+      {
+        title: "نکته ۷: حذف تداخل",
+        color: "bg-purple-300",
+        content: "HNO₃ برای حذف تداخل‌های S و N در Sodium Fusion Extract جوشانده می‌شود.",
+        waterColor: "bg-purple-500"
+      },
+      {
+        title: "نکته ۸: نکات ایمنی",
+        color: "bg-orange-300",
+        content: "هود، عینک، و دستکش برای محافظت در برابر سدیم و آرسنیک ضروری است.",
+        waterColor: "bg-orange-500"
+      },
+      {
+        title: "نکته ۹: حساسیت تست‌ها",
+        color: "bg-green-300",
+        content: "حساسیت تست فسفر ۰.۰۱% و تست آرسنیک ۰.۰۵% است.",
+        waterColor: "bg-green-500"
+      },
+      {
+        title: "نکته ۱۰: تمایز آرسنیک",
+        color: "bg-blue-300",
+        content: "HgCl₂ برای تمایز لکه آرسنیک از گوگرد (H₂S) استفاده می‌شود.",
+        waterColor: "bg-blue-500"
+      }
+    ];
+
+    function loadBoxes() {
+      const boxesDiv = document.getElementById('boxes');
+      boxesDiv.innerHTML = '';
+      boxes.forEach(box => {
+        const card = document.createElement('div');
+        card.className = `card ${box.color} p-4 rounded-lg cursor-pointer`;
+        card.innerHTML = `
+          <h3 class="text-lg font-semibold mb-2">${box.title}</h3>
+          <p class="mb-2">${box.content}</p>
+          <div class="water-container">
+            <div class="water ${box.waterColor}" style="height: 100%"></div>
+          </div>
+        `;
+        card.onclick = () => {
+          const water = card.querySelector('.water');
+          if (!water.classList.contains('depleting')) {
+            water.classList.add('depleting');
+            setTimeout(() => {
+              card.classList.add('hidden');
+            }, 30000);
+          }
+        };
+        boxesDiv.appendChild(card);
+      });
+    }
+
+    function saveNotes() {
+      const notes = document.getElementById('notes').value;
+      localStorage.setItem('userNotes', notes);
+      alert('یادداشت ذخیره شد!');
+    }
+
+    window.onload = () => {
+      document.getElementById('notes').value = localStorage.getItem('userNotes') || '';
+      loadBoxes();
+      if (!localStorage.getItem('lastVisit')) {
+        localStorage.setItem('lastVisit', new Date());
+      } else {
+        const lastVisit = new Date(localStorage.getItem('lastVisit'));
+        const now = new Date();
+        if ((now - lastVisit) / (1000 * 60 * 60) > 24) {
+          alert('وقت مرور دوباره است!');
+          localStorage.setItem('lastVisit', now);
+        }
+      }
+    };
+  </script>
+</body>
+</html>

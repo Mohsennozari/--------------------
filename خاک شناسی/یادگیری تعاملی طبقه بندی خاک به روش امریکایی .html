@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>یادگیری سیستم طبقه‌بندی خاک USDA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <style>
+    body{font-family:'Vazir',sans-serif;direction:rtl;background:linear-gradient(to bottom right,#e0f2fe,#d1fae5)}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff');font-weight:normal}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Bold.woff') format('woff');font-weight:bold}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Light.woff') format('woff');font-weight:300}
+    .btn{transition:all 0.3s ease}.btn:hover{transform:scale(1.05);filter:brightness(1.1)}
+    .card{transition:transform 0.5s ease;transform-style:preserve-3d}.card-flipped{transform:rotateY(180deg)}
+    .card-front,.card-back{position:absolute;backface-visibility:hidden;width:100%;height:100%}.card-back{transform:rotateY(180deg)}
+    .progress-bar{transition:width 0.6s ease-in-out}
+    .table-container,.card-container{animation:slideIn 0.5s ease-in}
+    .toast{transition:opacity 0.3s ease-in-out}
+    .table-row{transition:background 0.3s ease}
+    @keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <div id="root" class="container mx-auto p-6 min-h-screen flex items-center justify-center"></div>
+  <script type="text/babel">
+    const flashcards=[
+      // ۱۲ رده اصلی
+      {id:1,question:"رده Entisols چیست؟",answer:"خاک‌های جوان، بدون افق توسعه‌یافته، کنار رودخانه‌ها و تپه‌های ماسه‌ای"},
+      {id:2,question:"رده Inceptisols چیست؟",answer:"خاک‌های با افق Cambic (توسعه آغازین)، در مناطق کوهستانی"},
+      {id:3,question:"رده Aridisols چیست؟",answer:"خاک‌های خشک، شور یا گچی، در بیابان‌ها"},
+      {id:4,question:"رده Mollisols چیست؟",answer:"خاک‌های حاصلخیز با افق Mollic (تیره و ضخیم)، در علفزارها"},
+      {id:5,question:"رده Alfisols چیست؟",answer:"خاک‌های نیمه‌حاصلخیز با افق Argillic، زیر جنگل‌های برگ‌ریز"},
+      {id:6,question:"رده Ultisols چیست؟",answer:"خاک‌های هوادیده و اسیدی با افق Argillic، در مناطق گرم و مرطوب"},
+      {id:7,question:"رده Spodosols چیست؟",answer:"خاک‌های اسیدی با افق Spodic (Bhs)، زیر جنگل‌های کاج"},
+      {id:8,question:"رده Oxisols چیست؟",answer:"خاک‌های اکسیدشده با افق Oxic، در مناطق استوایی، قرمز/زرد"},
+      {id:9,question:"رده Gelisols چیست؟",answer:"خاک‌های منجمد با permafrost، در مناطق قطبی"},
+      {id:10,question:"رده Histosols چیست؟",answer:"خاک‌های آلی (>20% ماده آلی)، در تالاب‌ها، اسفنجی"},
+      {id:11,question:"رده Andisols چیست؟",answer:"خاک‌های حاصل از مواد آتشفشانی، با تخلخل بالا، در slopes آتشفشان‌ها"},
+      {id:12,question:"رده Vertisols چیست؟",answer:"خاک‌های با رس‌های فعال و ترک‌خورنده، در دشت‌های رسی"},
+      // افق‌های تشخیصی
+      {id:13,question:"افق Mollic چیست؟",answer:"سطحی تیره، ضخیم، حاصلخیز، مرتبط با Mollisols"},
+      {id:14,question:"افق Ochric چیست؟",answer:"سطحی روشن و نازک، مرتبط با Aridisols و Entisols"},
+      {id:15,question:"افق Argillic چیست؟",answer:"تجمع رس در افق زیرین، مرتبط با Alfisols و Ultisols"},
+      {id:16,question:"افق Spodic چیست؟",answer:"تجمع آهن و مواد آلی، مرتبط با Spodosols"},
+      {id:17,question:"افق Oxic چیست؟",answer:"تجمع اکسیدهای آهن و آلومینیوم، مرتبط با Oxisols"},
+      {id:18,question:"افق Cambic چیست؟",answer:"افق B آغازین، مرتبط با Inceptisols"},
+      {id:19,question:"افق Histic چیست؟",answer:"سطحی آلی و ضخیم، مرتبط با Histosols"},
+      {id:20,question:"افق Calcic چیست؟",answer:"تجمع کربنات کلسیم، مرتبط با Aridisols"},
+      // نکات طلایی
+      {id:21,question:"حاصلخیزترین خاک کدام است؟",answer:"Mollisols (به دلیل افق Mollic)"},
+      {id:22,question:"کم‌توسعه‌یافته‌ترین خاک چیست؟",answer:"Entisols (فاقد افق)"},
+      {id:23,question:"خاک‌های مشکل‌ساز برای سازه کدام‌اند؟",answer:"Vertisols (ترک‌خورنده) و Histosols (فشردگی)"},
+      {id:24,question:"خاک‌های گرمسیری کدام‌اند؟",answer:"Oxisols (قرمز) و Ultisols (اسیدی)"},
+      {id:25,question:"خاک‌های منجمد کدام‌اند؟",answer:"Gelisols (دارای permafrost)"},
+      {id:26,question:"خاک‌های شور کدام‌اند؟",answer:"Aridisols (افق‌های نمکی یا گچی)"}
+    ];
+    const hierarchyTable=[
+      {level:"Order",description:"کلی‌ترین سطح (۱۲ مورد)",example:"Entisols, Mollisols"},
+      {level:"Suborder",description:"بر اساس ویژگی‌های آب و هوایی یا رطوبتی",example:"'Aq' برای آب‌دار (Aquic)"},
+      {level:"Great Group",description:"ویژگی‌های افق‌های تشخیصی",example:"Argiaquolls"},
+      {level:"Subgroup",description:"ترکیبی از ویژگی‌ها",example:"Typic Argiaquolls"},
+      {level:"Family",description:"بر اساس بافت، mineralogy و ...",example:"Fine-loamy, mixed, superactive"},
+      {level:"Series",description:"جزئی‌ترین سطح (محلی)",example:"Cecil series"}
+    ];
+    const ordersTable=[
+      {name:"Entisols",keyword:"جوان",environment:"رودخانه‌ها، تپه‌های ماسه‌ای",horizon:"ندارد",features:"کم‌توسعه‌یافته"},
+      {name:"Inceptisols",keyword:"آغازین",environment:"کوهستان‌ها",horizon:"Cambic",features:"توسعه متوسط"},
+      {name:"Aridisols",keyword:"خشک",environment:"بیابان‌ها",horizon:"Ochric, Calcic",features:"شور یا گچی"},
+      {name:"Mollisols",keyword:"حاصلخیز",environment:"علفزارها (Prairies)",horizon:"Mollic",features:"A تیره و ضخیم"},
+      {name:"Alfisols",keyword:"نیمه‌حاصلخیز",environment:"زیر جنگل‌ها",horizon:"Argillic, Ochric",features:"حاصلخیزتر از Ultisols"},
+      {name:"Ultisols",keyword:"فرسوده",environment:"آب و هوای مرطوب",horizon:"Argillic",features:"اسیدی، حاصلخیزی کم"},
+      {name:"Spodosols",keyword:"اسیدی (کاج)",environment:"زیر جنگل کاج",horizon:"Spodic",features:"افق Bhs (قهوه‌ای-قرمز)"},
+      {name:"Oxisols",keyword:"اکسید شده",environment:"گرمسیری",horizon:"Oxic",features:"قرمز/زرد، حاصلخیزی کم"},
+      {name:"Gelisols",keyword:"یخ‌زده",environment:"قطبی",horizon:"Permafrost",features:"منجمد"},
+      {name:"Histosols",keyword:"آلی",environment:"تالاب‌ها",horizon:"Histic",features:"اسفنجی، ماده آلی بالا"},
+      {name:"Andisols",keyword:"آتشفشانی",environment:"slopes آتشفشان‌ها",horizon:"Andic",features:"تخلخل بالا"},
+      {name:"Vertisols",keyword:"چرخان",environment:"دشت‌های رسی",horizon:"-",features:"ترک‌خورنده، رس‌های فعال"}
+    ];
+    const horizonsTable=[
+      {horizon:"Mollic",description:"سطحی تیره، ضخیم، حاصلخیز",orders:"Mollisols"},
+      {horizon:"Ochric",description:"سطحی روشن، نازک",orders:"Aridisols, Entisols"},
+      {horizon:"Argillic",description:"تجمع رس",orders:"Alfisols, Ultisols"},
+      {horizon:"Spodic",description:"تجمع آهن و مواد آلی",orders:"Spodosols"},
+      {horizon:"Oxic",description:"تجمع اکسیدها",orders:"Oxisols"},
+      {horizon:"Cambic",description:"افق B آغازین",orders:"Inceptisols"},
+      {horizon:"Histic",description:"آلی",orders:"Histosols"},
+      {horizon:"Calcic",description:"تجمع کربنات کلسیم",orders:"Aridisols"}
+    ];
+    const mnemonic="هیچ دانشمند عالی‌ای، خاک ورتیسول و اکسیسول را در افیسول آرندیپت اینسپتیوسول انتیسول نگران نمی‌شود و برای مولیسول اولتیسول هیستوسول اسپادوسول جلیسول می‌گذارد.";
+    function App(){
+      const [mode,setMode]=React.useState('flashcards'); // 'flashcards', 'hierarchy', 'orders', 'horizons', 'mnemonic'
+      const [currentFlashcardIndex,setCurrentFlashcardIndex]=React.useState(0);
+      const [isFlipped,setIsFlipped]=React.useState(false);
+      const [usedFlashcardIndices,setUsedFlashcardIndices]=React.useState([]);
+      const [showToast,setShowToast]=React.useState(false);
+      const [filter,setFilter]=React.useState('');
+      const handleFlip=()=>{
+        setIsFlipped(!isFlipped);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 1000);
+      };
+      const handleNextFlashcard=()=>{
+        let nextIndex;
+        if(usedFlashcardIndices.length===flashcards.length){
+          setUsedFlashcardIndices([]);
+        }
+        do{
+          nextIndex=Math.floor(Math.random()*flashcards.length);
+        }while(usedFlashcardIndices.includes(nextIndex));
+        setUsedFlashcardIndices([...usedFlashcardIndices,nextIndex]);
+        setCurrentFlashcardIndex(nextIndex);
+        setIsFlipped(false);
+      };
+      const switchMode=(newMode)=>{
+        setMode(newMode);
+        setCurrentFlashcardIndex(0);
+        setIsFlipped(false);
+        setUsedFlashcardIndices([]);
+        setShowToast(false);
+        setFilter('');
+      };
+      const filteredHierarchyTable=hierarchyTable.filter(row=>
+        row.level.toLowerCase().includes(filter.toLowerCase())||
+        row.description.toLowerCase().includes(filter.toLowerCase())||
+        row.example.toLowerCase().includes(filter.toLowerCase())
+      );
+      const filteredOrdersTable=ordersTable.filter(row=>
+        row.name.toLowerCase().includes(filter.toLowerCase())||
+        row.keyword.toLowerCase().includes(filter.toLowerCase())||
+        row.environment.toLowerCase().includes(filter.toLowerCase())||
+        row.horizon.toLowerCase().includes(filter.toLowerCase())||
+        row.features.toLowerCase().includes(filter.toLowerCase())
+      );
+      const filteredHorizonsTable=horizonsTable.filter(row=>
+        row.horizon.toLowerCase().includes(filter.toLowerCase())||
+        row.description.toLowerCase().includes(filter.toLowerCase())||
+        row.orders.toLowerCase().includes(filter.toLowerCase())
+      );
+      const flashcardProgress=(usedFlashcardIndices.length/flashcards.length)*100;
+      return (
+        <div class="max-w-4xl mx-auto bg-white shadow-2xl rounded-2xl p-8">
+          <h1 class="text-3xl font-bold text-emerald-600 text-center mb-6">یادگیری سیستم طبقه‌بندی خاک USDA</h1>
+          <div class="flex flex-wrap justify-center gap-4 mb-6">
+            {['flashcards','hierarchy','orders','horizons','mnemonic'].map(m=>(
+              <button
+                key={m}
+                onClick={()=>switchMode(m)}
+                class={`px-6 py-3 rounded-xl shadow-lg btn ${mode===m?'bg-emerald-600 text-white':'bg-gray-200 text-gray-800'}`}
+              >
+                {m==='flashcards'?'فلش‌کارت‌ها':m==='hierarchy'?'سلسله مراتب':m==='orders'?'رده‌های اصلی':m==='horizons'?'افق‌های تشخیصی':'جمله کمکی'}
+              </button>
+            ))}
+          </div>
+          {mode==='flashcards'&&(
+            <div class="card-container">
+              <div class="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden">
+                <div class="bg-gradient-to-r from-emerald-600 to-yellow-400 h-4 rounded-full progress-bar" style={{width:`${flashcardProgress}%`}}></div>
+              </div>
+              <p class="text-center text-gray-600 mb-4 font-medium">کارت {usedFlashcardIndices.length+1} از {flashcards.length}</p>
+              <div class={`relative w-full h-64 bg-white rounded-xl shadow-lg card ${isFlipped?'card-flipped':''}`}>
+                <div class="card-front bg-white rounded-xl flex items-center justify-center p-6 text-center">
+                  <p class="text-xl font-medium text-gray-800">{flashcards[currentFlashcardIndex].question}</p>
+                </div>
+                <div class="card-back bg-emerald-100 rounded-xl flex items-center justify-center p-6 text-center">
+                  <p class="text-xl font-medium text-emerald-800">{flashcards[currentFlashcardIndex].answer}</p>
+                </div>
+              </div>
+              {showToast&&(
+                <div class="toast fixed top-4 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-4 py-2 rounded-xl shadow-lg">
+                  {isFlipped?'پاسخ نمایش داده شد!':'سوال نمایش داده شد!'}
+                </div>
+              )}
+              <div class="flex justify-center mt-6 gap-4">
+                <button
+                  onClick={handleFlip}
+                  class="bg-rose-600 text-white px-6 py-3 rounded-xl hover:bg-rose-700 btn shadow-lg"
+                >
+                  نمایش پاسخ
+                </button>
+                <button
+                  onClick={handleNextFlashcard}
+                  class="bg-gradient-to-r from-emerald-600 to-yellow-400 text-white px-6 py-3 rounded-xl hover:from-emerald-700 hover:to-yellow-500 btn shadow-lg"
+                >
+                  کارت بعدی
+                </button>
+              </div>
+            </div>
+          )}
+          {mode==='hierarchy'&&(
+            <div class="table-container">
+              <h2 class="text-2xl font-bold text-blue-600 mb-4">سلسله مراتب سیستم USDA</h2>
+              <input
+                type="text"
+                value={filter}
+                onChange={e=>setFilter(e.target.value)}
+                placeholder="فیلتر بر اساس سطح، توضیح یا مثال..."
+                class="w-full p-3 mb-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse">
+                  <thead>
+                    <tr class="bg-blue-600 text-white">
+                      <th class="p-3">سطح</th>
+                      <th class="p-3">توضیح</th>
+                      <th class="p-3">مثال</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredHierarchyTable.map(row=>(
+                      <tr key={row.level} class="table-row border-b hover:bg-blue-50">
+                        <td class="p-3">{row.level}</td>
+                        <td class="p-3">{row.description}</td>
+                        <td class="p-3">{row.example}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+          {mode==='orders'&&(
+            <div class="table-container">
+              <h2 class="text-2xl font-bold text-blue-600 mb-4">۱۲ رده اصلی USDA</h2>
+              <input
+                type="text"
+                value={filter}
+                onChange={e=>setFilter(e.target.value)}
+                placeholder="فیلتر بر اساس نام، کلمه کلیدی، محیط، افق یا ویژگی..."
+                class="w-full p-3 mb-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse">
+                  <thead>
+                    <tr class="bg-blue-600 text-white">
+                      <th class="p-3">نام رده</th>
+                      <th class="p-3">کلمه کلیدی</th>
+                      <th class="p-3">محیط تشکیل</th>
+                      <th class="p-3">افق‌های تشخیصی</th>
+                      <th class="p-3">ویژگی‌های مهم</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredOrdersTable.map(row=>(
+                      <tr key={row.name} class="table-row border-b hover:bg-blue-50">
+                        <td class="p-3">{row.name}</td>
+                        <td class="p-3">{row.keyword}</td>
+                        <td class="p-3">{row.environment}</td>
+                        <td class="p-3">{row.horizon}</td>
+                        <td class="p-3">{row.features}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+          {mode==='horizons'&&(
+            <div class="table-container">
+              <h2 class="text-2xl font-bold text-blue-600 mb-4">افق‌های تشخیصی</h2>
+              <input
+                type="text"
+                value={filter}
+                onChange={e=>setFilter(e.target.value)}
+                placeholder="فیلتر بر اساس افق، توضیح یا رده‌ها..."
+                class="w-full p-3 mb-4 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              <div class="overflow-x-auto">
+                <table class="w-full text-right border-collapse">
+                  <thead>
+                    <tr class="bg-blue-600 text-white">
+                      <th class="p-3">نوع افق</th>
+                      <th class="p-3">توضیح</th>
+                      <th class="p-3">رده‌های مرتبط</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredHorizonsTable.map(row=>(
+                      <tr key={row.horizon} class="table-row border-b hover:bg-blue-50">
+                        <td class="p-3">{row.horizon}</td>
+                        <td class="p-3">{row.description}</td>
+                        <td class="p-3">{row.orders}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+          {mode==='mnemonic'&&(
+            <div class="table-container">
+              <h2 class="text-2xl font-bold text-blue-600 mb-4">جمله کمکی برای حفظ ۱۲ رده</h2>
+              <p class="text-lg text-gray-800 mb-6">{mnemonic}</p>
+              <ul class="list-disc pr-6 text-gray-600">
+                <li>هیچ: Histosols</li>
+                <li>دانشمند: Spodosols</li>
+                <li>عالی‌ای: Alfisols</li>
+                <li>خاک: Oxisols</li>
+                <li>ورتیسول: Vertisols</li>
+                <li>و: Andisols</li>
+                <li>اکسیسول: Oxisols</li>
+                <li>را: Aridisols</li>
+                <li>در: Inceptisols</li>
+                <li>افیسول: Alfisols</li>
+                <li>آرندیپت: Entisols</li>
+                <li>اینسپتیوسول: Inceptisols</li>
+                <li>انتیسول: Entisols</li>
+                <li>و برای: Ultisols</li>
+                <li>مولیسول: Mollisols</li>
+                <li>اولتیسول: Ultisols</li>
+                <li>هیستوسول: Histosols</li>
+                <li>اسپادوسول: Spodosols</li>
+                <li>جلیسول: Gelisols</li>
+              </ul>
+            </div>
+          )}
+        </div>
+      );
+    }
+    ReactDOM.render(<App/>,document.getElementById('root'));
+  </script>
+</body>
+</html>

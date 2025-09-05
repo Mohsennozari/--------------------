@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فلش‌کارت‌های شیمی آلی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @font-face {
+            font-family: 'IRANSans';
+            src: url('https://cdn.fontcdn.ir/Font/Persian/IRANSans/IRANSansWeb.woff') format('woff');
+        }
+        body {
+            font-family: 'IRANSans', sans-serif;
+            overflow: hidden;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f3f4f6;
+        }
+        .card {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .card.active {
+            display: flex;
+            opacity: 1;
+        }
+        .progress-bar {
+            height: 6px;
+            background-color: #e5e7eb;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background-color: #2563eb;
+            transition: width 0.3s ease;
+        }
+        .option {
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+        .option:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .correct { background-color: #059669; color: white; }
+        .incorrect { background-color: #dc2626; color: white; }
+        .bg-gradient-1 { background: linear-gradient(135deg, #fef3c7, #f59e0b); }
+        .bg-gradient-2 { background: linear-gradient(135deg, #bfdbfe, #2563eb); }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto max-w-md p-4">
+        <h1 class="text-2xl font-bold text-center text-blue-900 mb-4">فلش‌کارت‌های شیمی آلی</h1>
+        <div class="mb-4">
+            <div class="flex justify-between text-gray-600 text-sm mb-2">
+                <span id="card-counter">سوال ۱ از ۱۰</span>
+                <span id="cards-remaining">۹ سوال باقی‌مانده</span>
+            </div>
+            <div class="progress-bar">
+                <div id="progress" class="progress" style="width: 10%"></div>
+            </div>
+        </div>
+        <div id="flashcard-container">
+            <div class="card bg-gradient-1 active border border-blue-200 rounded-lg shadow p-6 flex flex-col min-h-[300px]" data-answer="الف">
+                <h2 class="text-xl font-bold text-blue-900 text-center mb-4">نقطه جوش چیست؟</h2>
+                <div class="space-y-2 w-full">
+                    <p class="option text-base text-gray-800" data-option="الف">الف) دمایی که فشار بخار مایع برابر فشار جو می‌شود</p>
+                    <p class="option text-base text-gray-800" data-option="ب">ب) دمایی که مایع شروع به تبخیر می‌کند</p>
+                    <p class="option text-base text-gray-800" data-option="ج">ج) دمایی که مایع منجمد می‌شود</p>
+                    <p class="option text-base text-gray-800" data-option="د">د) دمایی که فشار بخار صفر می‌شود</p>
+                </div>
+            </div>
+            <div class="card bg-gradient-2 border border-blue-200 rounded-lg shadow p-6 flex flex-col min-h-[300px]" data-answer="ب">
+                <h2 class="text-xl font-bold text-blue-900 text-center mb-4">فشار بخار چیست؟</h2>
+                <div class="space-y-2 w-full">
+                    <p class="option text-base text-gray-800" data-option="الف">الف) فشار اتمسفر روی مایع</p>
+                    <p class="option text-base text-gray-800" data-option="ب">ب) فشار بخار در تعادل با مایع</p>
+                    <p class="option text-base text-gray-800" data-option="ج">ج) فشار مایع در دمای جوش</p>
+                    <p class="option text-base text-gray-800" data-option="د">د) فشار جو در ارتفاعات</p>
+                </div>
+            </div>
+            <div class="card bg-gradient-1 border border-blue-200 rounded-lg shadow p-6 flex flex-col min-h-[300px]" data-answer="الف">
+                <h2 class="text-xl font-bold text-blue-900 text-center mb-4">با افزایش دما، فشار بخار:</h2>
+                <div class="space-y-2 w-full">
+                    <p class="option text-base text-gray-800" data-option="الف">الف) افزایش می‌یابد</p>
+                    <p class="option text-base text-gray-800" data-option="ب">ب) کاهش می‌یابد</p>
+                    <p class="option text-base text-gray-800" data-option="ج">ج) ثابت می‌ماند</p>
+                    <p class="option text-base text-gray-800" data-option="د">د) به صفر می‌رسد</p>
+                </div>
+            </div>
+            <div class="card bg-gradient-2 border border-blue-200 rounded-lg shadow p-6 flex flex-col min-h-[300px]" data-answer="ج">
+                <h2 class="text-xl font-bold text-blue-900 text-center mb-4">تعادل تبخیر و میعان در چه حالتی برقرار است؟</h2>
+                <div class="space-y-2 w-full">
+                    <p class="option text-base text-gray-800" data-option="الف">الف) وقتی تبخیر متوقف شود</p>
+                    <p class="option text-base text-gray-800" data-option="ب">ب) وقتی میعان متوقف شود</p>
+                    <p class="option text-base text-gray-800" data-option="ج">ج) وقتی سرعت تبخیر و میعان برابر باشد</p>
+                    <p class="option text-base text-gray-800" data-option="د">د) وقتی فشار بخار صفر شود</p>
+                </div>
+            </div>
+            <div class="card bg-gradient-1 border border-blue-200 rounded-lg shadow p-6 flex flex-col min-h-[300px]" data-answer="ب">
+                <h2 class="text-xl font-bold text-blue-900 text-center mb-4">نقطه جوش نرمال آب در چه فشاری است؟</h2>
+                <div class="space-y-2 w-full">
+                    <p class="option text-base text-gray-800" data-option="الف">الف) 0.5 اتمسفر</p>
+                    <p class="option text-base text-gray-800" data-option="ب">ب) 1 اتمسفر</p>
+                    <p class="option text-base text-gray-800" data-option="ج">ج) 2 اتمسفر</p>
+                    <p class="option text-base text-gray-800" data-option="د">د) 10 اتمسفر</p>
+                </div>
+            </div>
+            <div class="card bg-gradient-2 border border-blue-200 rounded-lg shadow p-6 flex flex-col min-h-[300px]" data-answer="الف">
+                <h2 class="text-xl font-bold text-blue-900 text-center mb-4">افزایش فشار جو چه تأثیری بر نقطه جوش دارد؟</h2>
+                <div class="space-y-2 w-full">
+                    <p class="option text-base text-gray-800" data-option="الف">الف) افزایش می‌یابد</p>
+                    <p class="option text-base text-gray-800" data-option="ب">ب) کاهش می‌یابد</p>
+                    <p class="option text-base text-gray-800" data-option="ج">ج) ثابت می‌ماند</p>
+                    <p class="option text-base text-gray-800" data-option="د">د) به صفر می‌رسد</p>
+                </div>
+            </div>
+            <div class="card bg-gradient-1 border border-blue-200 rounded-lg shadow p-6 flex flex-col min-h-[300px]" data-answer="ج">
+                <h2 class="text-xl font-bold text-blue-900 text-center mb-4">دما در هنگام جوشیدن مایع خالص:</h2>
+                <div class="space-y-2 w-full">
+                    <p class="option text-base text-gray-800" data-option="الف">الف) افزایش می‌یابد</p>
+                    <p class="option text-base text-gray-800" data-option="ب">ب) کاهش می‌یابد</p>
+                    <p class="option text-base text-gray-800" data-option="ج">ج) ثابت می‌ماند</p>
+                    <p class="option text-base text-gray-800" data-option="د">د) به صفر می‌رسد</p>
+                </div>
+            </div>
+            <div class="card bg-gradient-2 border border-blue-200 rounded-lg shadow p-6 flex flex-col min-h-[300px]" data-answer="الف">
+                <h2 class="text-xl font-bold text-blue-900 text-center mb-4">ناخالصی چه تأثیری بر نقطه جوش دارد؟</h2>
+                <div class="space-y-2 w-full">
+                    <p class="option text-base text-gray-800" data-option="الف">الف) افزایش می‌یابد</p>
+                    <p class="option text-base text-gray-800" data-option="ب">ب) کاهش می‌یابد</p>
+                    <p class="option text-base text-gray-800" data-option="ج">ج) ثابت می‌ماند</p>
+                    <p class="option text-base text-gray-800" data-option="د">د) به صفر می‌رسد</p>
+                </div>
+            </div>
+            <div class="card bg-gradient-1 border border-blue-200 rounded-lg shadow p-6 flex flex-col min-h-[300px]" data-answer="ب">
+                <h2 class="text-xl font-bold text-blue-900 text-center mb-4">هدف اصلی تقطیر چیست؟</h2>
+                <div class="space-y-2 w-full">
+                    <p class="option text-base text-gray-800" data-option="الف">الف) افزایش دمای مایع</p>
+                    <p class="option text-base text-gray-800" data-option="ب">ب) خالص‌سازی مایع</p>
+                    <p class="option text-base text-gray-800" data-option="ج">ج) کاهش فشار بخار</p>
+                    <p class="option text-base text-gray-800" data-option="د">د) تغییر حالت مایع</p>
+                </div>
+            </div>
+            <div class="card bg-gradient-2 border border-blue-200 rounded-lg shadow p-6 flex flex-col min-h-[300px]" data-answer="ج">
+                <h2 class="text-xl font-bold text-blue-900 text-center mb-4">کدام وسیله در تقطیر ساده استفاده می‌شود؟</h2>
+                <div class="space-y-2 w-full">
+                    <p class="option text-base text-gray-800" data-option="الف">الف) میکروسکوپ</p>
+                    <p class="option text-base text-gray-800" data-option="ب">ب) ترازو</p>
+                    <p class="option text-base text-gray-800" data-option="ج">ج) سنگ جوش</p>
+                    <p class="option text-base text-gray-800" data-option="د">د) سانتریفیوژ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const cards = document.querySelectorAll('.card');
+        const totalCards = cards.length;
+        let currentCard = 0;
+
+        function updateProgress() {
+            document.getElementById('progress').style.width = `${((currentCard + 1) / totalCards) * 100}%`;
+            document.getElementById('card-counter').textContent = `سوال ${currentCard + 1} از ${totalCards}`;
+            document.getElementById('cards-remaining').textContent = `${totalCards - currentCard - 1} سوال باقی‌مانده`;
+        }
+
+        function showCard(index) {
+            cards.forEach(c => {
+                c.classList.remove('active');
+                c.style.opacity = '0';
+                c.querySelectorAll('.option').forEach(o => o.classList.remove('correct', 'incorrect'));
+            });
+            cards[index].classList.add('active');
+            cards[index].style.opacity = '1';
+            updateProgress();
+        }
+
+        cards.forEach(card => {
+            card.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', () => {
+                    const correctAnswer = card.getAttribute('data-answer');
+                    const selected = option.getAttribute('data-option');
+                    option.classList.add(selected === correctAnswer ? 'correct' : 'incorrect');
+                    if (selected !== correctAnswer) {
+                        card.querySelector(`[data-option="${correctAnswer}"]`).classList.add('correct');
+                    }
+                    setTimeout(() => {
+                        currentCard = (currentCard + 1) % totalCards;
+                        showCard(currentCard);
+                    }, 800);
+                });
+            });
+        });
+
+        showCard(currentCard);
+    </script>
+</body>
+</html>

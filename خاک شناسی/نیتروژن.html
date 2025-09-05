@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>آزمون نیتروژن</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <style>
+    body{font-family:'Vazir',sans-serif;direction:rtl;background:linear-gradient(to bottom right,#e0f2fe,#d1fae5)}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff');font-weight:normal}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Bold.woff') format('woff');font-weight:bold}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Light.woff') format('woff');font-weight:300}
+    .btn{transition:all 0.3s ease}.btn:hover{transform:scale(1.05);filter:brightness(1.1)}
+    .modal{transition:all 0.4s ease}.modal-hidden{opacity:0;transform:scale(0.9)}.modal-visible{opacity:1;transform:scale(1)}
+    .progress-bar{transition:width 0.6s ease-in-out}
+    .question-card{animation:slideIn 0.5s ease-in}
+    @keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <div id="root" class="container mx-auto p-6 min-h-screen flex items-center justify-center"></div>
+  <script type="text/babel">
+    const questions=[
+      {id:1,text:"کدام فرآیند نیتروژن را به گازهای N₂ و N₂O تبدیل می‌کند؟",options:["الف) نیتریفیکاسیون","ب) دنیتریفیکاسیون","ج) تثبیت نیتروژن","د) آمونیفیکاسیون"],correct:1},
+      {id:2,text:"کدام گاز در اثر دنیتریفیکاسیون تولید می‌شود و به لایه اوزون آسیب می‌زند؟",options:["الف) NH₃","ب) N₂O","ج) NO","د) CO₂"],correct:1},
+      {id:3,text:"کدام باکتری در تثبیت همزیستی نیتروژن با گیاهان لگوم نقش دارد؟",options:["الف) Rhizobium","ب) Nitrosomonas","ج) Clostridium","د) Azotobacter"],correct:0},
+      {id:4,text:"آنزیم کلیدی در تثبیت بیولوژیکی نیتروژن چیست؟",options:["الف) نیترات ردوکتاز","ب) نیتروژناز","ج) اوره‌آز","د) دآمیناز"],correct:1},
+      {id:5,text:"کدام شرایط برای دنیتریفیکاسیون مطلوب است؟",options:["الف) pH بالا و اکسیژن زیاد","ب) pH پایین و اکسیژن کم","ج) دمای پایین و رطوبت کم","د) دمای ۲۵-۳۵ درجه و اکسیژن کمتر از ۱۰٪"],correct:3},
+      {id:6,text:"فرآیند Anammox چیست؟",options:["الف) اکسیداسیون هوازی آمونیوم","ب) احیای نیترات به نیتریت","ج) اکسیداسیون بی‌هوازی آمونیوم با استفاده از نیتریت","د) تثبیت نیتروژن توسط سیانوباکتری‌ها"],correct:2},
+      {id:7,text:"کدام عنصر برای عملکرد آنزیم نیتروژناز ضروری است؟",options:["الف) کلسیم","ب) آهن","ج) پتاسیم","د) بور"],correct:1},
+      {id:8,text:"چه عاملی باعث کاهش تثبیت بیولوژیکی نیتروژن در لگوم‌ها می‌شود؟",options:["الف) کمبود آب","ب) مقدار بالای نیتروژن معدنی در خاک","ج) pH پایین","د) دمای بالا"],correct:1},
+      {id:9,text:"کدام گاز در تشکیل باران اسیدی نقش دارد؟",options:["الف) N₂","ب) N₂O","ج) NO","د) NH₃"],correct:2},
+      {id:10,text:"در فرآیند کودنیتریفیکاسیون (co-denitrification) از چه ترکیبی علاوه بر نیتریت استفاده می‌شود؟",options:["الف) نیترات","ب) آمونیوم","ج) اوره","د) سولفات"],correct:1},
+      {id:11,text:"کدام باکتری در فرآیند Anammox نقش دارد؟",options:["الف) Nitrosomonas","ب) Planctomycetes","ج) Rhizobium","د) Azotobacter"],correct:1},
+      {id:12,text:"لگه‌موگلوبین در گره‌های ریشه چه نقشی دارد؟",options:["الف) انتقال نیتروژن","ب) محافظت از نیتروژناز در برابر اکسیژن","ج) جذب فسفر","د) تولید آمونیاک"],correct:1},
+      {id:13,text:"کدام گیاه توانایی تثبیت نیتروژن به صورت همزیستی با Frankia را دارد؟",options:["الف) گندم","ب) ذرت","ج) توسکا","د) برنج"],correct:2},
+      {id:14,text:"در خاک‌های غرقاب شده، کدام فرم نیتروژن در برابر دنیتریفیکاسیون مقاوم است؟",options:["الف) نیترات","ب) نیتریت","ج) آمونیوم","د) نیتروژن آلی"],correct:2},
+      {id:15,text:"کدام عامل می‌تواند باعث کاهش دنیتریفیکاسیون در خاک شود؟",options:["الف) افزایش مواد آلی","ب) pH کمتر از ۵","ج) دمای ۳۰ درجه","د) رطوبت بالا"],correct:1},
+      {id:16,text:"اگر در یک هکتار زمین ۵۰ کیلوگرم نیتروژن به صورت کود اضافه شود و ۲۰٪ آن از طریق دنیتریفیکاسیون از دست برود، مقدار نیتروژن از دست رفته چقدر است؟",options:["الف) ۵ کیلوگرم","ب) ۱۰ کیلوگرم","ج) ۱۵ کیلوگرم","د) ۲۰ کیلوگرم"],correct:1},
+      {id:17,text:"اگر pH خاک از ۶ به ۴ کاهش یابد، غلظت یون H⁺ چند برابر شده است؟",options:["الف) ۲ برابر","ب) ۱۰ برابر","ج) ۱۰۰ برابر","د) ۱۰۰۰ برابر"],correct:2},
+      {id:18,text:"اگر یک لگوم در هر هکتار ۱۵۰ کیلوگرم نیتروژن تثبیت کند و ۳۰٪ آن مورد استفاده گیاه قرار گیرد، چه مقدار نیتروژن قابل استفاده است؟",options:["الف) ۴۵ کیلوگرم","ب) ۵۰ کیلوگرم","ج) ۱۰۵ کیلوگرم","د) ۱۵۰ کیلوگرم"],correct:0},
+      {id:19,text:"اگر میزان تبخیر آمونیاک از کود اوره ۲۵٪ باشد و ۸۰ کیلوگرم اوره استفاده شود، چه مقدار نیتروژن به صورت NH₃ از دست می‌رود؟ (جرم مولی اوره = ۶۰، نیتروژن در اوره = ۴۶.۷٪)",options:["الف) ۹.۳۴ کیلوگرم","ب) ۱۸.۶۸ کیلوگرم","ج) ۲۰ کیلوگرم","د) ۲۵ کیلوگرم"],correct:1},
+      {id:20,text:"اگر در یک خاک ۱۰۰ کیلوگرم در هکتار نیترات وجود داشته باشد و ۴۰٪ آن طی یک بارندگی شدید شسته شود، مقدار نیترات شسته شده چقدر است؟",options:["الف) ۲۰ کیلوگرم","ب) ۴۰ کیلوگرم","ج) ۶۰ کیلوگرم","د) ۸۰ کیلوگرم"],correct:1}
+    ];
+    const stages=[questions.slice(0,7),questions.slice(7,14),questions.slice(14,20)];
+    function QuizApp(){
+      const [stage,setStage]=React.useState(0);
+      const [questionIndex,setQuestionIndex]=React.useState(0);
+      const [repeatCount,setRepeatCount]=React.useState(0);
+      const [selected,setSelected]=React.useState(null);
+      const [feedback,setFeedback]=React.useState(null);
+      const [showCorrect,setShowCorrect]=React.useState(false);
+      const [scores,setScores]=React.useState([0,0,0]);
+      const [answersCorrect,setAnswersCorrect]=React.useState({});
+      const [showModal,setShowModal]=React.useState(false);
+      const currentStage=stages[stage];
+      const handleSelect=(index)=>{
+        if(feedback==='correct')return;
+        setSelected(index);
+        const q=currentStage[questionIndex];
+        const isCorrect=index===q.correct;
+        setAnswersCorrect(prev=>({...prev,[`${stage}-${questionIndex}-${repeatCount}`]:isCorrect}));
+        if(isCorrect){
+          setFeedback('correct');
+          if(selected===null){
+            setScores(prev=>({...prev,[stage]:prev[stage]+1}));
+          }
+          setTimeout(nextQuestion,1000);
+        }else{
+          setFeedback('incorrect');
+          setShowCorrect(true);
+          setTimeout(() => {
+            setFeedback(null);
+            setShowCorrect(false);
+            setSelected(null);
+          }, 2000);
+        }
+      };
+      const nextQuestion=()=>{
+        setSelected(null);
+        setFeedback(null);
+        setShowCorrect(false);
+        if(repeatCount<2){
+          setRepeatCount(prev=>prev+1);
+        }else if(questionIndex+1<currentStage.length){
+          setQuestionIndex(prev=>prev+1);
+          setRepeatCount(0);
+        }else{
+          setShowModal(true);
+        }
+      };
+      const handleNextStage=()=>{
+        const stageAnswers=Object.keys(answersCorrect)
+          .filter(key=>key.startsWith(`${stage}-`))
+          .map(key=>answersCorrect[key]);
+        const hasIncorrect=stageAnswers.includes(false)||stageAnswers.length<currentStage.length*3;
+        if(hasIncorrect){
+          setQuestionIndex(0);
+          setRepeatCount(0);
+          setAnswersCorrect(prev=>Object.fromEntries(Object.keys(prev)
+            .filter(key=>!key.startsWith(`${stage}-`))
+            .map(key=>[key,prev[key]])));
+        }else if(stage<2){
+          setStage(prev=>prev+1);
+          setQuestionIndex(0);
+          setRepeatCount(0);
+        }else{
+          setStage(0);
+          setQuestionIndex(0);
+          setRepeatCount(0);
+          setScores([0,0,0]);
+          setAnswersCorrect({});
+        }
+        setShowModal(false);
+      };
+      const progress=((questionIndex*3+repeatCount+1)/(currentStage.length*3))*100;
+      return (
+        <div class="max-w-3xl mx-auto bg-white shadow-2xl rounded-2xl p-8 question-card">
+          <h1 class="text-3xl font-bold text-emerald-600 text-center mb-6">آزمون نیتروژن - مرحله {stage+1}</h1>
+          <div class="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-600 to-yellow-400 h-4 rounded-full progress-bar" style={{width:`${progress}%`}}></div>
+          </div>
+          <p class="text-center text-gray-600 mb-4 font-medium">سوال {questionIndex+1} از {currentStage.length} (تکرار {repeatCount+1} از ۳)</p>
+          <p class="font-semibold text-xl text-gray-800 mb-8">{currentStage[questionIndex].text}</p>
+          <div class="grid grid-cols-2 gap-4">
+            {currentStage[questionIndex].options.map((opt,i)=>(
+              <button
+                key={i}
+                onClick={()=>handleSelect(i)}
+                class={`w-full p-4 text-lg font-medium rounded-xl shadow-lg btn text-center ${
+                  i===0?'bg-rose-600 hover:bg-rose-700 text-white':
+                  i===1?'bg-emerald-600 hover:bg-emerald-700 text-white':
+                  i===2?'bg-yellow-400 hover:bg-yellow-500 text-gray-800':
+                  'bg-blue-600 hover:bg-blue-700 text-white'
+                } ${showCorrect&&i===currentStage[questionIndex].correct?'bg-emerald-200 text-emerald-800':selected===i&&feedback==='incorrect'?'bg-rose-200 text-rose-800':feedback==='correct'&&i===currentStage[questionIndex].correct?'bg-emerald-200 text-emerald-800':''} ${feedback==='correct'?'cursor-not-allowed opacity-60':''}`}
+                disabled={feedback==='correct'}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+          {feedback==='incorrect'&&(
+            <p class="text-rose-600 mt-6 text-center flex items-center justify-center font-medium">
+              <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              اشتباه! دوباره امتحان کنید.
+            </p>
+          )}
+          {feedback==='correct'&&(
+            <p class="text-emerald-600 mt-6 text-center flex items-center justify-center font-medium">
+              <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              درست! به تکرار یا سوال بعدی می‌رویم.
+            </p>
+          )}
+          {showModal&&(
+            <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center modal modal-visible">
+              <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
+                <h2 class="text-2xl font-bold text-emerald-600 mb-6">نتایج مرحله {stage+1}</h2>
+                <p class="text-lg text-gray-600 mb-4">نمره: {scores[stage]} از {currentStage.length*3}</p>
+                <p class="text-lg text-gray-600 mb-4">کل نمره: {Object.values(scores).reduce((a,b)=>a+b,0)} از {(stage===0?7:stage===1?14:20)*3}</p>
+                {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length*3&&(
+                  <p class="text-rose-600 mb-6 font-medium">برخی سوالات اشتباه بودند، مرحله تکرار می‌شود.</p>
+                )}
+                <button
+                  onClick={handleNextStage}
+                  class="bg-gradient-to-r from-emerald-600 to-yellow-400 text-white px-6 py-3 rounded-xl hover:from-emerald-700 hover:to-yellow-500 btn shadow-lg"
+                >
+                  {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length*3?'تکرار مرحله':stage<2?'مرحله بعدی':'شروع مجدد'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    ReactDOM.render(<QuizApp/>,document.getElementById('root'));
+  </script>
+</body>
+</html>

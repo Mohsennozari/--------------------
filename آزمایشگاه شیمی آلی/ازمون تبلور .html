@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>آزمون تستی آزمایش تبلور</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-white font-vazir text-right flex items-center justify-center min-h-screen">
+  <div class="container mx-auto p-6 max-w-lg">
+    <header class="bg-blue-600 text-white p-4 rounded-lg mb-6 shadow-lg text-center">
+      <h1 class="text-2xl font-bold">آزمون تستی آزمایشگاه شیمی آلی</h1>
+      <p class="text-sm">زمان شروع: 07:24 PM +04، 02/09/2025</p>
+    </header>
+    <div id="examContainer" class="bg-white p-6 rounded-lg shadow-lg text-center">
+      <h2 id="questionNumber" class="text-xl font-semibold mb-4"></h2>
+      <p id="questionText" class="text-lg mb-4"></p>
+      <div id="options" class="space-y-2 mb-4"></div>
+      <div id="feedback" class="text-lg font-bold mb-4"></div>
+      <div id="timer" class="text-lg font-bold text-red-600"></div>
+    </div>
+    <div id="result" class="hidden mt-6 text-center text-xl font-bold text-green-600"></div>
+  </div>
+
+  <script>
+    const questions = [
+      { question: "هدف اصلی آزمایش تبلور چیست؟", options: ["سنتز ترکیبات", "خالص‌سازی ترکیبات", "اندازه‌گیری دما", "تجزیه ترکیبات"], answer: "خالص‌سازی ترکیبات" },
+      { question: "کدام حلال برای استانیلید مناسب است؟", options: ["اتانول", "آب مقطر", "اتیل استات", "بنزن"], answer: "آب مقطر" },
+      { question: "در چه دمایی استانیلید در آب حل می‌شود؟", options: ["دمای اتاق", "آب داغ", "دمای یخچال", "دمای جوش"], answer: "آب داغ" },
+      { question: "ابزار اصلی برای فیلتراسیون چیست؟", options: ["همزن", "قیف و کاغذ صافی", "بشر", "شعله"], answer: "قیف و کاغذ صافی" },
+      { question: "شوک حرارتی برای چه هدفی استفاده می‌شود؟", options: ["حل کردن ترکیب", "شروع تبلور", "خشک کردن کریستال", "گرم کردن محلول"], answer: "شروع تبلور" },
+      { question: "کدام روش برای جمع‌آوری کریستال‌ها استفاده می‌شود؟", options: ["فیلتراسیون خلأ", "تقطیر", "استخراج", "تبخیر"], answer: "فیلتراسیون خلأ" },
+      { question: "ناخالصی‌ها در کدام بخش باقی می‌مانند؟", options: ["کریستال‌ها", "مادرمای حلال", "کاغذ صافی", "هوا"], answer: "مادرمای حلال" },
+      { question: "برای تحریک تبلور از چه تکنیکی استفاده می‌شود؟", options: ["خراش دادن دیواره", "افزودن اسید", "افزودن باز", "گرم کردن بیشتر"], answer: "خراش دادن دیواره" },
+      { question: "دمای مناسب برای خشک کردن کریستال‌ها چیست؟", options: ["دمای بالا", "دمای محیط", "دمای یخچال", "دمای جوش"], answer: "دمای محیط" },
+      { question: "کدام عامل راندمان تبلور را افزایش می‌دهد؟", options: ["حجم زیاد حلال", "حجم کم حلال", "دمای پایین", "عدم فیلتراسیون"], answer: "حجم کم حلال" },
+      { question: "ابزار همزن در چه مرحله‌ای استفاده می‌شود؟", options: ["فیلتراسیون", "حل کردن", "خنک کردن", "خشک کردن"], answer: "حل کردن" },
+      { question: "نقطه ذوب کریستال‌ها چه را نشان می‌دهد؟", options: ["حجم", "خلوص", "رنگ", "وزن"], answer: "خلوص" },
+      { question: "کدام تجهیزات برای گرم کردن استفاده می‌شود؟", options: ["حمام آب", "قیف", "کاغذ صافی", "گیره"], answer: "حمام آب" },
+      { question: "حلال باید با ترکیب اصلی چه باشد؟", options: ["واکنشی", "غیر واکنشی", "اسیدی", "باز"], answer: "غیر واکنشی" },
+      { question: "برای ایمنی چه باید استفاده شود؟", options: ["عینک محافظ", "دستکش پلاستیکی", "هر دو", "هیچ‌کدام"], answer: "عینک محافظ" },
+      { question: "کدام مرحله نیاز به کنترل دما دارد؟", options: ["حل کردن", "خنک کردن", "هر دو", "هیچ‌کدام"], answer: "هر دو" },
+      { question: "کریستال‌های خالص چه ظاهری دارند؟", options: ["کدر", "شفاف", "رنگارنگ", "چروکیده"], answer: "شفاف" },
+      { question: "فیلتراسیون داغ برای چیست؟", options: ["حذف ناخالصی‌ها", "افزودن حلال", "خشک کردن", "گرم کردن"], answer: "حذف ناخالصی‌ها" },
+      { question: "کدام عامل تبلور را کنترل‌نشده می‌کند؟", options: ["دمای بالا", "دمای پایین", "کنترل دما", "فیلتراسیون"], answer: "دمای بالا" },
+      { question: "گزارش‌نویسی شامل چیست؟", options: ["رنگ کریستال‌ها", "شکل کریستال‌ها", "هر دو", "هیچ‌کدام"], answer: "هر دو" },
+      { question: "تکرار تبلور چه تأثیری دارد؟", options: ["کاهش خلوص", "افزایش خلوص", "تغییر رنگ", "تغییر شکل"], answer: "افزایش خلوص" },
+      { question: "حلالیت در دمای بالا باید چگونه باشد؟", options: ["پایین", "بالا", "متوسط", "صفر"], answer: "بالا" },
+      { question: "ابزار قیف بوخنر برای چیست؟", options: ["فیلتراسیون خلأ", "گرم کردن", "حل کردن", "خشک کردن"], answer: "فیلتراسیون خلأ" },
+      { question: "شکل کریستال‌ها به چه بستگی دارد؟", options: ["سرعت خنک کردن", "حجم حلال", "دمای اتاق", "رنگ"], answer: "سرعت خنک کردن" },
+      { question: "دمای جوش حلال باید با چه سازگار باشد؟", options: ["پایداری ترکیب", "رنگ ترکیب", "وزن ترکیب", "شکل ترکیب"], answer: "پایداری ترکیب" },
+      { question: "نقاط جوانه چگونه ایجاد می‌شوند؟", options: ["خراش دادن", "افزودن آب", "گرم کردن", "فیلتراسیون"], answer: "خراش دادن" },
+      { question: "خشک کردن بیش از حد چه می‌کند؟", options: ["بهبود خلوص", "آسیب به کریستال", "افزایش وزن", "تغییر رنگ"], answer: "آسیب به کریستال" },
+      { question: "تجهیزات گیره برای چیست؟", options: ["نگهداری تجهیزات", "فیلتراسیون", "حل کردن", "خشک کردن"], answer: "نگهداری تجهیزات" },
+      { question: "حلال polar برای چه مناسب است؟", options: ["استانیلید", "بنزن", "تولوئن", "اتیل استات"], answer: "استانیلید" },
+      { question: "تایم‌بندی برای چیست؟", options: ["گرم کردن و خنک کردن", "فیلتراسیون", "خشک کردن", "جمع‌آوری"], answer: "گرم کردن و خنک کردن" },
+      { question: "ناخالصی‌ها چگونه جدا می‌شوند؟", options: ["فیلتراسیون", "تبخیر", "گرم کردن", "افزودن اسید"], answer: "فیلتراسیون" },
+      { question: "کریستال‌سازی به چه بستگی دارد؟", options: ["غلظت محلول", "رنگ حلال", "وزن کاغذ", "دمای هوا"], answer: "غلظت محلول" },
+      { question: "ابزار همزن شیشه‌ای چه کاربردی دارد؟", options: ["مخلوط کردن", "فیلتراسیون", "خشک کردن", "گرم کردن"], answer: "مخلوط کردن" },
+      { question: "دمای پایین برای چیست؟", options: ["رسوب دادن", "حل کردن", "فیلتراسیون", "خشک کردن"], answer: "رسوب دادن" },
+      { question: "خلوص اولیه روی چه تأثیر دارد؟", options: ["راندمان", "رنگ", "شکل", "وزن"], answer: "راندمان" },
+      { question: "فیلتراسیون دوم برای چیست؟", options: ["افزایش خلوص", "کاهش خلوص", "تغییر شکل", "افزودن حلال"], answer: "افزایش خلوص" },
+      { question: "ایمنی در کار با چه نیاز است؟", options: ["حلال داغ", "آب سرد", "هوا", "کاغذ"], answer: "حلال داغ" },
+      { question: "شکل کریستال‌ها چه اطلاعاتی می‌دهد؟", options: ["فرآیند تبلور", "وزن ترکیب", "رنگ حلال", "دمای هوا"], answer: "فرآیند تبلور" },
+      { question: "تجهیزات حمام آب برای چیست؟", options: ["گرم کردن", "فیلتراسیون", "خشک کردن", "جمع‌آوری"], answer: "گرم کردن" },
+      { question: "نتیجه نهایی تبلور چیست؟", options: ["کریستال خالص", "محلول کدر", "ناخالصی", "هوا"], answer: "کریستال خالص" }
+    ];
+
+    let currentIndex = 0;
+    let score = 0;
+    let timer;
+    const questionNumber = document.getElementById('questionNumber');
+    const questionText = document.getElementById('questionText');
+    const optionsDiv = document.getElementById('options');
+    const timerDisplay = document.getElementById('timer');
+    const feedbackDiv = document.getElementById('feedback');
+    const resultDiv = document.getElementById('result');
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    shuffle(questions);
+
+    function displayQuestion() {
+      if (currentIndex >= questions.length) {
+        examContainer.classList.add('hidden');
+        resultDiv.textContent = `آزمون پایان یافت! امتیاز شما: ${score} از ${questions.length}`;
+        resultDiv.classList.remove('hidden');
+        return;
+      }
+
+      questionNumber.textContent = `سوال ${currentIndex + 1} از 40`;
+      questionText.textContent = questions[currentIndex].question;
+      optionsDiv.innerHTML = '';
+      feedbackDiv.textContent = '';
+      const options = [...questions[currentIndex].options];
+      shuffle(options);
+      options.forEach(option => {
+        const button = document.createElement('button');
+        button.textContent = option;
+        button.className = 'w-full text-right p-2 bg-gray-200 hover:bg-gray-300 rounded transition duration-200';
+        button.onclick = () => checkAnswer(option, button);
+        optionsDiv.appendChild(button);
+      });
+
+      let timeLeft = 10;
+      timerDisplay.textContent = `زمان باقی‌مانده: ${timeLeft} ثانیه`;
+
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `زمان باقی‌مانده: ${timeLeft} ثانیه`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          feedbackDiv.textContent = 'زمان به پایان رسید! دوباره امتحان کنید.';
+          feedbackDiv.className = 'text-lg font-bold text-red-600 mb-4';
+          setTimeout(displayQuestion, 1000); // نمایش مجدد همان سوال
+        }
+      }, 1000);
+    }
+
+    function checkAnswer(selected, button) {
+      clearInterval(timer);
+      const correctAnswer = questions[currentIndex].answer;
+      if (selected === correctAnswer) {
+        score++;
+        feedbackDiv.textContent = 'درست بود!';
+        feedbackDiv.className = 'text-lg font-bold text-green-600 mb-4';
+        button.className = 'w-full text-right p-2 bg-green-200 rounded transition duration-200';
+        const buttons = optionsDiv.querySelectorAll('button');
+        buttons.forEach(btn => btn.disabled = true);
+        setTimeout(() => {
+          currentIndex++;
+          displayQuestion();
+        }, 1000); // انتقال به سوال بعدی پس از پاسخ درست
+      } else {
+        feedbackDiv.textContent = 'اشتباه بود! دوباره امتحان کنید.';
+        feedbackDiv.className = 'text-lg font-bold text-red-600 mb-4';
+        button.className = 'w-full text-right p-2 bg-red-200 rounded transition duration-200';
+        const buttons = optionsDiv.querySelectorAll('button');
+        buttons.forEach(btn => btn.disabled = true);
+        setTimeout(displayQuestion, 1000); // نمایش مجدد همان سوال
+      }
+    }
+
+    // شروع آزمون
+    displayQuestion();
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazir:wght@400;700&display=swap');
+    body {
+      font-family: 'Vazir', sans-serif;
+    }
+    button:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+    }
+  </style>
+</body>
+</html>

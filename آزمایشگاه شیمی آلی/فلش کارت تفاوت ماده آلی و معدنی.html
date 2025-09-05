@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>فلش‌کارت‌های تفاوت مواد آلی و معدنی</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card { transition: transform 0.3s, box-shadow 0.3s; }
+    .card:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); }
+    .fade-in { opacity: 0; animation: fadeIn 1s forwards; }
+    .slide-in { transform: translateX(100px); animation: slideIn 0.5s forwards; }
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes slideIn { to { transform: translateX(0); } }
+    .draggable { cursor: move; }
+    .dropzone { border: 2px dashed gray; min-height: 40px; }
+    .correct { border-color: green; }
+    .incorrect { border-color: red; }
+  </style>
+</head>
+<body dir="rtl" class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center text-blue-800 mb-8">فلش‌کارت‌های تفاوت مواد آلی و معدنی</h1>
+
+    <!-- بخش ۱: تفاوت‌های مواد آلی و معدنی -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-green-600 mb-4 cursor-pointer" onclick="toggleLesson('lesson1')">بخش ۱: تفاوت‌های مواد آلی و معدنی</h2>
+      <div id="lesson1" class="hidden fade-in mb-4">
+        <p class="text-lg">مواد آلی ترکیباتی هستند که عمدتاً حاوی کربن و هیدروژن‌اند و معمولاً پیوندهای کووالانسی دارند. مواد معدنی، ترکیبات فاقد پیوندهای کربن-هیدروژن و معمولاً شامل پیوندهای یونی یا فلزی‌اند. مواد آلی نقطه ذوب و جوش پایین‌تر، حلالیت بیشتر در حلال‌های آلی و رفتار حرارتی متفاوت دارند.</p>
+      </div>
+      <h3 class="text-xl font-semibold text-green-600 mb-2">فلش‌کارت‌ها</h3>
+      <div id="flashcards1" class="grid grid-cols-2 gap-4 mb-4"></div>
+    </div>
+
+    <!-- بخش ۲: آزمایش‌های شناسایی -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-blue-600 mb-4 cursor-pointer" onclick="toggleLesson('lesson2')">بخش ۲: آزمایش‌های شناسایی تفاوت مواد آلی و معدنی</h2>
+      <div id="lesson2" class="hidden fade-in mb-4">
+        <p class="text-lg">آزمایش سوختن، حرارت دادن، حلالیت و واکنش اسیدی-بازی از آزمایش‌های ساده برای شناسایی تفاوت مواد آلی و معدنی است. مواد آلی هنگام سوختن دود یا بوی خاص تولید می‌کنند و برخی گازها آزاد می‌کنند، اما مواد معدنی معمولاً نمی‌سوزند و در واکنش با اسیدها گاز CO₂ آزاد می‌کنند.</p>
+      </div>
+      <h3 class="text-xl font-semibold text-blue-600 mb-2">فلش‌کارت‌ها</h3>
+      <div id="flashcards2" class="grid grid-cols-2 gap-4 mb-4"></div>
+    </div>
+
+    <!-- بخش ۳: نکات امتحان کتبی -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-purple-600 mb-4 cursor-pointer" onclick="toggleLesson('lesson3')">بخش ۳: نکات مهم برای امتحان کتبی</h2>
+      <div id="lesson3" class="hidden fade-in mb-4">
+        <p class="text-lg">برای امتحان، باید تعریف دقیق ماده آلی (ترکیبات دارای اسکلت کربنی) و ماده معدنی (ترکیبات بدون اسکلت کربنی، اغلب یونی) را بدانید؛ برخی مثال‌های رایج را حفظ کنید؛ روش‌های شناسایی با آزمایش‌های سوختن و حلالیت را بلد باشید و نکات ایمنی در آزمایشگاه را فراموش نکنید.</p>
+      </div>
+      <h3 class="text-xl font-semibold text-purple-600 mb-2">فلش‌کارت‌ها</h3>
+      <div id="flashcards3" class="grid grid-cols-2 gap-4 mb-4"></div>
+    </div>
+
+    <!-- نوار پیشرفت -->
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold text-gray-700 mb-2">پیشرفت یادگیری</h2>
+      <div class="w-full bg-gray-200 rounded">
+        <div id="progress" class="bg-green-500 h-4 rounded" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- یادداشت‌برداری -->
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">یادداشت‌های شخصی</h2>
+      <textarea id="notes" class="w-full h-24 p-2 border rounded" placeholder="نکات مهم خودت رو اینجا بنویس..."></textarea>
+      <button onclick="saveNotes()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">ذخیره یادداشت</button>
+    </div>
+  </div>
+
+  <script>
+    const flashcards = {
+      1: [
+        { question: 'مواد آلی عمدتاً شامل چه عناصری هستند؟', answer: 'کربن، هیدروژن، اکسیژن، نیتروژن' },
+        { question: 'ترکیبات معدنی معمولاً از چه نوع پیوندی تشکیل شده‌اند؟', answer: 'پیوند یونی یا کووالانسی فلزی' },
+        { question: 'نقطه ذوب مواد آلی چگونه است؟', answer: 'معمولاً پایین‌تر از مواد معدنی است' },
+        { question: 'مواد معدنی معمولاً در چه حلالی حل می‌شوند؟', answer: 'در آب' },
+        { question: 'نوع پیوند غالب در مواد آلی چیست؟', answer: 'کووالانسی' },
+        { question: 'مواد آلی در مقایسه با مواد معدنی بیشتر در چه حلالی حل می‌شوند؟', answer: 'حلال‌های آلی مثل اتانول یا بنزن' },
+        { question: 'هنگام حرارت دادن، مواد آلی چه اتفاقی می‌افتد؟', answer: 'تجزیه می‌شوند و گازهایی مثل CO₂ آزاد می‌کنند' },
+        { question: 'مواد معدنی هنگام حرارت دادن معمولاً چه رفتاری دارند؟', answer: 'تغییر فاز یا تغییر رنگ بدون تجزیه' },
+        { question: 'کدام نمونه زیر آلی است؟', answer: 'متان (CH₄)' },
+        { question: 'کدام نمونه زیر معدنی است؟', answer: 'NaCl' }
+      ],
+      2: [
+        { question: 'آزمایش سوختن مواد آلی چه نشانه‌هایی دارد؟', answer: 'دود، بوی سوختگی، شعله و خاکستر کربنی' },
+        { question: 'مواد معدنی هنگام سوختن چه واکنشی نشان می‌دهند؟', answer: 'معمولاً نمی‌سوزند و شعله تولید نمی‌کنند' },
+        { question: 'در آزمایش حرارت دادن مواد معدنی معمولاً چه اتفاقی می‌افتد؟', answer: 'ذوب یا تغییر رنگ بدون تجزیه' },
+        { question: 'آزمایش حلالیت مواد معدنی در چه حلالی انجام می‌شود؟', answer: 'آب' },
+        { question: 'آزمایش حلالیت مواد آلی معمولا در چه حلالی انجام می‌شود؟', answer: 'حلال‌های آلی مانند اتانول یا بنزن' },
+        { question: 'واکنش کربنات‌ها (مثل CaCO₃) با اسید (HCl) چه گازی تولید می‌کند؟', answer: 'گاز CO₂' },
+        { question: 'آیا همه مواد آلی در واکنش با اسیدها گاز تولید می‌کنند؟', answer: 'خیر، فقط گروه‌های عاملی خاص' },
+        { question: 'چرا آزمایش سوختن برای تشخیص مواد کاربردی است؟', answer: 'تولید دود و بوی خاص در مواد آلی' },
+        { question: 'آزمایش حرارت دادن چگونه به تشخیص کمک می‌کند؟', answer: 'تجزیه مواد آلی، پایداری مواد معدنی' },
+        { question: 'واکنش مواد معدنی با اسید چه ویژگی شاخصی دارد؟', answer: 'آزادسازی گاز CO₂ در کربنات‌ها' }
+      ],
+      3: [
+        { question: 'تعریف دقیق ماده آلی چیست؟', answer: 'ترکیباتی که دارای اسکلت کربنی هستند' },
+        { question: 'تعریف ماده معدنی چیست؟', answer: 'ترکیبات فاقد اسکلت کربنی، اغلب یونی' },
+        { question: 'مثال‌هایی از مواد آلی را نام ببرید.', answer: 'متان، اتانول، گلوکز' },
+        { question: 'مثال‌هایی از مواد معدنی را نام ببرید.', answer: 'NaCl، CaCO₃' },
+        { question: 'چگونه می‌توان با آزمایش سوختن مواد آلی را شناسایی کرد؟', answer: 'تولید دود، شعله و بوی خاص' },
+        { question: 'آزمایش حلالیت چگونه به شناسایی کمک می‌کند؟', answer: 'مواد آلی در حلال‌های آلی، معدنی در آب' },
+        { question: 'مهم‌ترین نکته ایمنی در آزمایشگاه شیمی آلی چیست؟', answer: 'استفاده از هود و دستکش' },
+        { question: 'چرا باید جدول مقایسه‌ای از مواد آلی و معدنی تهیه کنیم؟', answer: 'برای مرور سریع تفاوت‌ها' },
+        { question: 'چرا باید چند مثال از مواد را حفظ کنیم؟', answer: 'چون در امتحان سوال می‌شود' },
+        { question: 'در آزمایشگاه چرا باید نکات ایمنی را رعایت کنیم؟', answer: 'جلوگیری از خطرات و حفظ سلامت' }
+      ]
+    };
+
+    let score = 0;
+    let currentMatches = { 1: 0, 2: 0, 3: 0 };
+
+    function toggleLesson(lessonId) {
+      const lesson = document.getElementById(lessonId);
+      lesson.classList.toggle('hidden');
+      lesson.classList.toggle('fade-in');
+    }
+
+    function loadFlashcards(section) {
+      const flashcardsDiv = document.getElementById(`flashcards${section}`);
+      flashcardsDiv.innerHTML = '';
+      const questions = flashcards[section].map(f => ({ ...f, id: Math.random() }));
+      const answers = [...questions].sort(() => Math.random() - 0.5);
+
+      questions.forEach(q => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'card bg-green-100 p-4 rounded-lg draggable';
+        qDiv.draggable = true;
+        qDiv.dataset.id = q.id;
+        qDiv.dataset.question = q.question;
+        qDiv.innerText = q.question;
+        qDiv.ondragstart = dragStart;
+        flashcardsDiv.appendChild(qDiv);
+      });
+
+      answers.forEach(a => {
+        const aDiv = document.createElement('div');
+        aDiv.className = 'card bg-blue-100 p-4 rounded-lg dropzone';
+        aDiv.dataset.id = a.id;
+        aDiv.dataset.answer = a.answer;
+        aDiv.innerText = a.answer;
+        aDiv.ondragover = e => e.preventDefault();
+        aDiv.ondrop = e => drop(e, section);
+        flashcardsDiv.appendChild(aDiv);
+      });
+    }
+
+    function dragStart(e) {
+      e.dataTransfer.setData('text/plain', e.target.dataset.id);
+    }
+
+    function drop(e, section) {
+      e.preventDefault();
+      const questionId = e.dataTransfer.getData('text');
+      const questionDiv = document.querySelector(`[data-id="${questionId}"]`);
+      const answerDiv = e.target;
+      if (questionDiv.dataset.id === answerDiv.dataset.id) {
+        answerDiv.classList.add('correct');
+        answerDiv.classList.remove('dropzone');
+        answerDiv.innerText = `${questionDiv.dataset.question}: ${answerDiv.dataset.answer}`;
+        questionDiv.remove();
+        score += 3.33;
+        currentMatches[section]++;
+        updateProgress();
+        if (currentMatches[section] === flashcards[section].length) {
+          alert(`بخش ${section} تمام شد! امتیاز شما: ${Math.round(score)}`);
+        }
+      } else {
+        answerDiv.classList.add('incorrect');
+        setTimeout(() => answerDiv.classList.remove('incorrect'), 1000);
+      }
+    }
+
+    function updateProgress() {
+      document.getElementById('progress').style.width = `${score}%`;
+    }
+
+    function saveNotes() {
+      const notes = document.getElementById('notes').value;
+      localStorage.setItem('userNotes', notes);
+      alert('یادداشت ذخیره شد!');
+    }
+
+    window.onload = () => {
+      document.getElementById('notes').value = localStorage.getItem('userNotes') || '';
+      loadFlashcards(1);
+      loadFlashcards(2);
+      loadFlashcards(3);
+      if (!localStorage.getItem('lastVisit')) {
+        localStorage.setItem('lastVisit', new Date());
+      } else {
+        const lastVisit = new Date(localStorage.getItem('lastVisit'));
+        const now = new Date();
+        if ((now - lastVisit) / (1000 * 60 * 60) > 24) {
+          alert('وقت مرور دوباره است!');
+          localStorage.setItem('lastVisit', now);
+        }
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>یادگیری تفاوت مواد آلی و معدنی</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card { transition: transform 0.3s, box-shadow 0.3s; }
+    .card:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); }
+    .fade-in { opacity: 0; animation: fadeIn 1s forwards; }
+    .slide-in { transform: translateX(100px); animation: slideIn 0.5s forwards; }
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes slideIn { to { transform: translateX(0); } }
+    .flip-card { perspective: 1000px; }
+    .flip-card-inner { transition: transform 0.6s; transform-style: preserve-3d; }
+    .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+    .flip-card-front, .flip-card-back { backface-visibility: hidden; }
+    .flip-card-back { transform: rotateY(180deg); }
+  </style>
+</head>
+<body dir="rtl" class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center text-blue-800 mb-8">یادگیری تفاوت مواد آلی و معدنی</h1>
+
+    <!-- بخش‌ها -->
+    <!-- بخش ۱: تفاوت‌های مواد آلی و معدنی -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-green-600 mb-4 cursor-pointer" onclick="toggleLesson('lesson1')">بخش ۱: تفاوت‌های مواد آلی و معدنی</h2>
+      <div id="lesson1" class="hidden fade-in mb-4">
+        <p class="text-lg">مواد آلی ترکیباتی هستند که عمدتاً حاوی کربن و هیدروژن‌اند و معمولاً پیوندهای کووالانسی دارند. مواد معدنی، ترکیبات فاقد پیوندهای کربن-هیدروژن و معمولاً شامل پیوندهای یونی یا فلزی‌اند. مواد آلی نقطه ذوب و جوش پایین‌تر، حلالیت بیشتر در حلال‌های آلی و رفتار حرارتی متفاوت دارند.</p>
+      </div>
+      <h3 class="text-xl font-semibold text-green-600 mb-2">فلش‌کارت‌ها</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-green-100 p-4 rounded-lg">مواد آلی عمدتاً از چه عناصری تشکیل شده‌اند؟</div>
+            <div class="flip-card-back bg-green-200 p-4 rounded-lg">کربن، هیدروژن، گاهی اکسیژن و نیتروژن</div>
+          </div>
+        </div>
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-green-100 p-4 rounded-lg">نوع اصلی پیوند در مواد معدنی چیست؟</div>
+            <div class="flip-card-back bg-green-200 p-4 rounded-lg">پیوند یونی یا کووالانسی فلزی</div>
+          </div>
+        </div>
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-green-100 p-4 rounded-lg">نقطه ذوب مواد آلی معمولاً چگونه است؟</div>
+            <div class="flip-card-back bg-green-200 p-4 rounded-lg">پایین‌تر از مواد معدنی و حساس به گرما</div>
+          </div>
+        </div>
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-green-100 p-4 rounded-lg">مواد معدنی غالباً در چه نوع حلالی حل می‌شوند؟</div>
+            <div class="flip-card-back bg-green-200 p-4 rounded-lg">در آب</div>
+          </div>
+        </div>
+      </div>
+      <h3 class="text-xl font-semibold text-green-600 mb-2">کوئیز</h3>
+      <div id="quiz1" class="mb-4">
+        <p id="question1" class="text-lg mb-4"></p>
+        <div id="options1" class="space-y-2"></div>
+        <p id="feedback1" class="mt-4 text-lg"></p>
+        <button onclick="nextQuestion(1)" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">سوال بعدی</button>
+      </div>
+    </div>
+
+    <!-- بخش ۲: آزمایش‌های شناسایی -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-blue-600 mb-4 cursor-pointer" onclick="toggleLesson('lesson2')">بخش ۲: آزمایش‌های شناسایی تفاوت مواد آلی و معدنی</h2>
+      <div id="lesson2" class="hidden fade-in mb-4">
+        <p class="text-lg">آزمایش سوختن، حرارت دادن، حلالیت و واکنش اسیدی-بازی از آزمایش‌های ساده برای شناسایی تفاوت مواد آلی و معدنی است. مواد آلی هنگام سوختن دود یا بوی خاص تولید می‌کنند و برخی گازها آزاد می‌کنند، اما مواد معدنی معمولاً نمی‌سوزند و در واکنش با اسیدها گاز CO₂ آزاد می‌کنند.</p>
+      </div>
+      <h3 class="text-xl font-semibold text-blue-600 mb-2">فلش‌کارت‌ها</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-blue-100 p-4 rounded-lg">چه اتفاقی در آزمایش سوختن مواد آلی رخ می‌دهد؟</div>
+            <div class="flip-card-back bg-blue-200 p-4 rounded-lg">دود، بوی سوختگی و گاهی خاکستر کربنی تولید می‌شود</div>
+          </div>
+        </div>
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-blue-100 p-4 rounded-lg">مواد معدنی در آزمایش حرارت دادن عمدتاً چه رفتاری نشان می‌دهند؟</div>
+            <div class="flip-card-back bg-blue-200 p-4 rounded-lg">ممکن است ذوب شوند یا تغییر رنگ بدهند بدون تجزیه</div>
+          </div>
+        </div>
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-blue-100 p-4 rounded-lg">آزمایش حلالیت مواد معدنی چگونه انجام می‌شود؟</div>
+            <div class="flip-card-back bg-blue-200 p-4 rounded-lg">انحلال در آب تست می‌شود</div>
+          </div>
+        </div>
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-blue-100 p-4 rounded-lg">کدام گاز در واکنش کربنات‌ها با اسید آزاد می‌شود؟</div>
+            <div class="flip-card-back bg-blue-200 p-4 rounded-lg">CO₂</div>
+          </div>
+        </div>
+      </div>
+      <h3 class="text-xl font-semibold text-blue-600 mb-2">کوئیز</h3>
+      <div id="quiz2" class="mb-4">
+        <p id="question2" class="text-lg mb-4"></p>
+        <div id="options2" class="space-y-2"></div>
+        <p id="feedback2" class="mt-4 text-lg"></p>
+        <button onclick="nextQuestion(2)" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">سوال بعدی</button>
+      </div>
+    </div>
+
+    <!-- بخش ۳: نکات امتحان کتبی -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-purple-600 mb-4 cursor-pointer" onclick="toggleLesson('lesson3')">بخش ۳: نکات مهم برای امتحان کتبی</h2>
+      <div id="lesson3" class="hidden fade-in mb-4">
+        <p class="text-lg">برای امتحان، باید تعریف دقیق ماده آلی (ترکیبات دارای اسکلت کربنی) و ماده معدنی (ترکیبات بدون اسکلت کربنی، اغلب یونی) را بدانید؛ برخی مثال‌های رایج را حفظ کنید؛ روش‌های شناسایی با آزمایش‌های سوختن و حلالیت را بلد باشید و نکات ایمنی در آزمایشگاه را فراموش نکنید.</p>
+      </div>
+      <h3 class="text-xl font-semibold text-purple-600 mb-2">فلش‌کارت‌ها</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-purple-100 p-4 rounded-lg">تعریف ماده آلی چیست؟</div>
+            <div class="flip-card-back bg-purple-200 p-4 rounded-lg">ترکیباتی که دارای اسکلت کربنی هستند</div>
+          </div>
+        </div>
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-purple-100 p-4 rounded-lg">یک مثال از ماده معدنی نام ببرید</div>
+            <div class="flip-card-back bg-purple-200 p-4 rounded-lg">NaCl یا CaCO₃</div>
+          </div>
+        </div>
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-purple-100 p-4 rounded-lg">چه آزمایشی برای تمایز مواد آلی و معدنی کاربردی است؟</div>
+            <div class="flip-card-back bg-purple-200 p-4 rounded-lg">آزمایش سوختن و آزمایش حلالیت</div>
+          </div>
+        </div>
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-purple-100 p-4 rounded-lg">یک نکته مهم ایمنی هنگام آزمایشگاه چیست؟</div>
+            <div class="flip-card-back bg-purple-200 p-4 rounded-lg">استفاده از هود برای مواد فرار و دستکش برای مواد شیمیایی</div>
+          </div>
+        </div>
+      </div>
+      <h3 class="text-xl font-semibold text-purple-600 mb-2">کوئیز</h3>
+      <div id="quiz3" class="mb-4">
+        <p id="question3" class="text-lg mb-4"></p>
+        <div id="options3" class="space-y-2"></div>
+        <p id="feedback3" class="mt-4 text-lg"></p>
+        <button onclick="nextQuestion(3)" class="mt-4 bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">سوال بعدی</button>
+      </div>
+    </div>
+
+    <!-- بخش ۴: پیشنهادهای مطالعه -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-orange-600 mb-4 cursor-pointer" onclick="toggleLesson('lesson4')">بخش ۴: پیشنهادهای مطالعه و مرور</h2>
+      <div id="lesson4" class="hidden fade-in mb-4">
+        <p class="text-lg">برای تثبیت یادگیری، کتاب‌های مرجع را بخوانید، جدول مقایسه ای تهیه کنید و نکات کلیدی و مثال‌ها را مرور کنید. استفاده از فلش کارت‌ها و آزمون‌های تستی به یادگیری عمیق‌تر کمک می‌کند.</p>
+      </div>
+      <h3 class="text-xl font-semibold text-orange-600 mb-2">فلش‌کارت‌ها</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-orange-100 p-4 rounded-lg">بهترین منبع برای مطالعه آزمایشگاه شیمی آلی چیست؟</div>
+            <div class="flip-card-back bg-orange-200 p-4 rounded-lg">کتاب آزمایشگاه شیمی آلی مثل وگل و کتاب‌های دانشگاهی</div>
+          </div>
+        </div>
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-orange-100 p-4 rounded-lg">برای مرور سریع تفاوت مواد آلی و معدنی چه کاری مفید است؟</div>
+            <div class="flip-card-back bg-orange-200 p-4 rounded-lg">نوشتن جدول مقایسه‌ای و حفظ آن</div>
+          </div>
+        </div>
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-orange-100 p-4 rounded-lg">چرا ساختن فلش کارت‌ها برای مطالعه مفید است؟</div>
+            <div class="flip-card-back bg-orange-200 p-4 rounded-lg">کمک به مرور سریع و تثبیت آموخته‌ها</div>
+          </div>
+        </div>
+        <div class="flip-card card" onclick="flipCard(this)">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-orange-100 p-4 rounded-lg">یک روش مهم برای یادگیری آزمایش‌ها چیست؟</div>
+            <div class="flip-card-back bg-orange-200 p-4 rounded-lg">مرور آزمایش‌های عملی و مطالعه نکات ایمنی</div>
+          </div>
+        </div>
+      </div>
+      <h3 class="text-xl font-semibold text-orange-600 mb-2">کوئیز</h3>
+      <div id="quiz4" class="mb-4">
+        <p id="question4" class="text-lg mb-4"></p>
+        <div id="options4" class="space-y-2"></div>
+        <p id="feedback4" class="mt-4 text-lg"></p>
+        <button onclick="nextQuestion(4)" class="mt-4 bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">سوال بعدی</button>
+      </div>
+    </div>
+
+    <!-- نوار پیشرفت -->
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold text-gray-700 mb-2">پیشرفت یادگیری</h2>
+      <div class="w-full bg-gray-200 rounded">
+        <div id="progress" class="bg-green-500 h-4 rounded" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- یادداشت‌برداری -->
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">یادداشت‌های شخصی</h2>
+      <textarea id="notes" class="w-full h-24 p-2 border rounded" placeholder="نکات مهم خودت رو اینجا بنویس..."></textarea>
+      <button onclick="saveNotes()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">ذخیره یادداشت</button>
+    </div>
+  </div>
+
+  <script>
+    // داده‌های کوئیز
+    const quizzes = {
+      1: [
+        { question: 'مواد آلی معمولاً شامل کدام عنصر اصلی هستند؟', options: ['کلسیم', 'کربن', 'سدیم', 'آهن'], answer: 'کربن' },
+        { question: 'کدام گزینه از مواد آلی است؟', options: ['NaCl', 'متان', 'CaO', 'SiO₂'], answer: 'متان' },
+        { question: 'پیوند غالب در مواد آلی چیست؟', options: ['یونی', 'متالیک', 'کووالانسی', 'هیدروژنی'], answer: 'کووالانسی' },
+        { question: 'مواد معدنی چه نوع ساختاری دارند؟', options: ['پیوندهای کووالانسی C-C', 'پیوند یونی یا فلزی', 'رشته‌ای', 'شبکه‌ای هیدروژنی'], answer: 'پیوند یونی یا فلزی' },
+        { question: 'نقطه ذوب مواد معدنی در مقایسه با مواد آلی؟', options: ['پایین‌تر', 'برابر', 'بالاتر', 'نامشخص'], answer: 'بالاتر' },
+        { question: 'مواد آلی در چه حلالی بهتر حل می‌شوند؟', options: ['آب', 'اتانول', 'سولفوریک اسید', 'اسید هیدروکلریک'], answer: 'اتانول' },
+        { question: 'کدام نمونه معدنی است؟', options: ['اتانول', 'گلوکز', 'CaCO₃', 'پروپان'], answer: 'CaCO₃' },
+        { question: 'نقطه جوش مواد آلی نسبت به مواد معدنی:', options: ['بالاتر', 'پایین‌تر', 'مشابه', 'غیرقابل مقایسه'], answer: 'پایین‌تر' },
+        { question: 'رفتار حرارتی مواد معدنی تحت حرارت معمولا:', options: ['تجزیه می‌شوند', 'به گاز تبدیل می‌شوند', 'تغییر فاز می‌دهند بدون تجزیه', 'شعله تولید می‌کنند'], answer: 'تغییر فاز می‌دهند بدون تجزیه' },
+        { question: 'مواد آلی با حرارت دادن چه موادی ممکن است آزاد کنند؟', options: ['CO₂ و H₂O', 'NaCl', 'CaO', 'H₂S'], answer: 'CO₂ و H₂O' }
+      ],
+      2: [
+        { question: 'هنگام سوختن مواد آلی معمولاً چه چیزی تولید می‌شود؟', options: ['شعله بدون دود', 'دود و بوی سوختگی', 'هیچ واکنشی', 'بخار آب'], answer: 'دود و بوی سوختگی' },
+        { question: 'در آزمایش حرارت دادن مواد معدنی چه واکنشی شایع است؟', options: ['تجزیه کامل', 'واکنش انفجاری', 'ذوب یا تغییر رنگ', 'تولید دود زیاد'], answer: 'ذوب یا تغییر رنگ' },
+        { question: 'مواد معدنی در چه حلالی معمولاً حل می‌شوند؟', options: ['اتانول', 'آب', 'بنزن', 'اتر'], answer: 'آب' },
+        { question: 'واکنش کربنات‌ها با اسید منجر به تولید چه گازی می‌شود؟', options: ['H₂', 'CO₂', 'N₂', 'O₂'], answer: 'CO₂' },
+        { question: 'کدام مورد جز آزمایش‌های شناسایی تفاوت مواد آلی و معدنی نیست؟', options: ['آزمایش سوختن', 'آزمایش حلالیت', 'آزمایش اسیدی‌-بازی', 'آزمایش PH خون'], answer: 'آزمایش PH خون' },
+        { question: 'چرا مواد آلی هنگام حرارت دادن تجزیه می‌شوند؟', options: ['پیوندهای ضعیف', 'حلالیت بالا', 'واکنش با آب', 'واکنش با اسید'], answer: 'پیوندهای ضعیف' },
+        { question: 'آزمایش سوختن مواد معدنی معمولا چه نتیجه‌ای دارد؟', options: ['تولید خاکستر کربنی', 'تولید شعله و دود', 'بدون شعله یا سوختن', 'آزادسازی گاز'], answer: 'بدون شعله یا سوختن' },
+        { question: 'گاز CO₂ از کدام آزمایش آزاد می‌شود؟', options: ['حرارت دادن مواد آلی', 'واکنش کربنات‌ها با اسید', 'حل شدن مواد معدنی در اتانول', 'آزمایش سوختن مواد معدنی'], answer: 'واکنش کربنات‌ها با اسید' },
+        { question: 'وقتی نمک (مثل NaCl) حرارت داده شود، معمولاً چه اتفاقی می‌افتد؟', options: ['تجزیه شدن', 'تغییر فاز بدون تجزیه', 'تولید دود', 'جذب آب'], answer: 'تغییر فاز بدون تجزیه' },
+        { question: 'آزمایش حلالیت مواد آلی چگونه انجام می‌شود؟', options: ['حل کردن در آب', 'حل کردن در اتانول یا بنزن', 'واکنش با اسید', 'حرارت دادن'], answer: 'حل کردن در اتانول یا بنزن' }
+      ],
+      3: [
+        { question: 'ماده آلی چیست؟', options: ['ترکیب با اسکلت کربنی', 'ترکیب یونی', 'فلز خالص', 'آب'], answer: 'ترکیب با اسکلت کربنی' },
+        { question: 'کدام یک از موارد زیر نمونه‌ای از ماده آلی است؟', options: ['H₂O', 'گلوکز', 'NaCl', 'CO₂ (گاز دی‌اکسیدکربن)'], answer: 'گلوکز' },
+        { question: 'ماده معدنی عموماً چیست؟', options: ['ترکیبات با اسکلت کربنی', 'ترکیبات یونی', 'ترکیبات هیدروکربنی', 'ترکیبات پروتئینی'], answer: 'ترکیبات یونی' },
+        { question: 'برای شناسایی مواد آلی چه آزمایشی کاربردی است؟', options: ['واکنش با اسید', 'آزمایش سوختن', 'آزمایش PH', 'آزمایش نمک‌زدایی'], answer: 'آزمایش سوختن' },
+        { question: 'نکته ایمنی برای آزمایشگاه شیمی آلی چیست؟', options: ['استفاده از دستکش و هود', 'نادیده گرفتن بخارات', 'ریختن مستقیم مواد روی پوست', 'کار بدون عینک ایمنی'], answer: 'استفاده از دستکش و هود' },
+        { question: 'کدام یک مثال ماده معدنی است؟', options: ['متان', 'اتانول', 'CaCO₃', 'کربنات پروپان'], answer: 'CaCO₃' },
+        { question: 'اسکلت کربنی مربوط به کدام ماده است؟', options: ['ماده معدنی', 'ماده آلی', 'فلزات', 'نفت'], answer: 'ماده آلی' },
+        { question: 'آزمایش حلالیت برای تفکیک مواد از چه طریق انجام می‌شود؟', options: ['حل کردن مواد معدنی در اتانول', 'حل کردن مواد آلی در حلال‌های آلی', 'حرارت دادن مواد معدنی', 'واکنش با اسید'], answer: 'حل کردن مواد آلی در حلال‌های آلی' },
+        { question: 'چه آزمایشی مواد آلی را از معدنی تفکیک می‌کند؟', options: ['حرارت دادن', 'اسید دادن', 'آزمایش سوختن', 'آزمایش PH'], answer: 'آزمایش سوختن' },
+        { question: 'کدام مورد از نکات ایمنی آزمایشگاه است؟', options: ['پوشیدن لباس مناسب', 'خوردن مواد شیمیایی', 'کار بی‌ملاحظه با شعله', 'امتحان کردن مواد با بو کردن مستقیم'], answer: 'پوشیدن لباس مناسب' }
+      ],
+      4: [
+        { question: 'بهترین منبع برای مطالعه آزمایشگاه شیمی آلی کدام است؟', options: ['کتاب درسی وگل', 'رمان', 'روزنامه', 'نقشه جغرافیا'], answer: 'کتاب درسی وگل' },
+        { question: 'جدول مقایسه‌ای چه کمکی به مطالعه می‌کند؟', options: ['گیج کردن', 'خلاصه کردن و مرور راحت', 'جایگزین کتاب', 'تفریح'], answer: 'خلاصه کردن و مرور راحت' },
+        { question: 'چرا فلش کارت‌ها مفیدند؟', options: ['برای سرگرمی', 'کمک به مرور سریع', 'ایجاد سردرگمی', 'نوشتن طولانی'], answer: 'کمک به مرور سریع' },
+        { question: 'مرور نکات ایمنی در آزمایشگاه مهم است چون:', options: ['خطرات کار با مواد را کاهش می‌دهد', 'وقت تلف کردن است', 'فقط برای معلم مهم است', 'بی‌اهمیت است'], answer: 'خطرات کار با مواد را کاهش می‌دهد' },
+        { question: 'مرور آزمایش‌های عملی چه فایده‌ای دارد؟', options: ['افزایش درک و یادگیری کاربردی', 'پیشگیری از یادگیری', 'باعث فراموشی می‌شود', 'هیچ کاربردی ندارد'], answer: 'افزایش درک و یادگیری کاربردی' },
+        { question: 'کدام پیشنهاد برای بهتر شدن مطالعه نیست؟', options: ['مطالعه مکرر و مرور نکات', 'استفاده از منابع معتبر', 'نخواندن مطالب', 'مرور با فلش کارت'], answer: 'نخواندن مطالب' },
+        { question: 'برای مرور سریع چه چیزی توصیه شده؟', options: ['رمان خواندن', 'جدول مقایسه‌ای', 'بازی کردن', 'آشپزی'], answer: 'جدول مقایسه‌ای' },
+        { question: 'فلش کارت باید چگونه باشد؟', options: ['خلاصه و مفید', 'طولانی و مفصل', 'بی‌ربط', 'غیرمرتبط'], answer: 'خلاصه و مفید' },
+        { question: 'نکته ایمنی در آزمایشگاه شامل کدام است؟', options: ['استفاده از هود و دستکش', 'بلند صحبت کردن', 'نادیده گرفتن دستورالعمل‌ها', 'خوراکی خوردن در آزمایشگاه'], answer: 'استفاده از هود و دستکش' },
+        { question: 'بهترین روش یادگیری برای امتحان چیست؟', options: ['مرور درسنامه و تست زدن مکرر', 'نخواندن هیچ چیزی', 'فقط اعتماد به حفظ کردن', 'نگاه کردن به درسنامه فقط یکبار'], answer: 'مرور درسنامه و تست زدن مکرر' }
+      ]
+    };
+
+    let currentQuestions = { 1: 0, 2: 0, 3: 0, 4: 0 };
+    let score = 0;
+
+    // نمایش درسنامه
+    function toggleLesson(lessonId) {
+      const lesson = document.getElementById(lessonId);
+      lesson.classList.toggle('hidden');
+      lesson.classList.toggle('fade-in');
+    }
+
+    // فلش‌کارت‌ها
+    function flipCard(card) {
+      card.classList.toggle('flipped');
+    }
+
+    // کوئیز
+    function loadQuestion(section) {
+      const quizDiv = document.getElementById(`quiz${section}`);
+      const questionDiv = document.getElementById(`question${section}`);
+      const optionsDiv = document.getElementById(`options${section}`);
+      const feedbackDiv = document.getElementById(`feedback${section}`);
+
+      if (currentQuestions[section] < quizzes[section].length) {
+        const q = quizzes[section][currentQuestions[section]];
+        questionDiv.innerText = q.question;
+        optionsDiv.innerHTML = '';
+        q.options.forEach(option => {
+          const button = document.createElement('button');
+          button.innerText = option;
+          button.className = 'bg-gray-200 px-4 py-2 rounded mr-2 hover:bg-gray-300';
+          button.onclick = () => checkAnswer(section, option, q.answer);
+          optionsDiv.appendChild(button);
+        });
+        feedbackDiv.innerText = '';
+      } else {
+        quizDiv.innerHTML = `<p class="text-lg">کوئیز بخش ${section} تمام شد! امتیاز شما: ${score}</p>`;
+      }
+    }
+
+    function checkAnswer(section, userAnswer, correctAnswer) {
+      const feedbackDiv = document.getElementById(`feedback${section}`);
+      if (userAnswer === correctAnswer) {
+        feedbackDiv.innerText = 'درست!';
+        feedbackDiv.className = 'text-green-600 mt-4 text-lg';
+        score += 2.5; // هر سوال 2.5 امتیاز برای 100 در کل
+        updateProgress();
+      } else {
+        feedbackDiv.innerText = 'غلط، دوباره سعی کن!';
+        feedbackDiv.className = 'text-red-600 mt-4 text-lg';
+      }
+    }
+
+    function nextQuestion(section) {
+      currentQuestions[section]++;
+      loadQuestion(section);
+    }
+
+    // نوار پیشرفت
+    function updateProgress() {
+      document.getElementById('progress').style.width = `${score}%`;
+    }
+
+    // یادداشت‌برداری
+    function saveNotes() {
+      const notes = document.getElementById('notes').value;
+      localStorage.setItem('userNotes', notes);
+      alert('یادداشت ذخیره شد!');
+    }
+
+    // بارگذاری اولیه
+    window.onload = () => {
+      document.getElementById('notes').value = localStorage.getItem('userNotes') || '';
+      loadQuestion(1);
+      loadQuestion(2);
+      loadQuestion(3);
+      loadQuestion(4);
+      // یادآور مرور
+      if (!localStorage.getItem('lastVisit')) {
+        localStorage.setItem('lastVisit', new Date());
+      } else {
+        const lastVisit = new Date(localStorage.getItem('lastVisit'));
+        const now = new Date();
+        if ((now - lastVisit) / (1000 * 60 * 60) > 24) {
+          alert('وقت مرور دوباره است!');
+          localStorage.setItem('lastVisit', now);
+        }
+      }
+    };
+  </script>
+</body>
+</html>

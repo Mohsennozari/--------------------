@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی وصل کردنی: برداشت و انبارداری</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background: url('https://images.unsplash.com/photo-1500595046743-ee5a3a111d86?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        .matching-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .matching-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+        .connected {
+            background-color: #d4edda !important;
+        }
+        .fireworks {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            animation: slideIn 0.5s ease-out, slideOut 0.5s ease-in 2s forwards;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); }
+            to { transform: translateX(100%); }
+        }
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('https://cdn.fontcdn.ir/Fonts/Vazirmatn/Vazirmatn-Regular.woff2') format('woff2');
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white bg-opacity-90 rounded-xl shadow-2xl p-6 max-w-5xl w-full border-4 border-yellow-500">
+        <h1 class="text-3xl font-bold text-center text-green-700 mb-6">🌾 بازی وصل کردنی: برداشت و انبارداری 🌾</h1>
+        <div id="progress" class="text-center mb-4 text-lg text-gray-700"></div>
+        <div id="matching-game" class="grid grid-cols-2 gap-6 relative">
+            <div id="column-a" class="space-y-3"></div>
+            <div id="column-b" class="space-y-3"></div>
+        </div>
+        <div class="mt-4 flex justify-center space-x-4">
+            <button id="next-table" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">جدول بعدی</button>
+            <button id="reset-table" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">ریست جدول</button>
+        </div>
+        <canvas id="fireworks" class="fireworks hidden"></canvas>
+        <svg id="lines" class="absolute top-0 left-0 w-full h-full pointer-events-none"></svg>
+        <div id="toast-container"></div>
+    </div>
+
+    <script>
+        const tables = [
+            {
+                type: 'تعریفی',
+                title: 'تعاریف مهم',
+                data: [
+                    { a: 'برداشت محصول', b: 'مرحله جمع‌آوری محصول پس از کاشت و داشت' },
+                    { a: 'شاخص برداشت', b: 'نسبت عملکرد اقتصادی به عملکرد کل (وزن خشک گیاه)' },
+                    { a: 'رسیدگی فیزیولوژیک', b: 'توقف انتقال مواد فتوسنتزی به قسمت اقتصادی گیاه' },
+                    { a: 'رسیدگی تجاری', b: 'مرحله‌ای که محصول بیشترین ارزش اقتصادی را دارد' },
+                    { a: 'برداشت مکانیزه', b: 'برداشت با استفاده از ماشین‌آلات تخصصی مانند کمباین' },
+                    { a: 'برداشت دستی', b: 'برداشت محصول به صورت کارگری با ابزار ساده مانند داس' },
+                    { a: 'کمباین غله‌ریز', b: 'دستگاه مکانیزه برای برداشت غلات دانه‌ریز که درو، کوبش و پاک‌سازی را انجام می‌دهد' },
+                    { a: 'بسته‌بندی علوفه', b: 'فرآیند آماده‌سازی و بسته‌بندی علوفه جهت نگهداری طولانی‌مدت' },
+                    { a: 'انبارداری', b: 'نگهداری محصول برداشت شده در شرایط مناسب تا زمان مصرف' },
+                    { a: 'عوامل فساد محصول', b: 'دما، رطوبت و اکسیژن که سرعت فساد محصول را تعیین می‌کنند' }
+                ],
+                background: 'bg-gradient-to-r from-green-200 to-green-400'
+            },
+            {
+                type: 'مقایسه‌ای',
+                title: 'برداشت دستی vs مکانیزه',
+                data: [
+                    { a: 'وسعت زمین', b: 'مناسب برای مزارع کوچک / مناسب برای مزارع وسیع' },
+                    { a: 'سرعت برداشت', b: 'کند / سریع' },
+                    { a: 'هزینه کارگری', b: 'بالا / کمتر از برداشت دستی' },
+                    { a: 'کیفیت محصول', b: 'بیشتر احتمال آسیب به محصول / کنترل بهتر کیفیت محصول' },
+                    { a: 'تجهیزات مورد نیاز', b: 'داس، خرمن کوب / کمباین، دروگر، دستگاه خردکن' },
+                    { a: 'یکنواختی رسیدگی', b: 'کمتر / بالاتر' },
+                    { a: 'مقاومت به ریزش دانه', b: 'پایین‌تر / با مدیریت قابل افزایش' },
+                    { a: 'نیروی انسانی', b: 'بیش‌تر / کم‌تر' },
+                    { a: 'زمان برداشت', b: 'منعطف‌تر / محدود به زمان کار ماشین' },
+                    { a: 'مصرف انرژی', b: 'کمتر / بیشتر (سوخت و برق)' }
+                ],
+                background: 'bg-gradient-to-r from-blue-200 to-blue-400'
+            },
+            {
+                type: 'مقایسه‌ای',
+                title: 'رسیدگی فیزیولوژیک vs تجاری',
+                data: [
+                    { a: 'تعریف', b: 'توقف افزایش ماده خشک در قسمت اقتصادی / بهترین زمان برداشت برای بازار و مصرف' },
+                    { a: 'زمان وقوع', b: 'پایان انتقال مواد به اندام محصول / قبل یا بعد رسیدگی فیزیولوژیک' },
+                    { a: 'کاربرد', b: 'مشخص کردن زمان برداشت غلات / تعیین زمان برداشت سبزیجات و حبوبات خاص' },
+                    { a: 'ویژگی', b: 'محصول قابل برداشت ولی ارزش بازار پایین‌تر / ارزش اقتصادی بالاتر و کیفیت مناسب‌تر' },
+                    { a: 'مثال', b: 'گندم، جو / لوبیا سبز، میوه‌ها' }
+                ],
+                background: 'bg-gradient-to-r from-yellow-200 to-yellow-400'
+            },
+            {
+                type: 'مقایسه‌ای',
+                title: 'کمباین خودرویی vs کششی',
+                data: [
+                    { a: 'منبع حرکت', b: 'موتور داخلی / تراکتور' },
+                    { a: 'کاربرد', b: 'زمین‌های مسطح و دارای شیب کم / زمین‌های شیب‌دار بالا تا 45 درجه' },
+                    { a: 'کنترل عملکرد', b: 'مستقل / وابسته به تراکتور' },
+                    { a: 'قابلیت تطبیق با شیب', b: 'پایین / بالا با کمک اتصال ولوایی' },
+                    { a: 'هزینه خرید و نگهداری', b: 'بالاتر / کمتر' }
+                ],
+                background: 'bg-gradient-to-r from-gray-200 to-gray-400'
+            },
+            {
+                type: 'مقایسه‌ای',
+                title: 'رطوبت مناسب برداشت محصولات',
+                data: [
+                    { a: 'گندم', b: '14-16 / تشکیل لایه سیاهرنگ در شکاف دانه، زرد شدن ساقه' },
+                    { a: 'چغندرقند', b: '- / زرد شدن برگ‌های وسطی و قهوه‌ای شدن برگ‌های کناری' },
+                    { a: 'ذرت سیلویی', b: '70-75 (رطوبت کل بوته) / دانه‌ها شیری و خمیری' },
+                    { a: 'لوبیا', b: 'حدود 20 (رطوبت بذر) / زرد شدن غلاف‌ها، عدم ریزش دانه' },
+                    { a: 'برنج', b: '14 / رسیدگی کامل دانه‌ها' }
+                ],
+                background: 'bg-gradient-to-r from-brown-200 to-brown-400'
+            },
+            {
+                type: 'مقایسه‌ای',
+                title: 'مراحل برداشت محصولات مختلف',
+                data: [
+                    { a: 'زمان مناسب', b: 'رسیدگی فیزیولوژیک / غلاف‌ها حداقل 75% رسیدگی / اوایل تا اواسط گلدهی / زرد شدن برگ‌ها، ضخیم شدن پوست غده' },
+                    { a: 'علائم', b: 'زرد شدن ساقه، تشکیل لایه سیاه / زرد شدن غلاف‌ها، عدم ریزش / شروع گلدهی، رشد جوانه‌ها / برگ‌های زرد و قهوه‌ای' },
+                    { a: 'روش برداشت', b: 'کمباین یا دست / برداشت دستی یا کمباین / دروگر و بسته‌بندی / بیل، دستگاه غده‌کن' }
+                ],
+                background: 'bg-gradient-to-r from-multicolor-200 to-multicolor-400'
+            },
+            {
+                type: 'مقایسه‌ای',
+                title: 'انواع برداشت چغندرقند',
+                data: [
+                    { a: 'سنتی', b: 'همه مراحل دستی / هزینه کارگری زیاد، طولانی بودن زمان' },
+                    { a: 'نیمه مکانیزه', b: 'استفاده از چغندرکن برای کندن ریشه / بارگیری دستی، هزینه بالا' },
+                    { a: 'مکانیزه کامل', b: 'استفاده از کمباین چغندرقند مثل بیل عریض و زنجیر نقاله / پیچیدگی ماشین‌ها، نیاز به سرمایه زیاد' }
+                ],
+                background: 'bg-gradient-to-r from-red-200 to-red-400'
+            },
+            {
+                type: 'مقایسه‌ای',
+                title: 'عوامل انبارداری',
+                data: [
+                    { a: 'دما', b: 'کاهش فساد با دمای پایین / افزایش فساد با دمای بالا' },
+                    { a: 'رطوبت', b: 'نگهداری بهینه با رطوبت پایین / رشد کپک‌ها با رطوبت بالا' },
+                    { a: 'اکسیژن', b: 'کاهش فعالیت آفات و میکروارگانیسم‌ها / کاهش جوانه‌زنی بذر' }
+                ],
+                background: 'bg-gradient-to-r from-blue-200 to-blue-400'
+            },
+            {
+                type: 'مقایسه‌ای',
+                title: 'انبارهای فلزی vs بتونی',
+                data: [
+                    { a: 'وزن و استحکام', b: 'سبک‌تر اما کمتر مقاوم / سنگین و بادوام‌تر' },
+                    { a: 'عایق حرارتی', b: 'کمتر / بهتر' },
+                    { a: 'هزینه ساخت', b: 'گران‌تر / ارزان‌تر' },
+                    { a: 'نگهداری', b: 'نیاز به حفظ پوشش ضدزنگ / مقاوم‌تر به شرایط جوی' }
+                ],
+                background: 'bg-gradient-to-r from-gray-200 to-gray-400'
+            },
+            {
+                type: 'مقایسه‌ای',
+                title: 'عملیات کمباین',
+                data: [
+                    { a: 'برش و تغذیه', b: 'قطع محصول سرپا و تغذیه به داخل دستگاه' },
+                    { a: 'کوبیدن', b: 'جداکردن دانه از کلش و کاه' },
+                    { a: 'جدا کردن', b: 'تفکیک دانه از خرده کاه و کلش' },
+                    { a: 'تمیز کردن', b: 'زدودن مواد زائد از دانه تمیز' },
+                    { a: 'جابه‌جایی', b: 'انتقال دانه تمیز به مخزن و باقی مانده‌ها به زمین' }
+                ],
+                background: 'bg-gradient-to-r from-yellow-200 to-yellow-400'
+            },
+            {
+                type: 'مقایسه‌ای',
+                title: 'اصول حفظ کیفیت در انبار',
+                data: [
+                    { a: 'کنترل دما', b: 'جلوگیری از افزایش تدریجی دما که موجب فساد می‌شود' },
+                    { a: 'کنترل رطوبت', b: 'جلوگیری از تجمع رطوبت بالا و رشد میکروارگانیسم‌ها' },
+                    { a: 'تهویه مناسب', b: 'جابجایی هوا برای کاهش دما و رطوبت محلی' },
+                    { a: 'عایق‌بندی کف و دیواره', b: 'پیشگیری از نفوذ رطوبت محیط به محصول' },
+                    { a: 'دسترسی آسان', b: 'برای بازدید، تهویه و برداشت محصول به موقع' }
+                ],
+                background: 'bg-gradient-to-r from-green-200 to-green-400'
+            },
+            {
+                type: 'دسته‌بندی',
+                title: 'برداشت محصول بر اساس مصرف',
+                data: [
+                    { a: 'مصرف دانه‌ای', b: 'گندم، جو، برنج، ذرت، لوبیا' },
+                    { a: 'مصرف گل', b: 'زعفران' },
+                    { a: 'مصرف قسمت‌های علفی', b: 'یونجه، شبدر، سبزی‌های برگی و ساقه‌ای' },
+                    { a: 'مصرف اندام زیرزمینی', b: 'چغندرقند، سیب‌زمینی' },
+                    { a: 'مصرف میوه‌ای', b: 'گوجه فرنگی، خیار، هندوانه، درختان میوه' },
+                    { a: 'مصرف ساقه‌ای', b: 'نیشکر، کنف، مارچوبه' },
+                    { a: 'مصرف برگ‌های خاص', b: 'چای، توتون' }
+                ],
+                background: 'bg-gradient-to-r from-multicolor-200 to-multicolor-400'
+            },
+            {
+                type: 'دسته‌بندی',
+                title: 'طبقه‌بندی رسیدگی محصولات',
+                data: [
+                    { a: 'رسیدگی فیزیولوژیک', b: 'توقف رشد وزنی اندام اقتصادی' },
+                    { a: 'رسیدگی تجاری', b: 'زمان رسیدن ارزش اقتصادی بیشتر برای بازار' },
+                    { a: 'رسیدگی تجاری جزئی', b: 'محصول قبل از یا بعد رسیدگی فیزیولوژیک برداشت می‌شود' }
+                ],
+                background: 'bg-gradient-to-r from-yellow-200 to-yellow-400'
+            },
+            {
+                type: 'دسته‌بندی',
+                title: 'روش‌های برداشت محصولات زراعی',
+                data: [
+                    { a: 'برداشت دستی', b: 'فضاهای کوچک، هزینه بیشتر نیروی انسانی' },
+                    { a: 'برداشت نیمه مکانیزه', b: 'ترکیب ماشین و نیروی انسانی، مناسب زمین متوسط' },
+                    { a: 'برداشت مکانیزه', b: 'زمین‌های وسیع، کمبود نیروی انسانی، سرعت بالا' }
+                ],
+                background: 'bg-gradient-to-r from-green-200 to-green-400'
+            },
+            {
+                type: 'دسته‌بندی',
+                title: 'دسته‌بندی کمباین‌ها',
+                data: [
+                    { a: 'کمباین‌های خودرویی', b: 'موتور و چرخ مستقل، مناسب زمین مسطح' },
+                    { a: 'کمباین‌های کششی', b: 'کشیده شده توسط تراکتور، مناسب زمین شیب‌دار' }
+                ],
+                background: 'bg-gradient-to-r from-gray-200 to-gray-400'
+            },
+            {
+                type: 'دسته‌بندی',
+                title: 'گیاهان علوفه‌ای بر اساس زمان برداشت',
+                data: [
+                    { a: 'برداشت زود هنگام', b: 'کیفیت بالا، کمیت کمتر' },
+                    { a: 'برداشت دیر هنگام', b: 'کیفیت پایین‌تر، کمیت بیشتر' },
+                    { a: 'زمان متعادل', b: 'نقطه تعادل بین کیفیت و کمیت' }
+                ],
+                background: 'bg-gradient-to-r from-green-200 to-green-400'
+            },
+            {
+                type: 'دسته‌بندی',
+                title: 'اجزای ماشین‌های برداشت علوفه',
+                data: [
+                    { a: 'دروگر', b: 'بریدن گیاه' },
+                    { a: 'ردیف‌کن', b: 'جمع‌آوری و ردیف کردن علوفه' },
+                    { a: 'بسته‌بند', b: 'آماده‌سازی برای حمل و بسته‌بندی' },
+                    { a: 'خردکن', b: 'خردکردن برای سیلو' }
+                ],
+                background: 'bg-gradient-to-r from-yellow-200 to-yellow-400'
+            },
+            {
+                type: 'دسته‌بندی',
+                title: 'انواع برداشت چغندرقند',
+                data: [
+                    { a: 'سنتی', b: 'عملیات دستی کامل، هزینه زیاد نیروی کار' },
+                    { a: 'نیمه مکانیزه', b: 'کندن ریشه با ماشین، بارگیری دستی' },
+                    { a: 'مکانیزه کامل', b: 'انجام تمام عملیات با کمباین' }
+                ],
+                background: 'bg-gradient-to-r from-red-200 to-red-400'
+            },
+            {
+                type: 'دسته‌بندی',
+                title: 'عوامل مؤثر بر طول دوره انبارداری غلات',
+                data: [
+                    { a: 'دما', b: 'کاهش دما طول دوره انبارداری را افزایش می‌دهد' },
+                    { a: 'رطوبت', b: 'افزایش رطوبت دوره انبارداری را کاهش می‌دهد' },
+                    { a: 'نور و جریان هوا', b: 'قابل کنترل بودن، حفظ کیفیت محصول است' }
+                ],
+                background: 'bg-gradient-to-r from-blue-200 to-blue-400'
+            },
+            {
+                type: 'دسته‌بندی',
+                title: 'طبقه‌بندی علائم رسیدگی غلات',
+                data: [
+                    { a: 'رسیدگی فیزیولوژیک', b: 'زرد شدن ساقه، تشکیل لایه سیاهرنگ در دانه' },
+                    { a: 'رسیدگی تجاری', b: 'رسیدن رطوبت دانه به 14-16 درصد' }
+                ],
+                background: 'bg-gradient-to-r from-yellow-200 to-yellow-400'
+            },
+            {
+                type: 'دسته‌بندی',
+                title: 'اقدامات لازم قبل از برداشت سیب‌زمینی',
+                data: [
+                    { a: 'حذف اندام هوایی', b: '۱۰ روز قبل از برداشت جهت رسیدگی بهتر غده‌ها' },
+                    { a: 'اطمینان از رطوت خاک', b: 'برای جداشدن آسان غده‌ها و کاهش آسیب' }
+                ],
+                background: 'bg-gradient-to-r from-brown-200 to-brown-400'
+            }
+        ];
+
+        let currentTable = 0;
+        let selectedA = null;
+        let connections = [];
+        let completedTables = [];
+        const clickSound = new Audio('https://cdn.pixabay.com/audio/2023/08/08/audio_3f6b7b2c4b.mp3');
+        const fireworksSound = new Audio('https://cdn.pixabay.com/audio/2023/08/08/audio_4e7b2b3c5c.mp3');
+
+        // مدیریت خطای localStorage
+        try {
+            completedTables = JSON.parse(localStorage.getItem('completedTables')) || [];
+        } catch (e) {
+            console.error('خطا در دسترسی به localStorage:', e);
+            completedTables = [];
+        }
+
+        function showToast(message, type) {
+            const toast = `<div class="toast bg-${type === 'error' ? 'red' : 'green'}-500 text-white p-3 rounded-lg shadow-lg">${message}</div>`;
+            $('#toast-container').append(toast);
+            setTimeout(() => $('#toast-container .toast').first().remove(), 2500);
+        }
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[i], array[j]];
+            }
+            return array;
+        }
+
+        function loadTable(index) {
+            if (index >= tables.length) {
+                showToast('تبریک! همه جداول کامل شدند! 🎉', 'success');
+                try {
+                    localStorage.removeItem('completedTables');
+                } catch (e) {
+                    console.error('خطا در حذف localStorage:', e);
+                }
+                currentTable = 0;
+                loadTable(0);
+                return;
+            }
+            const table = tables[index];
+            $('#matching-game').removeClass().addClass(table.background + ' rounded-lg p-4');
+            $('#column-a').empty();
+            $('#column-b').empty();
+            $('#lines').empty();
+            connections = [];
+            const shuffledB = shuffle([...table.data.map(item => item.b)]);
+            table.data.forEach((item, i) => {
+                $('#column-a').append(`<div class="matching-card bg-yellow-100 border-2 border-yellow-500 p-3 rounded-lg cursor-pointer text-sm" data-index="${i}">${item.a}</div>`);
+                $('#column-b').append(`<div class="matching-card bg-green-100 border-2 border-green-500 p-3 rounded-lg cursor-pointer text-sm" data-b="${item.b}">${shuffledB[i]}</div>`);
+            });
+            $('#progress').text(`پازل ${index + 1} از ${tables.length}: ${table.type} - ${table.title}`);
+        }
+
+        function drawLine(x1, y1, x2, y2, id) {
+            const line = `<line id="line-${id}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="blue" stroke-width="2"/>`;
+            $('#lines').append(line);
+        }
+
+        function checkCompletion() {
+            const correctPairs = tables[currentTable].data.map((item, i) => ({ a: i, b: item.b }));
+            const isCorrect = connections.every(conn => {
+                const correct = correctPairs.find(pair => pair.a === conn.a && pair.b === conn.b);
+                return correct;
+            });
+            if (isCorrect && connections.length === tables[currentTable].data.length) {
+                showToast('جفت‌سازی درست! فشفشه‌ها روشن شدند! 🎆', 'success');
+                fireworksSound.play().catch(e => console.error('خطا در پخش صدا:', e));
+                showFireworks();
+                setTimeout(() => {
+                    completedTables.push(currentTable);
+                    try {
+                        localStorage.setItem('completedTables', JSON.stringify(completedTables));
+                    } catch (e) {
+                        console.error('خطا در ذخیره localStorage:', e);
+                    }
+                    currentTable++;
+                    loadTable(currentTable);
+                }, 5000);
+            } else if (connections.length > 0 && !isCorrect) {
+                showToast('جفت‌سازی اشتباه! اتصال حذف شد.', 'error');
+                const lastConn = connections.pop();
+                $(`#line-${lastConn.id}`).remove();
+                $(`.matching-card[data-index="${lastConn.a}"]`).removeClass('connected');
+                $(`.matching-card[data-b="${lastConn.b}"]`).removeClass('connected');
+            }
+        }
+
+        function showFireworks() {
+            const canvas = document.getElementById('fireworks');
+            canvas.classList.remove('hidden');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const particles = [];
+            for (let i = 0; i < 150; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 5 + 2,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    vx: (Math.random() - 0.5) * 12,
+                    vy: (Math.random() - 0.5) * 12
+                });
+            }
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.15;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                });
+                if (Date.now() < startTime + 5000) requestAnimationFrame(animate);
+                else canvas.classList.add('hidden');
+            }
+            const startTime = Date.now();
+            animate();
+        }
+
+        $(document).on('click', '.matching-card', function() {
+            const $this = $(this);
+            if ($this.hasClass('connected')) return;
+            clickSound.play().catch(e => console.error('خطا در پخش صدا:', e));
+            $this.addClass('bg-blue-200');
+            if ($this.parent().attr('id') === 'column-a') {
+                if (selectedA) selectedA.removeClass('bg-blue-200');
+                selectedA = $this;
+            } else if (selectedA) {
+                const aIndex = parseInt(selectedA.data('index'));
+                const bValue = $this.data('b');
+                const connId = connections.length;
+                connections.push({ a: aIndex, b: bValue, id: connId });
+                selectedA.addClass('connected');
+                $this.addClass('connected');
+                const aPos = selectedA.position();
+                const bPos = $this.position();
+                const gamePos = $('#matching-game').position();
+                drawLine(
+                    aPos.left + selectedA.width() + gamePos.left,
+                    aPos.top + selectedA.height() / 2 + gamePos.top,
+                    bPos.left + gamePos.left,
+                    bPos.top + $this.height() / 2 + gamePos.top,
+                    connId
+                );
+                selectedA.removeClass('bg-blue-200');
+                selectedA = null;
+                checkCompletion();
+            }
+        });
+
+        $('#next-table').on('click', () => {
+            currentTable++;
+            loadTable(currentTable);
+        });
+
+        $('#reset-table').on('click', () => {
+            loadTable(currentTable);
+            showToast('جدول بازنشانی شد!', 'success');
+        });
+
+        // شروع با آخرین جدول ناتمام یا اولین جدول
+        currentTable = completedTables.length > 0 ? Math.max(...completedTables) + 1 : 0;
+        loadTable(currentTable);
+    </script>
+</body>
+</html>

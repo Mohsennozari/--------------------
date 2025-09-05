@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>آزمون خاک‌شناسی</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <style>
+    body{font-family:'Vazir',sans-serif;direction:rtl;background:linear-gradient(to bottom,#e7f3e9,#f0f2f5)}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff')}
+    .btn{transition:background-color 0.3s}.modal{transition:opacity 0.3s,transform 0.3s}.modal-hidden{opacity:0;transform:scale(0.9)}.modal-visible{opacity:1;transform:scale(1)}
+  </style>
+</head>
+<body>
+  <div id="root" class="container mx-auto p-4 min-h-screen flex items-center justify-center"></div>
+  <script type="text/babel">
+    const questions=[
+      {id:1,text:"مهم‌ترین موضوع برای درک حاصلخیزی خاک چیست؟",options:["الف) میزان نیتروژن","ب) ظرفیت تبادل کاتیونی (CEC)","ج) درصد مواد آلی","د) pH خاک"],correct:1},
+      {id:2,text:"کدام عنصر از طریق هوا و آب به خاک افزوده می‌شود؟",options:["الف) نیتروژن","ب) کربن","ج) فسفر","د) پتاسیم"],correct:1},
+      {id:3,text:"کمبود کدام عنصر باعث ایجاد لکه‌های قهوه‌ای روی برگ‌ها می‌شود؟",options:["الف) نیتروژن","ب) فسفر","ج) پتاسیم","د) کلسیم"],correct:2},
+      {id:4,text:"فرم قابل جذب فسفر برای گیاه کدام است؟",options:["الف) PO₄³⁻","ب) H₂PO₄⁻","ج) P₂O₅","د) HPO₄²⁻"],correct:1},
+      {id:5,text:"کدام عنصر در ساخت کلروفیل نقش دارد؟",options:["الف) آهن","ب) منیزیم","ج) روی","د) مس"],correct:1},
+      {id:6,text:"در خاک‌های قلیایی، کدام عنصر معمولاً کم‌یاب می‌شود؟",options:["الف) آهن","ب) منگنز","ج) روی","د) همه موارد"],correct:3},
+      {id:7,text:"کدام عنصر در تثبیت نیتروژن نقش دارد؟",options:["الف) مولیبدن","ب) کلر","ج) نیکل","د) برم"],correct:0},
+      {id:8,text:"کود ۱۰-۵-۵ حاوی چه درصدی از نیتروژن است؟",options:["الف) ۵%","ب) ۱۰%","ج) ۱۵%","د) ۲۰%"],correct:1},
+      {id:9,text:"عنصر نیکل برای کدام فرآیند در گیاه ضروری است؟",options:["الف) فتوسنتز","ب) جوانه‌زنی بذر","ج) تثبیت نیتروژن","د) انتقال قند"],correct:1},
+      {id:10,text:"کدام عنصر در گیاه متحرک نیست؟",options:["الف) نیتروژن","ب) پتاسیم","ج) کلسیم","د) منیزیم"],correct:2},
+      {id:11,text:"افزایش pH خاک باعث کاهش جذب کدام عنصر می‌شود؟",options:["الف) مولیبدن","ب) آهن","ج) بور","د) مس"],correct:1},
+      {id:12,text:"کدام کود برای تولید محصولات ارگانیک قابل قبول است؟",options:["الف) سوپر فسفات","ب) سولفات پتاسیم","ج) نیترات آمونیوم","د) اوره"],correct:1},
+      {id:13,text:"کمبود کدام عنصر باعث کلروز بین رگبرگی می‌شود؟",options:["الف) آهن","ب) منیزیم","ج) گوگرد","د) برم"],correct:0},
+      {id:14,text:"فرم جذب شده پتاسیم توسط گیاه چیست؟",options:["الف) K₂O","ب) K⁺","ج) KCl","د) KNO₃"],correct:1},
+      {id:15,text:"کدام عنصر در انتقال قند در گیاه نقش دارد؟",options:["الف) بور","ب) روی","ج) مس","د) منگنز"],correct:0},
+      {id:16,text:"کدام یک از منابع گوگرد است؟",options:["الف) جیپسوم","ب) دولومیت","ج) سوپر فسفات","د) اوره"],correct:0},
+      {id:17,text:"کمبود کدام عنصر باعث رشد کوتاه و برگ‌های بنفش می‌شود؟",options:["الف) نیتروژن","ب) فسفر","ج) پتاسیم","د) کلسیم"],correct:1},
+      {id:18,text:"عنصر مولیبدن در چه فرآیندی نقش دارد؟",options:["الف) تبدیل نیترات به آمونیوم","ب) تثبیت کربن","ج) انتقال الکترون","د) فعال‌سازی آنزیم‌ها"],correct:0},
+      {id:19,text:"کدام عنصر در ساخت دیواره سلولی گیاه نقش دارد؟",options:["الف) کلسیم","ب) منیزیم","ج) گوگرد","د) روی"],correct:0},
+      {id:20,text:"کدام کود نیتروژنه بیشترین درصد نیتروژن را دارد؟",options:["الف) اوره","ب) نیترات آمونیوم","ج) سولفات آمونیوم","د) آنهیدروس آمونیاک"],correct:3},
+      {id:21,text:"چه عواملی باعث کاهش نیتروژن در خاک می‌شوند؟",options:["الف) آبشویی","ب) تصعید","ج) دنیتریفیکاسیون","د) همه موارد"],correct:3},
+      {id:22,text:"کدام عنصر در گیاه به صورت آنیون جذب می‌شود؟",options:["الف) پتاسیم","ب) کلسیم","ج) نیترات","د) منیزیم"],correct:2},
+      {id:23,text:"عنصر روی در چه محدوده‌ای در بافت خشک گیاه یافت می‌شود؟",options:["الف) ۵–۲۰ ppm","ب) ۲۰–۲۰۰ ppm","ج) ۲۵–۱۵۰ ppm","د) ۵۰–۲۵۰ ppm"],correct:2},
+      {id:24,text:"کدام عنصر برای عملکرد آنزیم اوره‌آز ضروری است؟",options:["الف) نیکل","ب) مولیبدن","ج) مس","د) روی"],correct:0},
+      {id:25,text:"کدام عنصر در تولید اکسیژن در فتوسنتز نقش دارد؟",options:["الف) کلر","ب) برم","ج) گوگرد","د) منیزیم"],correct:0},
+      {id:26,text:"در خاک‌های اسیدی، فسفر معمولاً توسط کدام عنصر تثبیت می‌شود؟",options:["الف) کلسیم","ب) آهن و آلومینیوم","ج) منیزیم","د) سدیم"],correct:1},
+      {id:27,text:"کدام عنصر در متابولیسم کربوهیدرات نقش دارد؟",options:["الف) بور","ب) روی","ج) منگنز","د) مس"],correct:1},
+      {id:28,text:"کدام کود هم منبع نیتروژن و هم پتاسیم است؟",options:["الف) نیترات پتاسیم","ب) سولفات پتاسیم","ج) دی آمونیوم فسفات","د) اوره"],correct:0},
+      {id:29,text:"کمبود کدام عنصر باعث زردی برگ‌های پیر و سوختگی حاشیه برگ‌ها می‌شود؟",options:["الف) نیتروژن","ب) فسفر","ج) پتاسیم","د) گوگرد"],correct:2},
+      {id:30,text:"عنصر کبالت برای کدام دسته از گیاهان ضروری است؟",options:["الف) غلات","ب) حبوبات","ج) گیاهان روغنی","د) سبزیجات"],correct:1},
+      {id:31,text:"اگر یک کیسه کود ۵۰ کیلوگرمی با درجه ۲۰-۱۰-۱۰ داشته باشیم، مقدار نیتروژن خالص در آن چقدر است؟",options:["الف) ۵ کیلوگرم","ب) ۱۰ کیلوگرم","ج) ۱۵ کیلوگرم","د) ۲۰ کیلوگرم"],correct:1},
+      {id:32,text:"اگر P₂O₅ یک کود ۱۰% باشد، مقدار فسفر خالص (P) چقدر است؟",options:["الف) ۴٫۴%","ب) ۱۰%","ج) ۱۲٫۲%","د) ۲۲٫۹%"],correct:0},
+      {id:33,text:"اگر K₂O یک کود ۱۵% باشد، مقدار پتاسیم خالص (K) چقدر است؟",options:["الف) ۱۲٫۴۵%","ب) ۱۵%","ج) ۱۸٫۵%","د) ۲۰%"],correct:0},
+      {id:34,text:"یک کیسه کود ۴۰ کیلوگرمی با درجه ۱۵-۵-۱۰ داریم. مقدار P₂O₅ آن چقدر است؟",options:["الف) ۲ کیلوگرم","ب) ۴ کیلوگرم","ج) ۶ کیلوگرم","د) ۸ کیلوگرم"],correct:0},
+      {id:35,text:"اگر یک کود دارای ۱۸% P₂O₅ باشد، چند درصد فسفر خالص دارد؟",options:["الف) ۷٫۹۲%","ب) ۱۸%","ج) ۲۲%","د) ۴۰%"],correct:0},
+      {id:36,text:"مقدار K₂O در یک کود ۱۲-۶-۶ برای یک کیسه ۲۵ کیلوگرمی چقدر است؟",options:["الف) ۱٫۵ کیلوگرم","ب) ۳ کیلوگرم","ج) ۴٫۵ کیلوگرم","د) ۶ کیلوگرم"],correct:0},
+      {id:37,text:"اگر یک کود ۲۰-۱۰-۵ داشته باشیم، نسبت کودی آن چیست؟",options:["الف) ۴-۲-۱","ب) ۲-۱-۱","ج) ۵-۲-۱","د) ۱۰-۵-۲"],correct:0},
+      {id:38,text:"تبدیل ۸% پتاسیم خالص (K) به K₂O چه درصدی می‌شود؟",options:["الف) ۶٫۶۴%","ب) ۸%","ج) ۹٫۶%","د) ۱۰%"],correct:2},
+      {id:39,text:"اگر یک کود ۱۰۰ کیلوگرمی دارای ۲۰% N، ۱۰% P₂O₅ و ۱۰% K₂O باشد، مقدار کل مواد مغذی اصلی چقدر است؟",options:["الف) ۲۰ کیلوگرم","ب) ۳۰ کیلوگرم","ج) ۴۰ کیلوگرم","د) ۵۰ کیلوگرم"],correct:2},
+      {id:40,text:"اگر یک کود ۱۸-۴۶-۰ (دی آمونیوم فسفات) داشته باشیم، مقدار فسفر خالص (P) در یک تن چقدر است؟",options:["الف) ۲۰۰ کیلوگرم","ب) ۲۰۲ کیلوگرم","ج) ۴۶۰ کیلوگرم","د) ۱۸۰ کیلوگرم"],correct:1}
+    ];
+    const stages=[questions.slice(0,10),questions.slice(10,20),questions.slice(20,30),questions.slice(30,40)];
+    function QuizApp(){
+      const [stage,setStage]=React.useState(0);
+      const [questionIndex,setQuestionIndex]=React.useState(0);
+      const [selected,setSelected]=React.useState(null);
+      const [feedback,setFeedback]=React.useState(null);
+      const [showCorrect,setShowCorrect]=React.useState(false);
+      const [scores,setScores]=React.useState([0,0,0,0]);
+      const [answersCorrect,setAnswersCorrect]=React.useState({});
+      const [showModal,setShowModal]=React.useState(false);
+      const currentStage=stages[stage];
+      const handleSelect=(index)=>{
+        if(feedback==='correct')return;
+        setSelected(index);
+        const q=currentStage[questionIndex];
+        setAnswersCorrect(prev=>({...prev,[`${stage}-${questionIndex}`]:index===q.correct}));
+        if(index===q.correct){
+          setFeedback('correct');
+          if(selected===null){
+            setScores(prev=>({...prev,[stage]:prev[stage]+1}));
+          }
+          setTimeout(nextQuestion,1000);
+        }else{
+          setFeedback('incorrect');
+          setShowCorrect(true);
+          setTimeout(() => {
+            setFeedback(null);
+            setShowCorrect(false);
+            setSelected(null);
+          }, 2000);
+        }
+      };
+      const nextQuestion=()=>{
+        setSelected(null);
+        setFeedback(null);
+        setShowCorrect(false);
+        if(questionIndex+1<currentStage.length){
+          setQuestionIndex(prev=>prev+1);
+        }else{
+          setShowModal(true);
+        }
+      };
+      const handleNextStage=()=>{
+        const stageAnswers=Object.keys(answersCorrect)
+          .filter(key=>key.startsWith(`${stage}-`))
+          .map(key=>answersCorrect[key]);
+        const hasIncorrect=stageAnswers.includes(false)||stageAnswers.length<currentStage.length;
+        if(hasIncorrect){
+          setQuestionIndex(0);
+          setAnswersCorrect(prev=>Object.fromEntries(Object.keys(prev)
+            .filter(key=>!key.startsWith(`${stage}-`))
+            .map(key=>[key,prev[key]])));
+        }else if(stage<3){
+          setStage(prev=>prev+1);
+          setQuestionIndex(0);
+        }else{
+          setStage(0);
+          setQuestionIndex(0);
+          setScores([0,0,0,0]);
+          setAnswersCorrect({});
+        }
+        setShowModal(false);
+      };
+      const progress=((questionIndex+1)/currentStage.length)*100;
+      return (
+        <div class="max-w-2xl mx-auto bg-white shadow-2xl rounded-xl p-6">
+          <h1 class="text-2xl font-bold text-gray-800 text-center mb-4">آزمون خاک‌شناسی - مرحله {stage+1}</h1>
+          <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+            <div class="bg-green-600 h-2.5 rounded-full" style={{width:`${progress}%`}}></div>
+          </div>
+          <p class="text-center text-gray-600 mb-4">سوال {questionIndex+1} از 10</p>
+          <p class="font-semibold text-lg text-gray-800 mb-6">{currentStage[questionIndex].text}</p>
+          <div class="space-y-3">
+            {currentStage[questionIndex].options.map((opt,i)=>(
+              <button
+                key={i}
+                onClick={()=>handleSelect(i)}
+                class={`w-full p-4 text-lg font-medium rounded-lg border btn text-right ${showCorrect&&i===currentStage[questionIndex].correct?'bg-green-200 text-green-800':selected===i&&feedback==='incorrect'?'bg-red-200 text-red-800':feedback==='correct'&&i===currentStage[questionIndex].correct?'bg-green-200 text-green-800':'bg-blue-100 hover:bg-blue-200 text-blue-800'} ${feedback==='correct'?'cursor-not-allowed opacity-50':''}`}
+                disabled={feedback==='correct'}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+          {feedback==='incorrect'&&(
+            <p class="text-red-600 mt-4 text-center flex items-center justify-center">
+              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              اشتباه! دوباره امتحان کنید.
+            </p>
+          )}
+          {feedback==='correct'&&(
+            <p class="text-green-600 mt-4 text-center flex items-center justify-center">
+              <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              درست! به سوال بعدی می‌رویم.
+            </p>
+          )}
+          {showModal&&(
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center modal modal-visible">
+              <div class="bg-white rounded-xl p-6 max-w-sm w-full text-center">
+                <h2 class="text-xl font-bold text-green-700 mb-4">نتایج مرحله {stage+1}</h2>
+                <p class="text-lg text-gray-600 mb-4">نمره: {scores[stage]} از 10</p>
+                <p class="text-lg text-gray-600 mb-4">کل نمره: {Object.values(scores).reduce((a,b)=>a+b,0)} از {(stage+1)*10}</p>
+                {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length&&(
+                  <p class="text-red-600 mb-4">برخی سوالات اشتباه بودند، مرحله تکرار می‌شود.</p>
+                )}
+                <button
+                  onClick={handleNextStage}
+                  class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 btn"
+                >
+                  {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length?'تکرار مرحله':stage<3?'مرحله بعدی':'شروع مجدد'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    ReactDOM.render(<QuizApp/>,document.getElementById('root'));
+  </script>
+</body>
+</html>

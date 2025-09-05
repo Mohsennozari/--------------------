@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تست ۳۰ سواله تشخیص فسفر و آرسنیک</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card { transition: transform 0.3s, box-shadow 0.3s; }
+    .card:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); }
+    .pulse { animation: pulse 0.5s infinite alternate; }
+    .correct { background-color: #10B981; color: white; }
+    .incorrect { background-color: #EF4444; color: white; }
+    #timer { font-size: 4rem; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+    @keyframes pulse { to { transform: scale(1.1); } }
+    canvas { position: fixed; top: 0; left: 0; z-index: 1000; pointer-events: none; }
+  </style>
+</head>
+<body dir="rtl" class="bg-gray-100 font-sans">
+  <canvas id="fireworks" class="hidden"></canvas>
+  <div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center text-blue-800 mb-8">تست ۳۰ سواله تشخیص فسفر و آرسنیک در شیمی آلی</h1>
+
+    <!-- تست -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+      <h2 id="quiz-title" class="text-2xl font-semibold mb-4"></h2>
+      <div id="timer" class="text-center mb-4"></div>
+      <div id="quiz">
+        <p id="question" class="text-lg mb-4"></p>
+        <div id="options" class="space-y-2"></div>
+        <p id="feedback" class="mt-4 text-lg"></p>
+      </div>
+    </div>
+
+    <!-- نوار پیشرفت -->
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold text-gray-700 mb-2">پیشرفت یادگیری</h2>
+      <div class="w-full bg-gray-200 rounded">
+        <div id="progress" class="bg-green-500 h-4 rounded" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- یادداشت‌برداری -->
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">یادداشت‌های شخصی</h2>
+      <textarea id="notes" class="w-full h-24 p-2 border rounded" placeholder="نکات مهم خودت رو اینجا بنویس..."></textarea>
+      <button onclick="saveNotes()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">ذخیره یادداشت</button>
+    </div>
+  </div>
+
+  <script>
+    const quizzes = [
+      { question: 'هدف آزمایش Lassaigne’s test چیست؟', options: ['تشخیص C و H', 'تشخیص P و As', 'اندازه‌گیری وزن مولکولی', 'تعیین نقطه ذوب'], answer: 'تشخیص P و As' },
+      { question: 'فسفر در کدام مولکول‌ها نقش کلیدی دارد؟', options: ['DNA و ATP', 'CO₂ و H₂O', 'NaCl و KCl', 'H₂S و NH₃'], answer: 'DNA و ATP' },
+      { question: 'چرا آرسنیک سمی است؟', options: ['جایگزین فسفر می‌شود', 'تولید CO₂ می‌کند', 'افزایش pH', 'کاهش حلالیت'], answer: 'جایگزین فسفر می‌شود' },
+      { question: 'چه ماده‌ای برای fusion استفاده می‌شود؟', options: ['کلسیم', 'سدیم فلزی', 'پتاسیم', 'منیزیم'], answer: 'سدیم فلزی' },
+      { question: 'نتیجه تست فسفر چیست؟', options: ['لکه قهوه‌ای', 'رسوب زرد', 'شعله سبز', 'گاز CO₂'], answer: 'رسوب زرد' },
+      { question: 'معرف اصلی تست فسفر چیست؟', options: ['نقره نیترات', 'آمونیوم مولیبدات', 'روی', 'اسید سولفوریک'], answer: 'آمونیوم مولیبدات' },
+      { question: 'نتیجه تست آرسنیک چیست؟', options: ['رسوب زرد', 'لکه قهوه‌ای-سیاه', 'شعله سبز', 'گاز H₂S'], answer: 'لکه قهوه‌ای-سیاه' },
+      { question: 'چه گازی در تست آرسنیک تولید می‌شود؟', options: ['CO₂', 'H₂S', 'AsH₃', 'N₂'], answer: 'AsH₃' },
+      { question: 'چرا HNO₃ در SFE جوشانده می‌شود؟', options: ['حذف CN⁻ و S²⁻', 'افزایش pH', 'تشکیل رسوب', 'خنثی‌سازی'], answer: 'حذف CN⁻ و S²⁻' },
+      { question: 'چرا از هود استفاده می‌شود؟', options: ['افزایش دما', 'ایمنی در برابر بخارات', 'خنک کردن', 'افزایش حلالیت'], answer: 'ایمنی در برابر بخارات' },
+      { question: 'حساسیت تست فسفر چقدر است؟', options: ['۰.۱%', '۰.۰۱%', '۱%', '۰.۰۰۱%'], answer: '۰.۰۱%' },
+      { question: 'حساسیت تست آرسنیک چقدر است؟', options: ['۰.۵%', '۰.۰۵%', '۱%', '۰.۰۰۵%'], answer: '۰.۰۵%' },
+      { question: 'چرا از عینک ایمنی استفاده می‌کنیم؟', options: ['افزایش دقت', 'محافظت از چشم', 'جلوگیری از صدا', 'کاهش دما'], answer: 'محافظت از چشم' },
+      { question: 'کدام ماده در تست آرسنیک گاز تولید می‌کند؟', options: ['HNO₃', 'Zn', 'AgNO₃', 'NH₃'], answer: 'Zn' },
+      { question: 'چرا محیط تست فسفر قلیایی است؟', options: ['تشکیل رسوب زرد', 'حذف HNO₃', 'افزایش دما', 'خنثی‌سازی'], answer: 'تشکیل رسوب زرد' },
+      { question: 'کدام ماده در SFE برای فسفر تشکیل می‌شود؟', options: ['NaCl', 'Na₃PO₄', 'Na₂SO₄', 'NaCN'], answer: 'Na₃PO₄' },
+      { question: 'کدام ماده در تست آرسنیک لکه ایجاد می‌کند؟', options: ['H₂SO₄', 'AgNO₃', 'HNO₃', 'NH₃'], answer: 'AgNO₃' },
+      { question: 'چرا سدیم فلزی خطرناک است؟', options: ['واکنش با آب', 'وزن مولکولی بالا', 'حلالیت کم', 'پیوند یونی'], answer: 'واکنش با آب' },
+      { question: 'HgCl₂ در تست آرسنیک چه نقشی دارد؟', options: ['حذف H₂S', 'تولید رسوب', 'افزایش pH', 'خنثی‌سازی'], answer: 'حذف H₂S' },
+      { question: 'چه چیزی رسوب زرد در تست فسفر ایجاد می‌کند؟', options: ['NaCl', '(NH₄)₃[PMo₁₂O₄₀]', 'Ag₃As', 'H₂S'], answer: '(NH₄)₃[PMo₁₂O₄₀]' },
+      { question: 'چرا از شن برای خاموش کردن سدیم استفاده می‌شود؟', options: ['سدیم با آب واکنش می‌دهد', 'ارزان است', 'دما را افزایش می‌دهد', 'حلالیت را کم می‌کند'], answer: 'سدیم با آب واکنش می‌دهد' },
+      { question: 'تفاوت لکه آرسنیک و آنتیموان چیست؟', options: ['As با HCl حل می‌شود', 'Sb با HCl حل می‌شود', 'هر دو حل می‌شوند', 'هیچ‌کدام حل نمی‌شوند'], answer: 'Sb با HCl حل می‌شود' },
+      { question: 'چرا لوله fusion در آب سرد قرار می‌گیرد؟', options: ['افزایش دما', 'استخراج نمک‌ها', 'کاهش pH', 'خنثی‌سازی'], answer: 'استخراج نمک‌ها' },
+      { question: 'کدام اسید در تست آرسنیک گاز تولید می‌کند؟', options: ['HCl', 'H₂SO₄', 'HNO₃', 'H₃PO₄'], answer: 'H₂SO₄' },
+      { question: 'چرا آمونیاک در تست فسفر استفاده می‌شود؟', options: ['کاهش pH', 'قلیایی کردن محیط', 'تولید گاز', 'خنثی‌سازی'], answer: 'قلیایی کردن محیط' },
+      { question: 'نتیجه منفی تست فسفر چه معنایی دارد؟', options: ['فاقد فسفر', 'ترکیب معدنی', 'SFE خراب', 'HNO₃ کافی نیست'], answer: 'فاقد فسفر' },
+      { question: 'کدام وسیله برای صاف کردن SFE استفاده می‌شود؟', options: ['قیف بوخنر', 'بشر', 'پیپت', 'کاغذ تورنسل'], answer: 'قیف بوخنر' },
+      { question: 'چرا مولیبدات اضافی مشکل ایجاد می‌کند؟', options: ['رسوب زرد کاذب', 'دمای پایین', 'حلالیت کم', 'H₂S'], answer: 'رسوب زرد کاذب' },
+      { question: 'کدام روش برای تأیید فسفر دقیق‌تر است؟', options: ['طیف‌سنجی AAS', 'آزمایش سوختن', 'آزمایش حلالیت', 'آزمایش pH'], answer: 'طیف‌سنجی AAS' },
+      { question: 'واکنش اصلی تست آرسنیک چیست؟', options: ['PO₄³⁻ + MoO₄²⁻ → رسوب زرد', 'AsH₃ + AgNO₃ → Ag₃As', 'Na₃PO₄ → CO₂', 'Zn + HNO₃ → H₂'], answer: 'AsH₃ + AgNO₃ → Ag₃As' }
+    ];
+
+    let currentQuestionIndex = 0;
+    let timerInterval;
+
+    function loadQuestion() {
+      const quizTitle = document.getElementById('quiz-title');
+      const questionDiv = document.getElementById('question');
+      const optionsDiv = document.getElementById('options');
+      const feedbackDiv = document.getElementById('feedback');
+      const timerDiv = document.getElementById('timer');
+
+      if (currentQuestionIndex < quizzes.length) {
+        const q = quizzes[currentQuestionIndex];
+        quizTitle.innerText = `سوال ${currentQuestionIndex + 1} از ۳۰`;
+        questionDiv.innerText = q.question;
+        optionsDiv.innerHTML = '';
+        q.options.forEach(option => {
+          const button = document.createElement('button');
+          button.innerText = option;
+          button.className = 'bg-gray-200 px-4 py-2 rounded mr-2 hover:bg-gray-300 w-full text-right';
+          button.onclick = () => checkAnswer(option, q.answer);
+          optionsDiv.appendChild(button);
+        });
+        feedbackDiv.innerText = '';
+        startTimer();
+      } else {
+        document.getElementById('quiz').innerHTML = `<p class="text-lg">تست تمام شد!</p>`;
+        clearInterval(timerInterval);
+      }
+      updateProgress();
+    }
+
+    function startTimer() {
+      let timeLeft = 5;
+      const timerDiv = document.getElementById('timer');
+      const colors = ['text-red-500', 'text-orange-500', 'text-yellow-500', 'text-green-500', 'text-blue-500'];
+      timerDiv.className = 'text-center mb-4 pulse ' + colors[timeLeft - 1];
+      timerDiv.innerText = timeLeft;
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft >= 0) {
+          timerDiv.className = 'text-center mb-4 pulse ' + colors[timeLeft];
+          timerDiv.innerText = timeLeft;
+        } else {
+          clearInterval(timerInterval);
+          showFireworks();
+          const feedbackDiv = document.getElementById('feedback');
+          feedbackDiv.innerText = `زمان تمام شد! جواب درست: ${quizzes[currentQuestionIndex].answer}`;
+          feedbackDiv.className = 'text-red-600 mt-4 text-lg';
+          document.querySelectorAll('#options button').forEach(btn => {
+            btn.disabled = true;
+            if (btn.innerText === quizzes[currentQuestionIndex].answer) {
+              btn.classList.add('correct');
+            }
+          });
+          setTimeout(nextQuestion, 3000);
+        }
+      }, 1000);
+    }
+
+    function checkAnswer(userAnswer, correctAnswer) {
+      clearInterval(timerInterval);
+      const feedbackDiv = document.getElementById('feedback');
+      const options = document.querySelectorAll('#options button');
+      options.forEach(btn => {
+        btn.disabled = true;
+        if (btn.innerText === correctAnswer) {
+          btn.classList.add('correct');
+        } else if (btn.innerText === userAnswer && userAnswer !== correctAnswer) {
+          btn.classList.add('incorrect');
+        }
+      });
+      feedbackDiv.innerText = userAnswer === correctAnswer ? 'درست!' : `غلط، جواب درست: ${correctAnswer}`;
+      feedbackDiv.className = userAnswer === correctAnswer ? 'text-green-600 mt-4 text-lg' : 'text-red-600 mt-4 text-lg';
+      showFireworks();
+      setTimeout(nextQuestion, 3000);
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      loadQuestion();
+    }
+
+    function updateProgress() {
+      const progressPercent = (currentQuestionIndex / quizzes.length) * 100;
+      document.getElementById('progress').style.width = `${progressPercent}%`;
+    }
+
+    function saveNotes() {
+      const notes = document.getElementById('notes').value;
+      localStorage.setItem('userNotes', notes);
+      alert('یادداشت ذخیره شد!');
+    }
+
+    function showFireworks() {
+      const canvas = document.getElementById('fireworks');
+      canvas.classList.remove('hidden');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const ctx = canvas.getContext('2d');
+      const particles = [];
+      const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'];
+
+      function Particle(x, y, isConfetti) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 15;
+        this.vy = isConfetti ? (Math.random() * -5 - 5) : (Math.random() - 0.5) * 15;
+        this.radius = isConfetti ? Math.random() * 4 + 2 : Math.random() * 6 + 3;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.alpha = 1;
+        this.isConfetti = isConfetti;
+      }
+
+      Particle.prototype.draw = function() {
+        ctx.beginPath();
+        if (this.isConfetti) {
+          ctx.rect(this.x, this.y, this.radius * 2, this.radius);
+        } else {
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        }
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.alpha;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      };
+
+      Particle.prototype.update = function() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += this.isConfetti ? 0.2 : 0.1;
+        this.alpha -= 0.015;
+        if (this.isConfetti) this.vx *= 0.98;
+      };
+
+      for (let i = 0; i < 150; i++) {
+        particles.push(new Particle(canvas.width / 2, canvas.height / 2, i % 2 === 0));
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, i) => {
+          p.update();
+          p.draw();
+          if (p.alpha <= 0) particles.splice(i, 1);
+        });
+        if (particles.length > 0 && performance.now() < startTime + 3000) {
+          requestAnimationFrame(animate);
+        } else {
+          canvas.classList.add('hidden');
+        }
+      }
+
+      const startTime = performance.now();
+      animate();
+    }
+
+    window.onload = () => {
+      document.getElementById('notes').value = localStorage.getItem('userNotes') || '';
+      loadQuestion();
+      if (!localStorage.getItem('lastVisit')) {
+        localStorage.setItem('lastVisit', new Date());
+      } else {
+        const lastVisit = new Date(localStorage.getItem('lastVisit'));
+        const now = new Date();
+        if ((now - lastVisit) / (1000 * 60 * 60) > 24) {
+          alert('وقت مرور دوباره است!');
+          localStorage.setItem('lastVisit', now);
+        }
+      }
+    };
+  </script>
+</body>
+</html>

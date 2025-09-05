@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>درسنامه خاک‌شناسی عمومی</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React and ReactDOM CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <!-- Babel for JSX -->
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <style>
+    body {
+      font-family: 'Vazir', Arial, sans-serif;
+      direction: rtl;
+      background: linear-gradient(to bottom, #e7f3e9, #f0f2f5);
+    }
+    @font-face {
+      font-family: 'Vazir';
+      src: url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff');
+    }
+    .accordion-content {
+      transition: max-height 0.4s ease-out, opacity 0.4s ease-out, transform 0.4s ease-out;
+    }
+    .accordion-content-hidden {
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    .accordion-content-visible {
+      max-height: 1500px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+    .header-logo {
+      fill: #2f855a;
+    }
+  </style>
+</head>
+<body>
+  <div id="root" className="container mx-auto p-4 min-h-screen"></div>
+
+  <script type="text/babel">
+    function AccordionItem({ title, children, icon }) {
+      const [isOpen, setIsOpen] = React.useState(false);
+
+      return (
+        <div className="mb-6 bg-white rounded-xl card">
+          <button
+            className="w-full p-5 text-right bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-xl hover:from-green-700 hover:to-green-800 transition flex justify-between items-center"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <div className="flex items-center">
+              <svg className="w-6 h-6 ml-3" fill="currentColor" viewBox="0 0 24 24">{icon}</svg>
+              <span className="font-bold text-lg">{title}</span>
+            </div>
+            <svg
+              className={`w-5 h-5 transform transition-transform ${isOpen ? 'rotate-180' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div
+            className={`accordion-content ${isOpen ? 'accordion-content-visible' : 'accordion-content-hidden'} overflow-hidden p-6 bg-gray-50 rounded-b-xl`}
+          >
+            {children}
+          </div>
+        </div>
+      );
+    }
+
+    function LessonApp() {
+      return (
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <header className="bg-white rounded-xl shadow-lg p-6 mb-8 flex items-center justify-between">
+            <div className="flex items-center">
+              <svg className="w-10 h-10 header-logo mr-3" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-1-13h2v6h3l-4 4-4-4h3V7z" />
+              </svg>
+              <h1 className="text-3xl font-bold text-gray-800">درسنامه خاک‌شناسی عمومی</h1>
+            </div>
+          </header>
+
+          {/* Introduction */}
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-8 text-center">
+            <p className="text-lg text-gray-600">
+              این درسنامه با طراحی جذاب و دسته‌بندی‌های منظم، مفاهیم کلیدی خاک‌شناسی عمومی را برای یادگیری آسان ارائه می‌دهد.
+            </p>
+          </div>
+
+          {/* Accordion Sections */}
+          <AccordionItem
+            title="1. ویژگی‌ها و نقش عناصر خاک و گیاه"
+            icon={
+              <path d="M4 20h16v-2H4v2zm0-4h16v-2H4v2zm0-4h16v-2H4v2zm0-4h16V6H4v2zm8-8C6.48 0 2 4.48 2 10h2c0-4.42 3.58-8 8-8s8 3.58 8 8h2c0-5.52-4.48-10-10-10z" />
+            }
+          >
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  تاثیر فسفر در گیاهان
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  فسفر در ساختار غشای سلولی (فسفولیپیدها)، انتقال انرژی (ATP)، و فرایندهای بیوشیمیایی نقش دارد، اما در تثبیت نیتروژن اتمسفری توسط گیاهان لگومینوز تاثیر مستقیم ندارد.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: افزودن کود فسفاتی مثل مونوفسفات آمونیم در خاک‌های فقیر از فسفر رشد گیاه را بهبود می‌دهد.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  فرم‌های نیتروژن در خاک
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  نیتروژن به اشکال آلی، نیترات (NO3⁻)، آمونیم (NH4⁺)، و اوره وجود دارد. در خاک‌های قلیایی، آمونیم به آمونیاک تبدیل شده و از خاک خارج می‌شود.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: در خاک‌های قلیایی، کود نیترات آمونیوم مناسب‌تر است.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  برداشت عناصر توسط گیاهان
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  نیتروژن به دلیل نقش در ساخت پروتئین‌ها و کلروفیل بیشترین برداشت را دارد.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: گیاهان پررشد مثل ذرت نیاز بالایی به نیتروژن دارند.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  نقش عناصر در فتوسنتز
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  آهن و منگنز در ساخت کلروفیل نقش دارند، روی در آنزیم‌ها فعال است، اما نیکل در فتوسنتز مستقیماً دخیل نیست.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: کمبود آهن باعث زردی برگ‌ها (کلروز) می‌شود.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  عناصر پرمصرف و کم‌مصرف
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  عناصر پرمصرف (مثل نیتروژن، فسفر) بیش از 0.1% وزن خشک گیاه را تشکیل می‌دهند.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: نیتروژن و پتاسیم در کودهای NPK به مقدار زیاد استفاده می‌شوند.</p>
+              </div>
+            </div>
+          </AccordionItem>
+
+          <AccordionItem
+            title="2. فرآیندها و چرخه‌های خاک و نیتروژن"
+            icon={
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z" />
+            }
+          >
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  چرخه نیتروژن
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  شامل Mineralization (تبدیل نیتروژن آلی به آمونیم)، Immobilization (تبدیل نیتروژن معدنی به آلی)، Fixation (تثبیت نیتروژن اتمسفری)، و Weathering (تجزیه کانی‌ها).
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: کود نیتروژنی Mineralization را تقویت می‌کند.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  نیتریفیکاسیون
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  فرایند هوازی تبدیل آمونیم به نیتریت (توسط نیتروزوموناس) و سپس نیتریت به نیترات (توسط نیتروباکتر).
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: نیتریفیکاسیون در خاک‌های مرطوب و هوادار سریع‌تر است.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  آناموکس
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  فرایند بی‌هوازی تبدیل آمونیم و نیتریت به نیتروژن گازی (N2).
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: آناموکس در خاک‌های باتلاقی نقش مهمی دارد.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  دنیتریفیکاسیون
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  تبدیل نیترات به گازهای نیتروژنی (N2، NO، NO2) در شرایط بی‌هوازی.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: دنیتریفیکاسیون در خاک‌های غرقابی باعث از دست رفتن نیتروژن می‌شود.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  تثبیت آمونیوم
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  آمونیم در فضای بین لایه‌ای کانی‌های رسی (مثل اسمکتایت) تثبیت می‌شود.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: تثبیت آمونیم در خاک‌های رسی دسترسی نیتروژن را کاهش می‌دهد.</p>
+              </div>
+            </div>
+          </AccordionItem>
+
+          <AccordionItem
+            title="3. ساختار و ویژگی‌های کانی‌های رسی و خاک"
+            icon={
+              <path d="M3 3h18v18H3V3zm16 16V5H5v14h14zm-2-2H7v-2h10v2zm0-4H7v-2h10v2zm0-4H7V7h10v2z" />
+            }
+          >
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  کانی‌های رسی
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  کائولینایت (CEC کم)، اسمکتایت (CEC بالا، انبساط‌پذیر)، ایلایت (CEC متوسط)، ورمیکولایت (CEC بالا).
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: اسمکتایت برای نگهداری کود در خاک‌های کشاورزی مناسب است.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  بارهای وابسته به pH
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  کائولینایت به دلیل لبه‌های شکسته، بارهای وابسته به pH بیشتری دارد.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: در خاک‌های اسیدی، بار کائولینایت جذب کاتیون‌ها را تغییر می‌دهد.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  فیلوسیلیکات‌ها
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  کانی‌های رسی با ساختار ورقه‌ای (تتراهدرال و اکتاهدرال) و پیوند مشترک.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: فیلوسیلیکات‌ها ظرفیت نگهداری آب را افزایش می‌دهند.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  ظرفیت تبادل کاتیونی (CEC)
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  خاک‌های با CEC بالا نیاز به کود پتاسیم بیشتری دارند.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: خاک‌های رسی برای کشاورزی پایدار مناسب‌اند.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  آلفیسول‌ها
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  خاک‌هایی با افق رسی (Bt) و اشباع بازی متوسط تا زیاد.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: آلفیسول‌ها در مناطق معتدل برای کشاورزی مناسب‌اند.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  هیدرولیز کانی‌ها
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  واکنش‌هایی مثل H2O + KAISI3O8 ↔ HAISi3O8 + K⁺ + OH⁻ کاتیون‌ها را آزاد می‌کنند. اکسیداسیون آهن: FeO + H2O → FeOOH + H⁺.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: هیدرولیز در هوازدگی سنگ‌ها نقش کلیدی دارد.</p>
+              </div>
+            </div>
+          </AccordionItem>
+
+          <AccordionItem
+            title="4. ویژگی‌های فیزیکی و اقلیمی خاک"
+            icon={
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-1-13h2v6h3l-4 4-4-4h3V7z" />
+            }
+          >
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  پارامترهای اقلیمی
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  بارندگی موثر و دمای متوسط سالیانه عوامل اصلی هوازدگی و تشکیل خاک هستند.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: مناطق پرباران و گرم خاک‌های عمیق‌تری دارند.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  نقش موجودات زنده
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  کرم‌های خاکی با حفر تونل‌ها تهویه و ساختار خاک را بهبود می‌دهند.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: کرم خاکی بهره‌وری خاک کشاورزی را افزایش می‌دهد.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  زهکشی خاک
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  خاک‌های قهوه‌ای و قرمز زهکشی خوب و خاک‌های خاکستری مایل به سبز زهکشی ضعیف دارند.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: خاک‌های گلی برای کشت برنج مناسب‌اند.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  مواد آلی در خاک
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  چمنزارهای با ریشه طویل افق‌های غنی از مواد آلی تا عمق بیشتری دارند.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: خاک‌های چمنزار برای کشاورزی پایدار مناسب‌اند.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  افق‌های خاک
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  افق p (شخم‌خورده) و z (تجمع نمک‌ها) در نامگذاری خاک استفاده می‌شوند.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: تجمع نمک‌ها در خاک‌های شور مشکل‌ساز است.</p>
+              </div>
+            </div>
+          </AccordionItem>
+
+          <AccordionItem
+            title="5. مدیریت کود و تغذیه خاک"
+            icon={
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z" />
+            }
+          >
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  مقادیر NPK در کود
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  کود 21 کیلوگرمی با درجه 14-3-22 شامل 2.94 کیلوگرم نیتروژن، 0.63 کیلوگرم P2O5، و 4.62 کیلوگرم K2O.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: محاسبه دقیق NPK برای تنظیم برنامه کودی ضروری است.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  کود مونوفسفات آمونیم
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  درصد NPK: 12% نیتروژن، 62% P2O5، 0% K2O.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: این کود برای خاک‌های فقیر از فسفر مناسب است.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  رابطه CEC و پتاسیم
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  خاک‌های با CEC بالا نیاز به کود پتاسیم بیشتری دارند.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: خاک‌های رسی نیاز کودی بیشتری دارند.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  محاسبه P2O5
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  برای 0.4 هکتار با نیاز 5 کیلوگرم فسفر، 28.63 کیلوگرم P2O5 در هکتار لازم است (5 × 2.29 ÷ 0.4).
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: این محاسبه برای بهینه‌سازی مصرف کود ضروری است.</p>
+              </div>
+            </div>
+          </AccordionItem>
+
+          <AccordionItem
+            title="6. آلودگی‌ها و مشکلات خاک"
+            icon={
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-1-13h2v6h3l-4 4-4-4h3V7z" />
+            }
+          >
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  آلودگی گوگرد
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  گوگرد (به‌صورت SO2 در باران اسیدی) باعث تخریب جنگل‌ها می‌شود.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: کاهش انتشار SO2 در مناطق جنگلی ضروری است.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  علائم کمبود عناصر
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  کمبود نیتروژن باعث رنگ پریدگی برگ‌های قدیمی و کمبود پتاسیم باعث آب‌سوختگی حاشیه برگ‌ها می‌شود.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: این علائم برای تشخیص کمبودهای تغذیه‌ای استفاده می‌شوند.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  فسفر در خاک اسیدی
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  در خاک‌های اسیدی شدید، فسفر به اکسیدهای آهن و آلومینیوم متصل شده و غیرقابل دسترس می‌شود.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: افزودن آهک دسترسی فسفر را بهبود می‌دهد.</p>
+              </div>
+            </div>
+          </AccordionItem>
+
+          <AccordionItem
+            title="7. مواد آلی و ترکیبات خاک"
+            icon={
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-1-13h2v6h3l-4 4-4-4h3V7z" />
+            }
+          >
+            <div className="space-y-6">
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  بخش فعال مواد آلی
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  مواد آلی نیمه‌تجزیه‌شده برای میکروب‌ها و گیاهان قابل دسترس هستند.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: این بخش برای تغذیه خاک در کشاورزی مهم است.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  هوموس
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  مواد آلی پایدار که ساختار خاک را بهبود می‌دهد.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: هوموس حاصلخیزی خاک را افزایش می‌دهد.</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-xl text-green-700 flex items-center">
+                  <svg className="w-5 h-5 ml-2 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
+                  </svg>
+                  Carbon Sequestration
+                </h3>
+                <p className="text-gray-600 mt-2">
+                  ذخیره کربن توسط گیاهان و ورود آن به خاک، CO2 اتمسفر را کاهش می‌دهد.
+                </p>
+                <p className="text-gray-500 italic mt-1">مثال: کشاورزی پایدار به این فرایند کمک می‌کند.</p>
+              </div>
+            </div>
+          </AccordionItem>
+
+          {/* Footer */}
+          <footer className="bg-white rounded-xl shadow-lg p-6 mt-8 text-center">
+            <p className="text-gray-600">
+              درسنامه خاک‌شناسی عمومی | طراحی‌شده با ❤️ برای یادگیری بهتر
+            </p>
+            <p className="text-gray-500 text-sm mt-2">
+              © 2025 | برای اطلاعات بیشتر: soil.science@example.com
+            </p>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<LessonApp />, document.getElementById('root'));
+  </script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>آزمون اقتصاد نیتروژن و گوگرد</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <style>
+    body{font-family:'Vazir',sans-serif;direction:rtl;background:linear-gradient(to bottom right,#e0f2fe,#d1fae5)}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff');font-weight:normal}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Bold.woff') format('woff');font-weight:bold}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Light.woff') format('woff');font-weight:300}
+    .btn{transition:all 0.3s ease}.btn:hover{transform:scale(1.05);filter:brightness(1.1)}
+    .modal{transition:all 0.4s ease}.modal-hidden{opacity:0;transform:scale(0.9)}.modal-visible{opacity:1;transform:scale(1)}
+    .progress-bar{transition:width 0.6s ease-in-out}
+    .question-card{animation:slideIn 0.5s ease-in}
+    @keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <div id="root" class="container mx-auto p-6 min-h-screen flex items-center justify-center"></div>
+  <script type="text/babel">
+    const questions=[
+      {id:1,text:"کدام فرم نیتروژن توسط گیاهان به صورت مستقیم جذب می‌شود؟",options:["الف) N₂","ب) NO₃⁻","ج) NH₃ (گاز)","د) پروتئین"],correct:1},
+      {id:2,text:"کمبود نیتروژن در گیاهان ابتدا در کدام بخش مشاهده می‌شود؟",options:["الف) برگ‌های جوان","ب) برگ‌های پیر","ج) ریشه","د) ساقه"],correct:1},
+      {id:3,text:"کدام فرآیند مسئول تبدیل نیتروژن آلی به معدنی است؟",options:["الف) تثبیت","ب) معدنی‌شدن","ج) دنیتریفیکاسیون","د) نیتریفیکاسیون"],correct:1},
+      {id:4,text:"کدام گاز در اثر دنیتریفیکاسیون تولید می‌شود و به لایه اوزون آسیب می‌زند؟",options:["الف) NH₃","ب) N₂O","ج) NO₂","د) CO₂"],correct:1},
+      {id:5,text:"کدام عامل pH خاک را در ناحیه ریزوسفر کاهش می‌دهد؟",options:["الف) جذب NO₃⁻","ب) جذب NH₄⁺","ج) جذب K⁺","د) جذب Ca²⁺"],correct:1},
+      {id:6,text:"کدام کانی رسی بیشترین ظرفیت را برای تثبیت آمونیوم دارد؟",options:["الف) کائولینیت","ب) ورمیکولیت","ج) مونت موریلونیت","د) ایلیت"],correct:1},
+      {id:7,text:"در چه شرایطی نیتریفیکاسیون متوقف می‌شود؟",options:["الف) pH پایین","ب) دمای بالا","ج) رطوبت کم","د) اکسیژن زیاد"],correct:0},
+      {id:8,text:"کدام ترکیب می‌تواند مستقیماً توسط گیاهان جذب شود؟",options:["الف) نیتروژن آلی با وزن مولکولی بالا","ب) اسیدهای آمینه","ج) پروتئین‌ها","د) هوموس"],correct:1},
+      {id:9,text:"فرآیند آناموکس (anammox) چیست؟",options:["الف) اکسیداسیون هوازی آمونیوم","ب) احیای نیترات به نیتریت","ج) اکسیداسیون بی‌هوازی آمونیوم با استفاده از نیتریت","د) تثبیت نیتروژن توسط سیانوباکتری‌ها"],correct:2},
+      {id:10,text:"چه عاملی باعث افزایش تصعید آمونیاک می‌شود؟",options:["الف) pH پایین","ب) دمای پایین","ج) رطوبت بالا","د) pH بالا"],correct:3},
+      {id:11,text:"در خاک‌های اسیدی، کدام فرم نیتروژن می‌تواند به عنوان منبع اصلی جذب گیاه عمل کند؟",options:["الف) نیترات","ب) آمونیوم","ج) نیتریت","د) نیتروژن آلی محلول (DON)"],correct:3},
+      {id:12,text:"کدام باکتری در مرحله اول نیتریفیکاسیون نقش دارد؟",options:["الف) Nitrobacter","ب) Nitrosomonas","ج) Rhizobium","د) Azotobacter"],correct:1},
+      {id:13,text:"در جنگل‌های دست‌نخورده، بیشترین نیتروژن از دست رفته از طریق آبشویی به چه صورتی است؟",options:["الف) NO₃⁻","ب) NH₄⁺","ج) DON","د) N₂"],correct:2},
+      {id:14,text:"کدام عامل می‌تواند باعث کاهش تثبیت بیولوژیکی نیتروژن در لگوم‌ها شود؟",options:["الف) کمبود آب","ب) مقدار بالای نیتروژن معدنی در خاک","ج) pH پایین","د) دمای بالا"],correct:1},
+      {id:15,text:"در فرآیند کودنیتریفیکاسیون (co-denitrification) از چه ترکیبی علاوه بر نیتریت استفاده می‌شود؟",options:["الف) نیترات","ب) آمونیوم","ج) اوره","د) سولفات"],correct:1},
+      {id:16,text:"کدام عنصر غذایی علاوه بر نیتروژن، به صورت عمده در مواد آلی خاک یافت می‌شود؟",options:["الف) پتاسیم","ب) گوگرد","ج) کلسیم","د) آهن"],correct:1},
+      {id:17,text:"کدام فرآیند نیتروژن را به فرم گازی N₂ تبدیل می‌کند؟",options:["الف) نیتریفیکاسیون","ب) دنیتریفیکاسیون","ج) تثبیت نیتروژن","د) معدنی‌شدن"],correct:1},
+      {id:18,text:"کمبود گوگرد در گیاهان باعث چه تغییر رنگی می‌شود؟",options:["الف) قرمز شدن برگ‌ها","ب) زردی یا کلروز","ج) آبی شدن برگ‌ها","د) قهوه‌ای شدن حاشیه برگ‌ها"],correct:1},
+      {id:19,text:"اکسیداسیون گوگرد در خاک منجر به تشکیل چه اسیدی می‌شود؟",options:["الف) اسید نیتریک","ب) اسید سولفوریک","ج) اسید فسفریک","د) اسید استیک"],correct:1},
+      {id:20,text:"کدام اسید آمینه حاوی گوگرد نیست؟",options:["الف) متیونین","ب) سیستئین","ج) والین","د) سیستین"],correct:2},
+      {id:21,text:"کدام گاز گوگردی در اتمسفر به عنوان پیش‌ساز باران اسیدی نقش دارد؟",options:["الف) سولفید هیدروژن (H₂S)","ب) دی‌اکسید گوگرد (SO₂)","ج) کربنیل سولفید (COS)","د) متان (CH₄)"],correct:1},
+      {id:22,text:"در کدام نوع خاک احتمال وجود سولفیدها بیشتر است؟",options:["الف) خاک‌های شنی","ب) خاک‌های باتلاقی مناطق مرطوب","ج) خاک‌های آهکی","د) خاک‌های جنگلی"],correct:1},
+      {id:23,text:"کاهش pH ناشی از اک住民 اکسیداسیون گوگرد می‌تواند تا چه حد پایین برود؟",options:["الف) ۴","ب) ۳","ج) ۲","د) ۱.۵"],correct:3},
+      {id:24,text:"کدام گروه از ترکیبات گوگرد آلی دارای بالاترین درجه اکسیداسیون است؟",options:["الف) سولفیدها","ب) سولفونات‌ها","ج) استرهای سولفات","د) تیول‌ها"],correct:2},
+      {id:25,text:"در شرایط بی‌هوازی، گوگرد احیا شده و با آهن ترکیب می‌شود تا چه چیزی تشکیل دهد؟",options:["الف) گچ","ب) سولفید آهن","ج) اسید سولفوریک","د) سولفات کلسیم"],correct:1},
+      {id:26,text:"نسبت تقریبی C:N:S در ماده آلی خاک چقدر است؟",options:["الف) ۱۰۰:۱۰:۱","ب) ۸۵:۷:۱","ج) ۵۰:۵:۱","د) ۲۰۰:۲۰:۲"],correct:1},
+      {id:27,text:"کدام باکتری در تثبیت همزیستی نیتروژن با گیاهان لگوم نقش دارد؟",options:["الف) Rhizobium","ب) Nitrosomonas","ج) Clostridium","د) Azotobacter"],correct:0},
+      {id:28,text:"آنزیم کلیدی در تثبیت بیولوژیکی نیتروژن چیست؟",options:["الف) نیترات ردوکتاز","ب) نیتروژناز","ج) اوره‌آز","د) دآمیناز"],correct:1},
+      {id:29,text:"لگه‌موگلوبین در گره‌های ریشه چه نقشی دارد؟",options:["الف) انتقال نیتروژن","ب) محافظت از نیتروژناز در برابر اکسیژن","ج) جذب فسفر","د) تولید آمونیاک"],correct:1},
+      {id:30,text:"کدام گیاه توانایی تثبیت نیتروژن به صورت همزیستی با Frankia را دارد؟",options:["الف) گندم","ب) ذرت","ج) توسکا","د) برنج"],correct:2},
+      {id:31,text:"اگر در یک هکتار زمین ۱۰۰ کیلوگرم نیتروژن به صورت کود اوره اضافه شود و ۲۰٪ آن به صورت NH₃ تصعید شود، مقدار نیتروژن از دست رفته چقدر است؟",options:["الف) ۱۰ کیلوگرم","ب) ۲۰ کیلوگرم","ج) ۳۰ کیلوگرم","د) ۴۰ کیلوگرم"],correct:1},
+      {id:32,text:"اگر pH خاک از ۵ به ۷ افزایش یابد، غلظت یون H⁺ چند برابر کاهش یافته است؟",options:["الف) ۲ برابر","ب) ۱۰ برابر","ج) ۱۰۰ برابر","د) ۱۰۰۰ برابر"],correct:2},
+      {id:33,text:"اگر یک خاک ۰.۲٪ نیتروژن داشته باشد و وزن خاک در هکتار (تا عمق ۲۰ سانتیمتر) ۲٬۰۰۰٬۰۰۰ کیلوگرم باشد، مقدار نیتروژن کل چقدر است؟",options:["الف) ۴۰۰۰ کیلوگرم","ب) ۳۰۰۰ کیلوگرم","ج) ۲۰۰۰ کیلوگرم","د) ۱۰۰۰ کیلوگرم"],correct:0},
+      {id:34,text:"اگر میزان تبخیر آمونیاک از کود اوره ۲۵٪ باشد و ۱۰۰ کیلوگرم اوره استفاده شود، چه مقدار نیتروژن به صورت NH₃ از دست می‌رود؟ (جرم مولی اوره = ۶۰، نیتروژن در اوره = ۴۶.۷٪)",options:["الف) ۱۱.۶۷۵ کیلوگرم","ب) ۲۳.۳۵ کیلوگرم","ج) ۲۵ کیلوگرم","د) ۵۰ کیلوگرم"],correct:0},
+      {id:35,text:"اگر در یک خاک ۵۰ کیلوگرم در هکتار نیترات وجود داشته باشد و ۳۰٪ آن طی بارندگی شسته شود، مقدار نیترات شسته شده چقدر است؟",options:["الف) ۱۰ کیلوگرم","ب) ۱۵ کیلوگرم","ج) ۲۰ کیلوگرم","د) ۲۵ کیلوگرم"],correct:1},
+      {id:36,text:"اگر غلظت گوگرد در برگ سالم یک گیاه ۰.۲٪ باشد و وزن خشک برگ ۵ گرم باشد، مقدار گوگرد در این برگ چقدر است؟",options:["الف) ۰.۱ گرم","ب) ۰.۰۱ گرم","ج) ۰.۰۰۱ گرم","د) ۰.۰۰۰۱ گرم"],correct:1},
+      {id:37,text:"یک کود NPK با فرمول ۱۵-۱۰-۵ حاوی ۳٪ گوگرد است. در یک تن از این کود، چه مقدار گوگرد وجود دارد؟",options:["الف) ۱۰ کیلوگرم","ب) ۲۰ کیلوگرم","ج) ۳۰ کیلوگرم","د) ۴۰ کیلوگرم"],correct:2},
+      {id:38,text:"در یک خاک با نسبت C:N:S برابر ۸۵:۷:۱، اگر مقدار کربن آلی ۱۷۰۰ کیلوگرم در هکتار باشد، مقدار گوگرد آلی چقدر است؟",options:["الف) ۱۰ کیلوگرم","ب) ۲۰ کیلوگرم","ج) ۳۰ کیلوگرم","د) ۴۰ کیلوگرم"],correct:1},
+      {id:39,text:"اگر یک کود گوگردی ۹۰٪ خالص باشد، چه مقدار از این کود باید استفاده شود تا ۴۵ کیلوگرم گوگرد خالص به خاک اضافه شود؟",options:["الف) ۵۰ کیلوگرم","ب) ۴۵ کیلوگرم","ج) ۴۰ کیلوگرم","د) ۳۵ کیلوگرم"],correct:0},
+      {id:40,text:"اگر در یک منطقه، بارش اسیدی حاوی ۲۰ کیلوگرم سولفات در هکتار در سال باشد، پس از ۵ سال چه مقدار گوگرد از این طریق به خاک اضافه شده است؟ (جرم مولی S در SO₄²⁻ = ۳۲، SO₄ = ۹۶)",options:["الف) ۳۳.۳ کیلوگرم","ب) ۶۶.۶ کیلوگرم","ج) ۱۰۰ کیلوگرم","د) ۲۰۰ کیلوگرم"],correct:0}
+    ];
+    const stages=[questions.slice(0,10),questions.slice(10,20),questions.slice(20,30),questions.slice(30,40)];
+    function QuizApp(){
+      const [stage,setStage]=React.useState(0);
+      const [questionIndex,setQuestionIndex]=React.useState(0);
+      const [repeatCount,setRepeatCount]=React.useState(0);
+      const [selected,setSelected]=React.useState(null);
+      const [feedback,setFeedback]=React.useState(null);
+      const [showCorrect,setShowCorrect]=React.useState(false);
+      const [scores,setScores]=React.useState([0,0,0,0]);
+      const [answersCorrect,setAnswersCorrect]=React.useState({});
+      const [showModal,setShowModal]=React.useState(false);
+      const currentStage=stages[stage];
+      const handleSelect=(index)=>{
+        if(feedback==='correct')return;
+        setSelected(index);
+        const q=currentStage[questionIndex];
+        const isCorrect=index===q.correct;
+        setAnswersCorrect(prev=>({...prev,[`${stage}-${questionIndex}-${repeatCount}`]:isCorrect}));
+        if(isCorrect){
+          setFeedback('correct');
+          if(selected===null){
+            setScores(prev=>({...prev,[stage]:prev[stage]+1}));
+          }
+          setTimeout(nextQuestion,1000);
+        }else{
+          setFeedback('incorrect');
+          setShowCorrect(true);
+          setTimeout(() => {
+            setFeedback(null);
+            setShowCorrect(false);
+            setSelected(null);
+          }, 2000);
+        }
+      };
+      const nextQuestion=()=>{
+        setSelected(null);
+        setFeedback(null);
+        setShowCorrect(false);
+        if(repeatCount<2){
+          setRepeatCount(prev=>prev+1);
+        }else if(questionIndex+1<currentStage.length){
+          setQuestionIndex(prev=>prev+1);
+          setRepeatCount(0);
+        }else{
+          setShowModal(true);
+        }
+      };
+      const handleNextStage=()=>{
+        const stageAnswers=Object.keys(answersCorrect)
+          .filter(key=>key.startsWith(`${stage}-`))
+          .map(key=>answersCorrect[key]);
+        const hasIncorrect=stageAnswers.includes(false)||stageAnswers.length<currentStage.length*3;
+        if(hasIncorrect){
+          setQuestionIndex(0);
+          setRepeatCount(0);
+          setAnswersCorrect(prev=>Object.fromEntries(Object.keys(prev)
+            .filter(key=>!key.startsWith(`${stage}-`))
+            .map(key=>[key,prev[key]])));
+        }else if(stage<3){
+          setStage(prev=>prev+1);
+          setQuestionIndex(0);
+          setRepeatCount(0);
+        }else{
+          setStage(0);
+          setQuestionIndex(0);
+          setRepeatCount(0);
+          setScores([0,0,0,0]);
+          setAnswersCorrect({});
+        }
+        setShowModal(false);
+      };
+      const progress=((questionIndex*3+repeatCount+1)/(currentStage.length*3))*100;
+      return (
+        <div class="max-w-3xl mx-auto bg-white shadow-2xl rounded-2xl p-8 question-card">
+          <h1 class="text-3xl font-bold text-emerald-600 text-center mb-6">آزمون اقتصاد نیتروژن و گوگرد - مرحله {stage+1}</h1>
+          <div class="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-600 to-yellow-400 h-4 rounded-full progress-bar" style={{width:`${progress}%`}}></div>
+          </div>
+          <p class="text-center text-gray-600 mb-4 font-medium">سوال {questionIndex+1} از {currentStage.length} (تکرار {repeatCount+1} از ۳)</p>
+          <p class="font-semibold text-xl text-gray-800 mb-8">{currentStage[questionIndex].text}</p>
+          <div class="grid grid-cols-2 gap-4">
+            {currentStage[questionIndex].options.map((opt,i)=>(
+              <button
+                key={i}
+                onClick={()=>handleSelect(i)}
+                class={`w-full p-4 text-lg font-medium rounded-xl shadow-lg btn text-center ${
+                  i===0?'bg-rose-600 hover:bg-rose-700 text-white':
+                  i===1?'bg-emerald-600 hover:bg-emerald-700 text-white':
+                  i===2?'bg-yellow-400 hover:bg-yellow-500 text-gray-800':
+                  'bg-blue-600 hover:bg-blue-700 text-white'
+                } ${showCorrect&&i===currentStage[questionIndex].correct?'bg-emerald-200 text-emerald-800':selected===i&&feedback==='incorrect'?'bg-rose-200 text-rose-800':feedback==='correct'&&i===currentStage[questionIndex].correct?'bg-emerald-200 text-emerald-800':''} ${feedback==='correct'?'cursor-not-allowed opacity-60':''}`}
+                disabled={feedback==='correct'}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+          {feedback==='incorrect'&&(
+            <p class="text-rose-600 mt-6 text-center flex items-center justify-center font-medium">
+              <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              اشتباه! دوباره امتحان کنید.
+            </p>
+          )}
+          {feedback==='correct'&&(
+            <p class="text-emerald-600 mt-6 text-center flex items-center justify-center font-medium">
+              <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              درست! به تکرار یا سوال بعدی می‌رویم.
+            </p>
+          )}
+          {showModal&&(
+            <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center modal modal-visible">
+              <div class="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
+                <h2 class="text-2xl font-bold text-emerald-600 mb-6">نتایج مرحله {stage+1}</h2>
+                <p class="text-lg text-gray-600 mb-4">نمره: {scores[stage]} از {currentStage.length*3}</p>
+                <p class="text-lg text-gray-600 mb-4">کل نمره: {Object.values(scores).reduce((a,b)=>a+b,0)} از {(stage+1)*10*3}</p>
+                {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length*3&&(
+                  <p class="text-rose-600 mb-6 font-medium">برخی سوالات اشتباه بودند، مرحله تکرار می‌شود.</p>
+                )}
+                <button
+                  onClick={handleNextStage}
+                  class="bg-gradient-to-r from-emerald-600 to-yellow-400 text-white px-6 py-3 rounded-xl hover:from-emerald-700 hover:to-yellow-500 btn shadow-lg"
+                >
+                  {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length*3?'تکرار مرحله':stage<3?'مرحله بعدی':'شروع مجدد'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    ReactDOM.render(<QuizApp/>,document.getElementById('root'));
+  </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>آزمون کاربرد گوگرد</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.20.6/babel.min.js"></script>
+  <style>
+    body{font-family:'Vazir',sans-serif;direction:rtl;background:linear-gradient(to bottom right,#fef3c7,#a7f3d0)}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir.woff') format('woff');font-weight:normal}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Bold.woff') format('woff');font-weight:bold}
+    @font-face{font-family:'Vazir';src:url('https://cdn.fontcdn.ir/Fonts/Vazir/Vazir-Light.woff') format('woff');font-weight:300}
+    .btn{transition:all 0.3s ease}.btn:hover{transform:scale(1.05);filter:brightness(1.1)}
+    .modal{transition:all 0.4s ease}.modal-hidden{opacity:0;transform:scale(0.9)}.modal-visible{opacity:1;transform:scale(1)}
+    .progress-bar{transition:width 0.6s ease-in-out}
+    .question-card{animation:slideIn 0.5s ease-in}
+    @keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <div id="root" class="container mx-auto p-6 min-h-screen flex items-center justify-center"></div>
+  <script type="text/babel">
+    const questions=[
+      {id:1,text:"گوگرد در گیاهان عمدتاً شبیه کدام عنصر غذایی مصرف می‌شود؟",options:["الف) نیتروژن","ب) فسفر","ج) پتاسیم","د) کلسیم"],correct:1},
+      {id:2,text:"کدام یک از ویتامین‌های زیر حاوی گوگرد است؟",options:["الف) ویتامین C","ب) ویتامین A","ج) تیامین (B1)","د) ویتامین D"],correct:2},
+      {id:3,text:"کمبود گوگرد در گیاهان باعث چه تغییر رنگی می‌شود؟",options:["الف) قرمز شدن برگ‌ها","ب) زردی یا کلروز","ج) آبی شدن برگ‌ها","د) قهوه‌ای شدن حاشیه برگ‌ها"],correct:1},
+      {id:4,text:"کدام یک از منابع زیر جزو منابع طبیعی گوگرد در خاک نیست؟",options:["الف) ماده آلی","ب) کانی‌های سولفاته","ج) گازهای اتمسفری","د) کودهای نیتروژنه"],correct:3},
+      {id:5,text:"اکسیداسیون گوگرد در خاک منجر به تشکیل چه اسیدی می‌شود؟",options:["الف) اسید نیتریک","ب) اسید سولفوریک","ج) اسید فسفریک","د) اسید استیک"],correct:1},
+      {id:6,text:"کدام اسید آمینه حاوی گوگرد نیست؟",options:["الف) متیونین","ب) سیستئین","ج) والین","د) سیستین"],correct:2},
+      {id:7,text:"در خاک‌های اسیدی، یون سولفات عمدتاً توسط چه چیزی جذب می‌شود؟",options:["الف) رس‌های ۱:۱ و اکسیدهای آهن و آلومینیوم","ب) ماسه","ج) مواد آلی","د) کلسیم کربنات"],correct:0},
+      {id:8,text:"کدام فرآیند باعث کاهش ورود گوگرد به خاک از طریق اتمسفر شده است؟",options:["الف) افزایش بارش‌های اسیدی","ب) اجرای استانداردهای هوای پاک","ج) افزایش مصرف کودهای گوگرددار","د) جنگل‌زدایی"],correct:1},
+      {id:9,text:"کدام گروه از ترکیبات گوگرد آلی دارای بالاترین درجه اکسیداسیون است؟",options:["الف) سولفیدها","ب) سولفونات‌ها","ج) استرهای سولفات","د) تیول‌ها"],correct:2},
+      {id:10,text:"در شرایط بی‌هوازی، گوگرد احیا شده و با آهن ترکیب می‌شود تا چه چیزی تشکیل دهد؟",options:["الف) گچ","ب) سولفید آهن","ج) اسید سولفوریک","د) سولفات کلسیم"],correct:1},
+      {id:11,text:"نسبت تقریبی C:N:S در ماده آلی خاک چقدر است؟",options:["الف) ۱۰۰:۱۰:۱","ب) ۸۵:۷:۱","ج) ۵۰:۵:۱","د) ۲۰۰:۲۰:۲"],correct:1},
+      {id:12,text:"کدام گاز گوگردی در اتمسفر به عنوان پیش‌ساز باران اسیدی نقش دارد؟",options:["الف) سولفید هیدروژن (H₂S)","ب) دی‌اکسید گوگرد (SO₂)","ج) کربنیل سولفید (COS)","د) متان (CH₄)"],correct:1},
+      {id:13,text:"در کدام نوع خاک احتمال وجود سولفیدها بیشتر است؟",options:["الف) خاک‌های شنی","ب) خاک‌های باتلاقی مناطق مرطوب","ج) خاک‌های آهکی","د) خاک‌های جنگلی"],correct:1},
+      {id:14,text:"کاهش pH ناشی از اکسیداسیون گوگرد می‌تواند تا چه حد پایین برود؟",options:["الف) ۴","ب) ۳","ج) ۲","د) ۱.۵"],correct:3},
+      {id:15,text:"کدام یک از موارد زیر از اثرات کمبود گوگرد در گیاهان نیست؟",options:["الف) تأخیر در بلوغ","ب) رشد دوکی شکل","ج) رنگ سبز تیره برگ‌ها","د) نازک شدن ساقه‌ها"],correct:2},
+      {id:16,text:"اگر غلظت گوگرد در برگ سالم یک گیاه ۰.۲٪ باشد و وزن خشک برگ ۵ گرم باشد، مقدار گوگرد در این برگ چقدر است؟",options:["الف) ۰.۱ گرم","ب) ۰.۰۱ گرم","ج) ۰.۰۰۱ گرم","د) ۰.۰۰۰۱ گرم"],correct:1},
+      {id:17,text:"یک کود NPK با فرمول ۱۵-۱۰-۵ حاوی ۳٪ گوگرد است. در یک تن از این کود، چه مقدار گوگرد وجود دارد؟",options:["الف) ۱۰ کیلوگرم","ب) ۲۰ کیلوگرم","ج) ۳۰ کیلوگرم","د) ۴۰ کیلوگرم"],correct:2},
+      {id:18,text:"اگر pH خاک در اثر اکسیداسیون گوگرد از ۵ به ۲ کاهش یابد، غلظت یون H⁺ چند برابر شده است؟",options:["الف) ۱۰ برابر","ب) ۱۰۰ برابر","ج) ۱۰۰۰ برابر","د) ۱۰۰۰۰ برابر"],correct:2},
+      {id:19,text:"در یک خاک با نسبت C:N:S برابر ۸۵:۷:۱، اگر مقدار کربن آلی ۱۷۰۰ کیلوگرم در هکتار باشد، مقدار گوگرد آلی چقدر است؟",options:["الف) ۱۰ کیلوگرم","ب) ۲۰ کیلوگرم","ج) ۳۰ کیلوگرم","د) ۴۰ کیلوگرم"],correct:1},
+      {id:20,text:"اگر یک محصول زراعی در هر هکتار ۲۵ کیلوگرم گوگرد از خاک جذب کند و تنها ۱۵ کیلوگرم گوگرد از طریق کود اضافه شود، پس از ۳ سال کمبود خالص گوگرد چقدر خواهد بود؟",options:["الف) ۱۵ کیلوگرم","ب) ۲۰ کیلوگرم","ج) ۳۰ کیلوگرم","د) ۴۵ کیلوگرم"],correct:2},
+      {id:21,text:"غلظت گوگرد در یک نمونه خاک ۰.۰۵٪ است. اگر وزن خاک در هکتار تا عمق ۲۰ سانتیمتر برابر ۲٬۰۰۰٬۰۰۰ کیلوگرم باشد، مقدار گوگرد کل در این خاک چقدر است؟",options:["الف) ۱۰۰ کیلوگرم","ب) ۵۰۰ کیلوگرم","ج) ۱۰۰۰ کیلوگرم","د) ۲۰۰۰ کیلوگرم"],correct:2},
+      {id:22,text:"اگر یک کود گوگردی ۹۰٪ خالص باشد، چه مقدار از این کود باید استفاده شود تا ۴۵ کیلوگرم گوگرد خالص به خاک اضافه شود؟",options:["الف) ۵۰ کیلوگرم","ب) ۴۵ کیلوگرم","ج) ۴۰ کیلوگرم","د) ۳۵ کیلوگرم"],correct:0},
+      {id:23,text:"اگر در یک خاک اسیدی، ۵۰٪ از یون‌های سولفات جذب شده باشند و کل سولفات موجود ۱۰۰ کیلوگرم در هکتار باشد، چه مقدار سولفات قابل جذب توسط گیاه است؟",options:["الف) ۵۰ کیلوگرم","ب) ۶۰ کیلوگرم","ج) ۷۰ کیلوگرم","د) ۸۰ کیلوگرم"],correct:0},
+      {id:24,text:"اگر یک گیاه مبتلا به کمبود گوگرد دارای غلظت گوگرد ۰.۱٪ باشد و گیاه سالم همان گونه ۰.۳٪ گوگرد داشته باشد، درصد کاهش گوگرد چقدر است؟",options:["الف) ۵۰٪","ب) ۶۶.۷٪","ج) ۷۵٪","د) ۸۰٪"],correct:1},
+      {id:25,text:"اگر در یک منطقه، بارش اسیدی حاوی ۲۰ کیلوگرم سولفات در هکتار در سال باشد، پس از ۵ سال چه مقدار گوگرد از این طریق به خاک اضافه شده است؟",options:["الف) ۳۳.۳ کیلوگرم","ب) ۶۶.۶ کیلوگرم","ج) ۱۰۰ کیلوگرم","د) ۲۰۰ کیلوگرم"],correct:0}
+    ];
+    const stages=[questions.slice(0,8),questions.slice(8,16),questions.slice(16,25)];
+    function QuizApp(){
+      const [stage,setStage]=React.useState(0);
+      const [questionIndex,setQuestionIndex]=React.useState(0);
+      const [repeatCount,setRepeatCount]=React.useState(0);
+      const [selected,setSelected]=React.useState(null);
+      const [feedback,setFeedback]=React.useState(null);
+      const [showCorrect,setShowCorrect]=React.useState(false);
+      const [scores,setScores]=React.useState([0,0,0]);
+      const [answersCorrect,setAnswersCorrect]=React.useState({});
+      const [showModal,setShowModal]=React.useState(false);
+      const currentStage=stages[stage];
+      const handleSelect=(index)=>{
+        if(feedback==='correct')return;
+        setSelected(index);
+        const q=currentStage[questionIndex];
+        const isCorrect=index===q.correct;
+        setAnswersCorrect(prev=>({...prev,[`${stage}-${questionIndex}-${repeatCount}`]:isCorrect}));
+        if(isCorrect){
+          setFeedback('correct');
+          if(selected===null){
+            setScores(prev=>({...prev,[stage]:prev[stage]+1}));
+          }
+          setTimeout(nextQuestion,1000);
+        }else{
+          setFeedback('incorrect');
+          setShowCorrect(true);
+          setTimeout(() => {
+            setFeedback(null);
+            setShowCorrect(false);
+            setSelected(null);
+          }, 2000);
+        }
+      };
+      const nextQuestion=()=>{
+        setSelected(null);
+        setFeedback(null);
+        setShowCorrect(false);
+        if(repeatCount<2){
+          setRepeatCount(prev=>prev+1);
+        }else if(questionIndex+1<currentStage.length){
+          setQuestionIndex(prev=>prev+1);
+          setRepeatCount(0);
+        }else{
+          setShowModal(true);
+        }
+      };
+      const handleNextStage=()=>{
+        const stageAnswers=Object.keys(answersCorrect)
+          .filter(key=>key.startsWith(`${stage}-`))
+          .map(key=>answersCorrect[key]);
+        const hasIncorrect=stageAnswers.includes(false)||stageAnswers.length<currentStage.length*3;
+        if(hasIncorrect){
+          setQuestionIndex(0);
+          setRepeatCount(0);
+          setAnswersCorrect(prev=>Object.fromEntries(Object.keys(prev)
+            .filter(key=>!key.startsWith(`${stage}-`))
+            .map(key=>[key,prev[key]])));
+        }else if(stage<2){
+          setStage(prev=>prev+1);
+          setQuestionIndex(0);
+          setRepeatCount(0);
+        }else{
+          setStage(0);
+          setQuestionIndex(0);
+          setRepeatCount(0);
+          setScores([0,0,0]);
+          setAnswersCorrect({});
+        }
+        setShowModal(false);
+      };
+      const progress=((questionIndex*3+repeatCount+1)/(currentStage.length*3))*100;
+      return (
+        <div class="max-w-2xl mx-auto bg-white shadow-2xl rounded-xl p-8 question-card">
+          <h1 class="text-3xl font-bold text-emerald-600 text-center mb-6">آزمون کاربرد گوگرد - مرحله {stage+1}</h1>
+          <div class="w-full bg-gray-200 rounded-full h-4 mb-6 overflow-hidden">
+            <div class="bg-gradient-to-r from-emerald-600 to-yellow-400 h-4 rounded-full progress-bar" style={{width:`${progress}%`}}></div>
+          </div>
+          <p class="text-center text-gray-600 mb-4 font-medium">سوال {questionIndex+1} از {currentStage.length} (تکرار {repeatCount+1} از 3)</p>
+          <p class="font-semibold text-xl text-gray-800 mb-8">{currentStage[questionIndex].text}</p>
+          <div class="grid grid-cols-2 gap-4">
+            {currentStage[questionIndex].options.map((opt,i)=>(
+              <button
+                key={i}
+                onClick={()=>handleSelect(i)}
+                class={`w-full p-4 text-lg font-medium rounded-xl shadow-lg btn text-center ${
+                  i===0?'bg-rose-600 hover:bg-rose-700 text-white':
+                  i===1?'bg-emerald-600 hover:bg-emerald-700 text-white':
+                  i===2?'bg-yellow-400 hover:bg-yellow-500 text-gray-800':
+                  'bg-blue-600 hover:bg-blue-700 text-white'
+                } ${showCorrect&&i===currentStage[questionIndex].correct?'bg-emerald-200 text-emerald-800':selected===i&&feedback==='incorrect'?'bg-rose-200 text-rose-800':feedback==='correct'&&i===currentStage[questionIndex].correct?'bg-emerald-200 text-emerald-800':''} ${feedback==='correct'?'cursor-not-allowed opacity-60':''}`}
+                disabled={feedback==='correct'}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+          {feedback==='incorrect'&&(
+            <p class="text-rose-600 mt-6 text-center flex items-center justify-center font-medium">
+              <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              اشتباه! دوباره امتحان کنید.
+            </p>
+          )}
+          {feedback==='correct'&&(
+            <p class="text-emerald-600 mt-6 text-center flex items-center justify-center font-medium">
+              <svg class="w-8 h-8 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+              درست! به تکرار یا سوال بعدی می‌رویم.
+            </p>
+          )}
+          {showModal&&(
+            <div class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-md flex items-center justify-center modal modal-visible">
+              <div class="bg-white rounded-xl p-8 max-w-sm w-full text-center shadow-2xl">
+                <h2 class="text-2xl font-bold text-emerald-600 mb-6">نتایج مرحله {stage+1}</h2>
+                <p class="text-lg text-gray-600 mb-4">نمره: {scores[stage]} از {currentStage.length*3}</p>
+                <p class="text-lg text-gray-600 mb-4">کل نمره: {Object.values(scores).reduce((a,b)=>a+b,0)} از {(stage===0?8:stage===1?16:25)*3}</p>
+                {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length*3&&(
+                  <p class="text-rose-600 mb-6 font-medium">برخی سوالات اشتباه بودند، مرحله تکرار می‌شود.</p>
+                )}
+                <button
+                  onClick={handleNextStage}
+                  class="bg-gradient-to-r from-emerald-600 to-yellow-400 text-white px-6 py-3 rounded-xl hover:from-emerald-700 hover:to-yellow-500 btn shadow-lg"
+                >
+                  {Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)&&answersCorrect[key]===false).length>0||Object.keys(answersCorrect).filter(key=>key.startsWith(`${stage}-`)).length<currentStage.length*3?'تکرار مرحله':stage<2?'مرحله بعدی':'شروع مجدد'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    ReactDOM.render(<QuizApp/>,document.getElementById('root'));
+  </script>
+</body>
+</html>

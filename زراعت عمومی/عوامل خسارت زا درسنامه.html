@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>درسنامه کامل عوامل خسارت‌زای محصولات کشاورزی</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FFC107', // زرد
+                        secondary: '#2196F3', // آبی
+                        accent: '#FF5722', // نارنجی
+                        highlight: '#4CAF50', // سبز
+                        bg: '#212121', // تیره
+                    },
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #212121 0%, #424242 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.5s ease;
+        }
+        .card {
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: scale(1.05) rotateY(5deg);
+        }
+        .reflection {
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.5), transparent);
+            filter: blur(5px);
+            z-index: -1;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        .widget {
+            transition: all 0.3s ease;
+        }
+        .widget:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="text-white font-sans">
+    <nav class="bg-primary p-4 fixed w-full top-0 shadow-lg z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">درسنامه عوامل خسارت‌زای کشاورزی</h1>
+            <button id="theme-toggle" class="bg-secondary text-white px-2 py-1 rounded">تم روشن/تاریک</button>
+        </div>
+    </nav>
+
+    <main class="container mx-auto p-6 mt-20">
+        <div id="progress-bar" class="w-full h-2 bg-gray-700 rounded mb-4">
+            <div class="h-full bg-highlight transition-all duration-300" style="width: 0%;"></div>
+        </div>
+
+        <!-- Section: مقدمه -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-accent">مقدمه و اهمیت</h2>
+            <div class="bg-white/10 p-4 rounded-lg shadow-lg relative fade-in">
+                <ul class="list-disc pl-6">
+                    <li class="mb-2">بیش از 10,000 حشره، 30,000 علف هرز، 100,000 بیماری، و 1,000 نماتد.</li>
+                    <li class="mb-2">کمتر از 10% آفات مهم اقتصادی‌اند.</li>
+                    <li class="mb-2">کاهش عملکرد تا 32% به دلیل تنش‌های زیستی.</li>
+                </ul>
+                <div class="reflection"></div>
+            </div>
+        </section>
+
+        <!-- Section: دسته‌بندی عوامل خسارت‌زا -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-primary">دسته‌بندی عوامل</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="card bg-highlight/20 p-4 rounded-lg shadow-lg relative fade-in widget">
+                    <h3 class="text-lg font-semibold">آفات گیاهی</h3>
+                    <p class="mb-2">حشرات، کنه‌ها، جوندگان، نرم‌تنان.</p>
+                </div>
+                <div class="card bg-secondary/20 p-4 rounded-lg shadow-lg relative fade-in widget">
+                    <h3 class="text-lg font-semibold">بیماری‌های گیاهی</h3>
+                    <p class="mb-2">قارچ‌ها، باکتری‌ها، ویروس‌ها، نماتدها.</p>
+                </div>
+                <div class="card bg-accent/20 p-4 rounded-lg shadow-lg relative fade-in widget">
+                    <h3 class="text-lg font-semibold">علف‌های هرز</h3>
+                    <p class="mb-2">رقابت برای منابع.</p>
+                </div>
+                <div class="reflection" style="bottom: -10px;"></div>
+            </div>
+        </section>
+
+        <!-- Section: آفات گیاهی -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-highlight">آفات گیاهی</h2>
+            <div class="bg-white/10 p-4 rounded-lg shadow-lg relative fade-in">
+                <h3 class="text-lg font-semibold mb-2">تعریف و خسارت</h3>
+                <p class="mb-2">تغذیه از اندام‌ها (مثل کرم مفتولی) یا کاهش کیفیت (مثل سوسک کلرادو).</p>
+                <h3 class="text-lg font-semibold mb-2">استراتژی‌ها</h3>
+                <ul class="list-disc pl-6 mb-2">
+                    <li>عدم اقدام (زیر آستانه اقتصادی)</li>
+                    <li>کاهش جمعیت (کنترل)</li>
+                    <li>افزایش مقاومت گیاه</li>
+                    <li>تلفیق روش‌ها</li>
+                </ul>
+                <h3 class="text-lg font-semibold mb-2">روش‌ها</h3>
+                <ul class="list-disc pl-6">
+                    <li>قانونی (قرنطینه)</li>
+                    <li>فیزیکی (تله، شخم)</li>
+                    <li>زراعی (تناوب، بهداشت)</li>
+                    <li>شیمیایی (سموم)</li>
+                    <li>بیولوژیک (حشرات شکارگر)</li>
+                    <li>مقاومت گیاهی</li>
+                    <li>مدیریت تلفیقی</li>
+                    <li>ریشه‌کنی</li>
+                </ul>
+                <div class="reflection"></div>
+            </div>
+        </section>
+
+        <!-- Section: بیماری‌های گیاهی -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-secondary">بیماری‌های گیاهی</h2>
+            <div class="bg-white/10 p-4 rounded-lg shadow-lg relative fade-in">
+                <h3 class="text-lg font-semibold mb-2">مفهوم و عوامل</h3>
+                <p class="mb-2">اختلال طبیعی به دلیل عوامل زنده (قارچ، باکتری) یا غیرزنده (دما، رطوبت).</p>
+                <h3 class="text-lg font-semibold mb-2">چرخه بیماری</h3>
+                <ul class="list-disc pl-6 mb-2">
+                    <li>تلقیح</li>
+                    <li>نفوذ</li>
+                    <li>عفونت</li>
+                    <li>دوره کمون</li>
+                    <li>گسترش</li>
+                    <li>تکثیر</li>
+                    <li>انتشار</li>
+                    <li>زمستان‌گذرانی</li>
+                </ul>
+                <h3 class="text-lg font-semibold mb-2">مبارزه</h3>
+                <ul class="list-disc pl-6">
+                    <li>پیشگیری (قرنطینه، محافظت)</li>
+                    <li>زراعی (تناوب، آیش)</li>
+                    <li>فیزیکی (گرما، آفتابدهی)</li>
+                    <li>بیولوژیک (آنتاگونیست‌ها)</li>
+                    <li>شیمیایی (قارچ‌کش‌ها)</li>
+                    <li>تلفیقی</li>
+                </ul>
+                <div class="reflection"></div>
+            </div>
+        </section>
+
+        <!-- Section: علف‌های هرز -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-accent">علف‌های هرز</h2>
+            <div class="bg-white/10 p-4 rounded-lg shadow-lg relative fade-in">
+                <h3 class="text-lg font-semibold mb-2">اثرات</h3>
+                <p class="mb-2">رقابت، پناهگاه آفات، کاهش کیفیت.</p>
+                <h3 class="text-lg font-semibold mb-2">دسته‌بندی</h3>
+                <ul class="list-disc pl-6 mb-2">
+                    <li>تک‌لپه‌ای، دو لپه‌ای</li>
+                    <li>یکساله، دائمی</li>
+                    <li>آبزی، سایه‌دوست</li>
+                    <li>تکثیر با بذر، ریزوم</li>
+                </ul>
+                <h3 class="text-lg font-semibold mb-2">کنترل</h3>
+                <ul class="list-disc pl-6">
+                    <li>شیمیایی (علف‌کش)</li>
+                    <li>زراعی (تناوب، مالچ)</li>
+                    <li>بیولوژیک (حشرات)</li>
+                    <li>مکانیکی (وجین، شخم)</li>
+                    <li>دوره بحرانی کنترل</li>
+                </ul>
+                <div class="reflection"></div>
+            </div>
+        </section>
+
+        <!-- Section: شبیه‌سازی -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-highlight">شبیه‌سازی کاهش عملکرد</h2>
+            <div class="bg-white/10 p-4 rounded-lg shadow-lg relative fade-in">
+                <p class="mb-2">عملکرد بدون آفت: 100%</p>
+                <p class="mb-2">عملکرد با آفت: <span id="yield" class="text-accent">68%</span></p>
+                <button id="simulate" class="bg-secondary text-white px-2 py-1 rounded mt-2">نمایش کاهش</button>
+                <div class="reflection"></div>
+            </div>
+        </section>
+
+        <!-- Section: نکات پایانی -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-primary">نکات پایانی</h2>
+            <div class="bg-white/10 p-4 rounded-lg shadow-lg relative fade-in">
+                <ul class="list-disc pl-6">
+                    <li class="mb-2">مدیریت تلفیقی بهترین روش برای تعادل اکولوژیک است.</li>
+                    <li class="mb-2">شناخت زیست‌شناسی آفات برای کنترل بهینه ضروری است.</li>
+                    <li class="mb-2">استفاده هدفمند از سموم با روش‌های غیرشیمیایی.</li>
+                </ul>
+                <div class="reflection"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Theme Toggle
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            const bg = document.body.classList.contains('dark')
+                ? 'linear-gradient(135deg, #212121 0%, #424242 100%)'
+                : 'linear-gradient(135deg, #E0E0E0 0%, #FFFFFF 100%)';
+            document.body.style.background = bg;
+            localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+        });
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+            document.body.style.background = 'linear-gradient(135deg, #212121 0%, #424242 100%)';
+        }
+
+        // Progress Bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.querySelector('#progress-bar div').style.width = scrolled + '%';
+        });
+
+        // Simulate Yield Reduction
+        document.getElementById('simulate').addEventListener('click', () => {
+            const yield = document.getElementById('yield');
+            let current = 100;
+            const interval = setInterval(() => {
+                current -= 0.5;
+                yield.textContent = `${Math.round(current)}%`;
+                if (current <= 68) clearInterval(interval);
+            }, 20);
+        });
+    </script>
+</body>
+</html>

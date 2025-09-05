@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمون شناسایی آلدئیدها و کتون‌ها</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #f4f4f4;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #444;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .option-btn {
+            padding: 15px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+            color: white;
+            background: linear-gradient(45deg, #007BFF, #00c4b4);
+        }
+        .option-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(45deg, #0056b3, #009688);
+        }
+        .option-btn:active {
+            transform: scale(0.95);
+        }
+        .option-btn.correct {
+            background: linear-gradient(45deg, #28a745, #34c759);
+        }
+        .option-btn.incorrect {
+            background: linear-gradient(45deg, #dc3545, #ff6b6b);
+        }
+        .option-btn.disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .feedback {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: color 0.5s;
+        }
+        .correct {
+            color: #28a745;
+            animation: pulse 0.5s;
+        }
+        .incorrect {
+            color: #dc3545;
+            animation: shake 0.5s;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX
+
+(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        #score {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #333;
+        }
+        #progress {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #666;
+        }
+        #correct-answer {
+            margin-top: 15px;
+            font-size: 1em;
+            color: #28a745;
+            font-weight: bold;
+        }
+        #next-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(45deg, #007BFF, #00c4b4);
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: none;
+        }
+        #next-btn:hover {
+            background: linear-gradient(45deg, #0056b3, #009688);
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>آزمون شناسایی آلدئیدها و کتون‌ها</h1>
+        <div id="question" class="question"></div>
+        <div id="options" class="options"></div>
+        <div id="feedback" class="feedback"></div>
+        <div id="correct-answer"></div>
+        <div id="score"></div>
+        <div id="progress"></div>
+        <button id="next-btn" onclick="nextQuestion()">سوال بعدی</button>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "هدف از تست 2,4-DNP چیست؟", options: ["شناسایی گروه کربونیل", "تمایز آلدئید از کتون", "شناسایی متیل کتون‌ها", "تشخیص قندها"], answer: "a" },
+            { question: "نتیجه مثبت تست 2,4-DNP چیست؟", options: ["رسوب زرد تا قرمز", "آینه نقره‌ای", "رسوب نارنجی Cu2O", "تغییر رنگ به سبز"], answer: "a" },
+            { question: "کدام ترکیب با تست 2,4-DNP واکنش نمی‌دهد؟", options: ["استون", "اتانال", "بنزن", "پروپانون"], answer: "c" },
+            { question: "تست بندیکت برای شناسایی چه گروهی مناسب است؟", options: ["آلدئیدها", "کتون‌ها", "متیل کتون‌ها", "گروه کربونیل"], answer: "a" },
+            { question: "نتیجه مثبت تست بندیکت چیست؟", options: ["رسوب نارنجی-قرمز Cu2O", "آینه نقره‌ای", "رسوب زرد یدوفرم", "تغییر رنگ به آبی"], answer: "a" },
+            { question: "کدام ترکیب در تست بندیکت واکنش مثبت می‌دهد؟", options: ["اتانال", "استون", "بنزوفنون", "سیکلوهگزانون"], answer: "a" },
+            { question: "تست تالن برای شناسایی چه چیزی استفاده می‌شود؟", options: ["آلدئیدها", "کتون‌ها", "متیل کتون‌ها", "گروه کربونیل"], answer: "a" },
+            { question: "نتیجه مثبت تست تالن چیست؟", options: ["آینه نقره‌ای", "رسوب زرد", "رسوب نارنجی", "تغییر رنگ به سبز"], answer: "a" },
+            { question: "کدام ترکیب در تست تالن واکنش مثبت نمی‌دهد؟", options: ["استون", "فرمالدهید", "اتانال", "گلوکز"], answer: "a" },
+            { question: "تست یدوفرم برای شناسایی چه گروهی استفاده می‌شود؟", options: ["متیل کتون‌ها", "آلدئیدها", "گروه کربونیل", "کتون‌های غیرمتیل‌دار"], answer: "a" },
+            { question: "نتیجه مثبت تست یدوفرم چیست؟", options: ["رسوب زرد یدوفرم", "آینه نقره‌ای", "رسوب نارنجی", "تغییر رنگ به آبی"], answer: "a" },
+            { question: "کدام ترکیب در تست یدوفرم واکنش مثبت می‌دهد؟", options: ["استون", "بنزوفنون", "سیکلوهگزانون", "فرمالدهید"], answer: "a" },
+            { question: "کدام تست می‌تواند آلدئید و کتون را از هم متمایز کند؟", options: ["تست تالن", "تست 2,4-DNP", "تست یدوفرم", "هیچ‌کدام"], answer: "a" },
+            { question: "در تست 2,4-DNP، تشکیل هیدرازون نشانه چیست؟", options: ["حضور گروه کربونیل", "حضور آلدئید", "حضور متیل کتون", "حضور قند"], answer: "a" },
+            { question: "کدام ماده شیمیایی در تست بندیکت استفاده می‌شود؟", options: ["مس(II) سولفات", "نقره آمونیوم", "ید", "2,4-DNP"], answer: "a" },
+            { question: "در تست تالن، چه ماده‌ای روی دیواره لوله تشکیل می‌شود؟", options: ["آینه نقره‌ای", "رسوب زرد", "رسوب نارنجی", "هیچ‌کدام"], answer: "a" },
+            { question: "تست یدوفرم در چه محیطی انجام می‌شود؟", options: ["قلیایی", "اسیدی", "خنثی", "فرقی ندارد"], answer: "a" },
+            { question: "کدام آلدئید در تست یدوفرم واکنش مثبت می‌دهد؟", options: ["اتانال", "فرمالدهید", "بنزالدهید", "پروپانال"], answer: "a" },
+            { question: "کدام تست برای شناسایی قندهای احیاکننده مناسب است؟", options: ["تست بندیکت", "تست 2,4-DNP", "تست یدوفرم", "هیچ‌کدام"], answer: "a" },
+            { question: "کدام ترکیب در هیچ‌یک از تست‌های تالن و بندیکت واکنش مثبت نمی‌دهد؟", options: ["استون", "اتانال", "فرمالدهید", "گلوکز"], answer: "a" },
+            { question: "کدام ماده در تست 2,4-DNP و یدوفرم واکنش مثبت می‌دهد؟", options: ["استون", "بنزوفنون", "سیکلوهگزانون", "فرمالدهید"], answer: "a" },
+            { question: "در تست تالن، چه ماده‌ای احیا می‌شود؟", options: ["نقره", "مس", "ید", "هیدرازین"], answer: "a" },
+            { question: "کدام تست نیازی به حرارت دادن ندارد؟", options: ["تست 2,4-DNP", "تست بندیکت", "تست تالن", "تست یدوفرم"], answer: "a" },
+            { question: "کدام ترکیب در تست 2,4-DNP واکنش مثبت و در تست تالن واکنش منفی می‌دهد؟", options: ["استون", "اتانال", "فرمالدهید", "گلوکز"], answer: "a" },
+            { question: "کدام تست برای شناسایی استون مناسب است؟", options: ["تست یدوفرم", "تست تالن", "تست بندیکت", "هیچ‌کدام"], answer: "a" },
+            { question: "کدام ماده شیمیایی در تست یدوفرم استفاده می‌شود؟", options: ["ید و سدیم هیدروکسید", "مس(II) سولفات", "نقره آمونیوم", "2,4-DNP"], answer: "a" },
+            { question: "تست 2,4-DNP چه نوع رسوبی تولید می‌کند؟", options: ["زرد تا قرمز", "نقره‌ای", "نارنجی", "سبز"], answer: "a" },
+            { question: "کدام تست برای شناسایی فرمالدهید مناسب است؟", options: ["تست تالن", "تست یدوفرم", "تست 2,4-DNP", "همه موارد"], answer: "d" },
+            { question: "کدام ترکیب در تست یدوفرم واکنش منفی می‌دهد؟", options: ["بنزوفنون", "استون", "اتانال", "متیل اتیل کتون"], answer: "a" },
+            { question: "کدام تست برای شناسایی بنزالدهید مناسب است؟", options: ["تست تالن", "تست یدوفرم", "تست 2,4-DNP", "همه موارد"], answer: "d" },
+            { question: "کدام ماده در تست تالن و 2,4-DNP واکنش مثبت می‌دهد؟", options: ["اتانال", "استون", "بنزوفنون", "سیکلوهگزانون"], answer: "a" },
+            { question: "در تست 2,4-DNP، چه نوع ترکیبی تشکیل می‌شود؟", options: ["هیدرازون", "آینه نقره‌ای", "یدوفرم", "اکسید مس"], answer: "a" },
+            { question: "کدام ترکیب در تست 2,4-DNP و بندیکت واکنش مثبت می‌دهد؟", options: ["اتانال", "استون", "بنزوفنون", "سیکلوهگزانون"], answer: "a" },
+            { question: "کدام تست به محیط قلیایی نیاز دارد؟", options: ["تست یدوفرم", "تست 2,4-DNP", "تست بندیکت", "تست تالن"], answer: "a" },
+            { question: "کدام ترکیب در تست یدوفرم و تالن واکنش مثبت نمی‌دهد؟", options: ["بنزوفنون", "استون", "اتانال", "متیل اتیل کتون"], answer: "a" },
+            { question: "در تست بندیکت، چه ماده‌ای کاهش می‌یابد؟", options: ["مس(II)", "نقره", "ید", "هیدرازین"], answer: "a" },
+            { question: "کدام تست برای شناسایی گلوکز مناسب است؟", options: ["تست بندیکت", "تست یدوفرم", "تست 2,4-DNP", "هیچ‌کدام"], answer: "a" },
+            { question: "کدام ترکیب در تست 2,4-DNP واکنش مثبت و در تست یدوفرم واکنش منفی می‌دهد؟", options: ["بنزوفنون", "استون", "اتانال", "متیل اتیل کتون"], answer: "a" },
+            { question: "کدام تست برای شناسایی متیل اتیل کتون مناسب است؟", options: ["تست یدوفرم", "تست تالن", "تست بندیکت", "هیچ‌کدام"], answer: "d" },
+            { question: "کدام ترکیب در تست‌های تالن، بندیکت و یدوفرم واکنش مثبت نمی‌دهد؟", options: ["بنزوفنون", "استون", "اتانال", "فرمالدهید"], answer: "a" }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const feedbackElement = document.getElementById('feedback');
+        const correctAnswerElement = document.getElementById('correct-answer');
+        const scoreElement = document.getElementById('score');
+        const progressElement = document.getElementById('progress');
+        const nextBtn = document.getElementById('next-btn');
+        let correctSelected = false;
+
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            questionElement.innerText = `${currentQuestion + 1}. ${q.question}`;
+            optionsElement.innerHTML = '';
+            correctAnswerElement.innerText = '';
+            nextBtn.style.display = 'none';
+            correctSelected = false;
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = option;
+                btn.onclick = () => checkAnswer(index);
+                optionsElement.appendChild(btn);
+            });
+            feedbackElement.innerText = '';
+            progressElement.innerText = `سوال ${currentQuestion + 1} از ${questions.length}`;
+            scoreElement.innerText = `امتیاز: ${score} از ${currentQuestion + 1}`;
+        }
+
+        function checkAnswer(selectedIndex) {
+            const q = questions[currentQuestion];
+            const correctIndex = q.answer.charCodeAt(0) - 97;
+            const buttons = optionsElement.getElementsByClassName('option-btn');
+
+            if (selectedIndex === correctIndex) {
+                feedbackElement.innerText = 'درست است!';
+                feedbackElement.className = 'feedback correct';
+                buttons[selectedIndex].classList.add('correct');
+                score++;
+                correctSelected = true;
+                nextBtn.style.display = 'block';
+                for (let btn of buttons) {
+                    btn.classList.add('disabled');
+                    btn.disabled = true;
+                }
+            } else {
+                feedbackElement.innerText = 'نادرست است! لطفاً پاسخ صحیح را انتخاب کنید.';
+                feedbackElement.className = 'feedback incorrect';
+                buttons[selectedIndex].classList.add('incorrect');
+                buttons[correctIndex].classList.add('correct');
+                correctAnswerElement.innerText = `پاسخ صحیح: ${q.options[correctIndex]}`;
+                for (let btn of buttons) {
+                    if (btn !== buttons[correctIndex]) {
+                        btn.classList.add('disabled');
+                        btn.disabled = true;
+                    }
+                }
+            }
+            scoreElement.innerText = `امتیاز: ${score} از ${currentQuestion + 1}`;
+        }
+
+        function nextQuestion() {
+            if (correctSelected) {
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    loadQuestion();
+                } else {
+                    questionElement.innerText = 'آزمون به پایان رسید!';
+                    optionsElement.innerHTML = '';
+                    feedbackElement.innerText = `نتیجه نهایی: ${score} از ${questions.length}`;
+                    correctAnswerElement.innerText = '';
+                    progressElement.innerText = '';
+                    nextBtn.style.display = 'none';
+                }
+            } else {
+                feedbackElement.innerText = 'لطفاً پاسخ صحیح را انتخاب کنید!';
+                feedbackElement.className = 'feedback incorrect';
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
